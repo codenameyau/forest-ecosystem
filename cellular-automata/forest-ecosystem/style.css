@@ -6,3 +6,7 @@ body {
 .container {
   margin: 10px;
 }
+
+canvas {
+  border: 1px dotted black;
+}
