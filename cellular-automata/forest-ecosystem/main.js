@@ -14,34 +14,12 @@
  ****************************/
 function GridSimulation(settings) {
   this.initializeSettings(settings);
-  this.initializeGrid(this.settings.gridSize);
+  this.initializeGrid();
   this.initializeEventHandlers();
 }
 
-GridSimulation.prototype.initializeSettings = function(settings) {
-  this.settings = settings;
-  this.checkProperty(this.settings, 'gridSize', 50);
-  this.checkProperty(this.settings, 'cellSize', 5);
-  this.checkProperty(this.settings, 'running', true);
-};
-
-GridSimulation.prototype.initializeGrid = function(gridSize) {
-  this.grid = [];
-  for (var i=0; i<gridSize; i++) {
-    this.grid[i] = [];
-  }
-};
-
-GridSimulation.prototype.initializeEventHandlers = function() {
-  window.addEventListener('focus', this.resume.bind(this), false);
-  window.addEventListener('blur', this.pause.bind(this), false);
-  window.addEventListener('keydown', this._keyboardInputHandler.bind(this), false);
-};
-
-GridSimulation.prototype.checkProperty = function(object, property, value) {
-  if (object && typeof object[property] === 'undefined') {
-    object[property] = value;
-  }
+GridSimulation.prototype.update = function() {
+  console.log('Updating');
 };
 
 GridSimulation.prototype.pause = function() {
@@ -59,6 +37,35 @@ GridSimulation.prototype.togglePause = function() {
   else { this.resume(); }
 };
 
+GridSimulation.prototype.initializeSettings = function(settings) {
+  this.settings = settings;
+  this.checkProperty(this.settings, 'gridRows', 50);
+  this.checkProperty(this.settings, 'gridCols', 50);
+  this.checkProperty(this.settings, 'cellSize', 5);
+  this.checkProperty(this.settings, 'running', true);
+};
+
+GridSimulation.prototype.initializeGrid = function() {
+  var gridRows = this.settings.gridRows;
+  var gridCols = this.settings.gridCols;
+  this.grid = [];
+  for (var i=0; i<gridCols; i++) {
+    this.grid[i] = [];
+  }
+};
+
+GridSimulation.prototype.initializeEventHandlers = function() {
+  window.addEventListener('focus', this.resume.bind(this), false);
+  window.addEventListener('blur', this.pause.bind(this), false);
+  window.addEventListener('keydown', this._keyboardInputHandler.bind(this), false);
+};
+
+GridSimulation.prototype.checkProperty = function(object, property, value) {
+  if (object && typeof object[property] === 'undefined') {
+    object[property] = value;
+  }
+};
+
 GridSimulation.prototype._keyboardInputHandler = function(event) {
   switch (event.which) {
 
@@ -69,13 +76,24 @@ GridSimulation.prototype._keyboardInputHandler = function(event) {
   }
 };
 
+
 /******************************
  * GridCanvas - Visualization *
  ******************************/
 function GridCanvas(gridObject) {
-  this.gridRef = gridObject;
+  this.grid = gridObject;
+  this.initializeCanvas();
 }
 
+GridCanvas.prototype.initializeCanvas = function() {
+  var settings = this.grid.settings;
+  this.canvas = document.getElementById(settings.canvasID);
+  this.canvas.width  = settings.gridCols * settings.cellSize;
+  this.canvas.height = settings.gridRows * settings.cellSize;
+  this.ctx = this.canvas.getContext('2d');
+  this.ctx.fillStyle = 'rgb(200, 0, 0)';
+  this.ctx.fillRect(0, 0, 50, 50);
+};
 
 
 /**************************
@@ -85,7 +103,8 @@ function GridCanvas(gridObject) {
 
   // Specify configuration
   var CONFIG = {
-    gridSize: 50,
+    gridRows: 50,
+    gridCols: 50,
     cellSize: 5,
     canvasID: 'imagination',
   };
