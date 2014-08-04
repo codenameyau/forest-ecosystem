@@ -1,5 +1,5 @@
 /*!
- * Forest Ecosystem
+ * Forest Ecosystem Simulation
  * codenameyau.github.io
  *
  * Challenge Description:
@@ -26,11 +26,20 @@ GridCanvas.prototype.initializeSettings = function(settings) {
   this.checkProperty(this.settings, 'running', true);
 };
 
+GridCanvas.prototype.drawGrid = function(grid) {
+  for (var i=grid.length-1; i>=0; --i) {
+    var rows = grid[i].length-1;
+    for (var j=rows; j>=0; --j) {
+      console.log(grid[i][j]);
+    }
+  }
+};
+
 GridCanvas.prototype.initializeCanvas = function() {
-  this.canvas = document.getElementById(this.settings.canvasID);
-  this.canvas.width  = this.settings.gridCols * this.settings.cellSize;
-  this.canvas.height = this.settings.gridRows * this.settings.cellSize;
-  this.ctx = this.canvas.getContext('2d');
+  var canvas = document.getElementById(this.settings.canvasID);
+  canvas.width  = this.settings.gridCols * this.settings.cellSize;
+  canvas.height = this.settings.gridRows * this.settings.cellSize;
+  this.ctx = canvas.getContext('2d');
 };
 
 GridCanvas.prototype.checkProperty = function(object, property, value) {
@@ -75,6 +84,9 @@ GridSimulation.prototype.initializeGrid = function() {
   this.grid = [];
   for (var i=0; i<gridCols; i++) {
     this.grid[i] = [];
+    for (var j=0; j<gridRows; j++) {
+      this.grid[i][j] = [];
+    }
   }
 };
 
@@ -102,6 +114,7 @@ GridSimulation.prototype._keyboardInputHandler = function(event) {
 };
 
 GridSimulation.prototype.run = function() {
+  this.canvas.drawGrid(this.grid);
   console.info('Running');
 };
 
@@ -114,8 +127,8 @@ GridSimulation.prototype.run = function() {
 
   // Specify configuration
   var CONFIG = {
-    gridRows: 50,
-    gridCols: 50,
+    gridRows: 20,
+    gridCols: 20,
     cellSize: 10,
     delay: 1000,
     canvasID: 'imagination',
@@ -125,6 +138,7 @@ GridSimulation.prototype.run = function() {
   // GridSimulation: handles the backend simulation
   var simulationCanvas = new GridCanvas(CONFIG);
   var simulation = new GridSimulation(simulationCanvas);
+  console.log(simulation);
   simulation.run();
 
 })();
