@@ -9,40 +9,63 @@
 'use strict';
 
 
-/********************
- * Grid Constructor *
- ********************/
-function Grid(size) {
-  this.initializeGrid(size);
+/****************************
+ * GridSimulation - Backend *
+ ****************************/
+function GridSimulation(settings) {
+  this.initializeSettings(settings);
+  this.initializeGrid(this.settings.gridSize);
+  console.log(this);
 }
 
-Grid.prototype.initializeGrid = function(gridSize) {
+GridSimulation.prototype.initializeSettings = function(settings) {
+  this.settings = settings;
+  this.checkProperty(this.settings, 'gridSize', 50);
+  this.checkProperty(this.settings, 'cellSize', 5);
+};
+
+GridSimulation.prototype.initializeGrid = function(gridSize) {
   this.grid = [];
   for (var i=0; i<gridSize; i++) {
     this.grid[i] = [];
   }
 };
 
+GridSimulation.prototype.checkProperty = function(object, property, value) {
+  if (object && typeof object[property] === 'undefined') {
+    object[property] = value;
+  }
+};
 
 
-/***************************
- * Main Program Simulation *
- ***************************/
+/******************************
+ * GridCanvas - Visualization *
+ ******************************/
+function GridCanvas(gridObject) {
+  this.gridRef = gridObject;
+  // this.settings = {
+  //   cellSize: config.cellSize,
+  //   canvasID: config.canvasID,
+  // };
+}
+
+
+
+/**************************
+ * Program Initialization *
+ **************************/
 (function() {
 
   // Specify configuration
   var CONFIG = {
-    numCells: 50,
+    gridSize: 50,
     cellSize: 5,
     canvasID: 'imagination',
   };
 
-  // Setup canvas grid
-  var canvas = document.getElementById(CONFIG.canvasID);
-  var ctx = canvas.getContext('2d');
-  var PI = Math.PI;
+  // GridSimulation: handles the backend simulation
+  // GridCanvas: visualizes the simulation with canvas
+  var simulationGrid = new GridSimulation(CONFIG);
+  var simulationCanvas = new GridCanvas(simulationGrid);
 
-  // Specify life
-  var A = new Grid(CONFIG.numCells);
-  console.log(A);
 })();
