@@ -1,10 +1,6 @@
 /*!
- * Forest Ecosystem Simulation
+ * GridCanvas Simulation
  * codenameyau.github.io
- *
- * Challenge Description:
- * http://redd.it/27h53e
- * http://codegolf.stackexchange.com/q/35322/30051
  */
 'use strict';
 
@@ -129,52 +125,3 @@ GridSimulation.prototype.run = function() {
   this.canvas.drawGrid(this.grid);
   console.info('Running');
 };
-
-
-
-/**************************
- * Program Initialization *
- **************************/
-function Life(options) {
-
-  this.movement = 0;
-}
-
-Life.prototype.checkProperty = function(object, property, value) {
-  if (object && typeof object[property] === 'undefined') {
-    object[property] = value;
-  }
-};
-
-(function() {
-
-  // Specify configuration
-  var CONFIG = {
-    canvasID: 'imagination',
-    gridRows: 20,
-    gridCols: 20,
-    cellSize: 10,
-    delay: 1000,
-    radius: 5,
-  };
-
-  // Lumberjack Object
-  var JACK = {
-
-  };
-
-
-  // GridCanvas: visualizes the simulation with canvas
-  // GridSimulation: handles the backend simulation
-  var simulationCanvas = new GridCanvas(CONFIG);
-  var simulation = new GridSimulation(simulationCanvas);
-  var grid = simulation.getGrid();
-
-  // Generate forest ecosystem
-  // Start: 10% lumberjacks, 50% trees, 2% bears
-
-
-  console.log(simulation);
-  // simulation.run();
-
-})();
