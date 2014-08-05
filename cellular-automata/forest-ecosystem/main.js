@@ -16,10 +16,10 @@
 /***************************
  * Forest Life Constructor *
  ***************************/
-function ForestLife(type) {
-  this.initializeProperties();
+function ForestLife(lifetype) {
+  this.initializeProperties(lifetype);
 
-  switch (this.lifeType) {
+  switch (lifetype) {
 
   case 'sapling':
     this.initializeSaplingTree();
@@ -40,30 +40,36 @@ function ForestLife(type) {
   }
 }
 
-ForestLife.prototype.initializeProperties = function() {
+ForestLife.prototype.initializeProperties = function(lifetype) {
+  this.type = lifetype;
   this.age = 0;
+  this.maturityAge = 0;
   this.movement = 0;
   this.spawnProbability = 0.0;
   this.spawnChild = '';
 };
 
 ForestLife.prototype.initializeSaplingTree = function() {
-  this.lifeID = 0;
-  this.lifeType = 'sapling';
+  this.maturityAge = 12;
 };
 
 ForestLife.prototype.initializeTree = function() {
-  this.lifeID = 1;
-  this.lifeType = 'tree';
   this.spawnProbability = 0.1;
   this.spawnChild = 'sapling';
+  this.maturityAge = 120;
 };
 
 ForestLife.prototype.initializeElderTree = function() {
-  this.lifeID = 2;
-  this.lifeType = 'elder';
   this.spawnProbability = 0.2;
   this.spawnChild = 'sapling';
+};
+
+ForestLife.prototype.initializeLumberJack = function() {
+  this.movement = 3;
+};
+
+ForestLife.prototype.initializeBear = function() {
+  this.movement = 5;
 };
 
 
@@ -82,14 +88,27 @@ ForestLife.prototype.initializeElderTree = function() {
     radius: 5,
   };
 
-  // Lumberjack Object
-  var jack = new ForestLife('lumberjack');
-
-  // GridCanvas: visualizes the simulation with canvas
+  // GridCanvas: visualizes the simulation
   // GridSimulation: handles the backend simulation
   var simulationCanvas = new GridCanvas(CONFIG);
   var simulation = new GridSimulation(simulationCanvas);
   var grid = simulation.getGrid();
+
+  // Keep track of statisitcs
+  simulation.stats = {
+    // Game information
+    month: 0,
+    lumber: {year: 0, total: 0},
+    maul: {year: 0, total: 0},
+
+    // Count of ForestLife
+    sapling: 0,
+    tree: 0,
+    elder: 0,
+    lumberjack: 0,
+    bear: 0,
+  };
+
 
   // Generate forest ecosystem
   // Start: 10% lumberjacks, 50% trees, 2% bears
