@@ -1,10 +1,8 @@
 /*!
- * Forest Ecosystem Simulation
+ * Grid Simulation
  * codenameyau.github.io
  *
- * Challenge Description:
- * http://redd.it/27h53e
- * http://codegolf.stackexchange.com/q/35322/30051
+ * Description:
  */
 'use strict';
 

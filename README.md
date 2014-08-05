@@ -1,4 +1,5 @@
 coding-cafe
 ===========
 
-Daily programming challenges
+Weekly programming challenges
+
