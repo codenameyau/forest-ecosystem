@@ -1,5 +1,6 @@
 /*---------------JSHint---------------*/
-/* global GridCanvas, PubTest         */
+/* global GridCanvas, GridSimulation  */
+/* global PubTest                     */
 /*------------------------------------*/
 'use strict';
 
@@ -19,12 +20,34 @@
     bearRatio: 0.02,
   };
   var canvas = new GridCanvas(CONFIG);
+  var simulation = new GridSimulation(canvas);
 
-  // Begin test cases
-  var test = new PubTest('GridCanvas');
-  test.assert(CONFIG === canvas.settings, 'Matching settings for GridCanvas');
 
-  // Report test results
-  test.results();
+  /**************************
+  * Test Suite: GridCanvas *
+  **************************/
+  var testCanvas = new PubTest('GridCanvas');
+
+  // Test Case: initialization
+  testCanvas.testCase(function() {
+    testCanvas.assertEqual(CONFIG, canvas.settings, 'matching settings for GridCanvas');
+  });
+
+  // Report testCanvas results
+  testCanvas.results();
+
+
+  /*****************************
+  * Test Suite: GridSimulation *
+  ******************************/
+  var testSimulation = new PubTest('GridSimulation');
+
+  // Test Case: initialization
+  testSimulation.testCase(function() {
+    testSimulation.assertEqual(canvas, simulation.canvas, 'simulation canvas should match canvas');
+  });
+
+  // Report testSimulation results
+  testSimulation.results();
 
 })();
