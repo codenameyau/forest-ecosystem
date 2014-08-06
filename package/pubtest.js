@@ -47,10 +47,9 @@ PubTest.prototype.testCase = function(callback) {
   callback();
 };
 
-
-/************************
- * PubTest - Assertions *
- ************************/
+/***********************************
+ * PubTest - Expression Assertions *
+ ***********************************/
 PubTest.prototype.assert = function(expr, message) {
   this._addCase(expr);
   console.assert(expr, message);
@@ -64,6 +63,22 @@ PubTest.prototype.assertEqual = function(exprA, exprB, message) {
 
 PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
   var assertion = (exprA !== exprB);
+  this._addCase(assertion);
+  console.assert(assertion, message);
+};
+
+PubTest.prototype.assertRange = function(value, min, max, message) {
+  var assertion = (value >= min && value <= max);
+  this._addCase(assertion);
+  console.assert(assertion, message);
+};
+
+
+/*****************************
+ * PubTest - Type Assertions *
+ *****************************/
+PubTest.prototype.assertInteger = function(value, message) {
+  var assertion = isNaN(value) ? false : (parseInt(value, 10) === value);
   this._addCase(assertion);
   console.assert(assertion, message);
 };
