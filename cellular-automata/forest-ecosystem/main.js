@@ -81,8 +81,8 @@ ForestLife.prototype.initializeBear = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 20,
-    gridCols: 20,
+    gridRows: 10,
+    gridCols: 10,
     cellSize: 10,
     delay: 1000,
     radius: 5,
@@ -111,9 +111,15 @@ ForestLife.prototype.initializeBear = function() {
     bear: 0,
   };
 
-  // Generate starting forest ecosystem from ratio
-  var randX, randY;
-  for (var i=simulation.size-1; i>=0; i--) {
+  // Generate random forest ecosystem based on ratio
+  var gridSize = simulation.getSize();
+  for (var i=0; i<gridSize; i++) {
+    var randPos = simulation.randomPosition();
+    for (var v=0; v<2; v++) {
+      if (randPos[v] >= gridSize) {
+        console.log(false);
+      }
+    }
   }
 
   console.log(simulation);

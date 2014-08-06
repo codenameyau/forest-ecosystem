@@ -1,6 +1,10 @@
 /*!
  * GridCanvas Simulation
+ * MIT License (c) 2014
  * codenameyau.github.io
+ *
+ * Description:
+ * Grid simulation tool with canvas renderer
  */
 'use strict';
 
@@ -82,7 +86,9 @@ GridSimulation.prototype.initializeGrid = function() {
 GridSimulation.prototype.initializeSimulation = function() {
   this.simulation = {
     size: this.canvas.settings.gridRows * this.canvas.settings.gridCols,
-    running: true,
+    rows: this.canvas.settings.gridRows,
+    cols: this.canvas.settings.gridCols,
+    running: false,
     time: 0,
   };
 };
@@ -125,6 +131,21 @@ GridSimulation.prototype.run = function() {
  ******************************/
 GridSimulation.prototype.getGrid = function() {
   return this.grid;
+};
+
+GridSimulation.prototype.getSize = function() {
+  return this.simulation.size;
+};
+
+GridSimulation.prototype.randomNumber = function(min, max) {
+  return Math.random() * (max - min) + min;
+};
+
+GridSimulation.prototype.randomPosition = function() {
+  return [
+    parseInt(this.randomNumber(0, this.simulation.rows), 10),
+    parseInt(this.randomNumber(0, this.simulation.cols), 10),
+  ];
 };
 
 /*****************************
