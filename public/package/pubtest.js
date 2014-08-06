@@ -13,7 +13,7 @@
  * PubTest Constructor *
  ***********************/
 function PubTest(name) {
-  name = name || 'PubTest';
+  name = name || 'Test';
   this.testing = name;
   this.cases = {
     total: 0,
@@ -27,8 +27,8 @@ function PubTest(name) {
  * PubTest - Public Methods *
  ****************************/
 PubTest.prototype.results = function() {
-  var passColor = (this.cases.pass) ? 'color: #007A00' : 'color: #E61111';
-  var failColor = (this.cases.fail) ? 'color: #E61111' : 'color: #007A00';
+  var passColor = (this.cases.pass) ? 'color: #007A00' : 'color: #FE0000';
+  var failColor = (this.cases.fail) ? 'color: #FE0000' : 'color: #007A00';
   console.log('');
   console.log('%c============', failColor);
   console.log('%cTest Results', failColor);
@@ -58,6 +58,11 @@ PubTest.prototype.assertEqual = function(exprA, exprB, message) {
   console.assert(assertion, message);
 };
 
+PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
+  var assertion = (exprA !== exprB);
+  this._addCase(assertion);
+  console.assert(assertion, message);
+};
 
 /******************************
  * PubTest - Internal Methods *
