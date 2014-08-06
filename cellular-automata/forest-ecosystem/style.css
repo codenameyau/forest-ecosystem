@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  margin: 10px;
+}
+
+canvas {
+  border: 1px dotted black;
+}
