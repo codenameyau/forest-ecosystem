@@ -86,6 +86,9 @@ ForestLife.prototype.initializeBear = function() {
     cellSize: 10,
     delay: 1000,
     radius: 5,
+    treeRatio: 0.5,
+    lumberjackRatio: 0.1,
+    bearRatio: 0.02,
   };
 
   // GridCanvas: visualizes the simulation
@@ -96,12 +99,11 @@ ForestLife.prototype.initializeBear = function() {
 
   // Keep track of statisitcs
   simulation.stats = {
-    // Game information
-    month: 0,
+    // Simulation information
     lumber: {year: 0, total: 0},
     maul: {year: 0, total: 0},
 
-    // Count of ForestLife
+    // ForestLife count
     sapling: 0,
     tree: 0,
     elder: 0,
@@ -109,9 +111,10 @@ ForestLife.prototype.initializeBear = function() {
     bear: 0,
   };
 
-
-  // Generate forest ecosystem
-  // Start: 10% lumberjacks, 50% trees, 2% bears
+  // Generate starting forest ecosystem from ratio
+  var randX, randY;
+  for (var i=simulation.size-1; i>=0; i--) {
+  }
 
   console.log(simulation);
   // simulation.run();

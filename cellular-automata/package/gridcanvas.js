@@ -22,6 +22,16 @@ GridCanvas.prototype.initializeSettings = function(settings) {
   this.checkProperty(this.settings, 'running', true);
 };
 
+GridCanvas.prototype.initializeCanvas = function() {
+  var canvas = document.getElementById(this.settings.canvasID);
+  canvas.width  = this.settings.gridCols * this.settings.cellSize;
+  canvas.height = this.settings.gridRows * this.settings.cellSize;
+  this.ctx = canvas.getContext('2d');
+};
+
+/**************************
+ * GridCanvas - Utilities *
+ **************************/
 GridCanvas.prototype.drawGrid = function(grid) {
   this.ctx.strokeStyle = 'rgb(30, 30, 30)';
   var radius = 4;
@@ -39,13 +49,6 @@ GridCanvas.prototype.drawGrid = function(grid) {
   }
 };
 
-GridCanvas.prototype.initializeCanvas = function() {
-  var canvas = document.getElementById(this.settings.canvasID);
-  canvas.width  = this.settings.gridCols * this.settings.cellSize;
-  canvas.height = this.settings.gridRows * this.settings.cellSize;
-  this.ctx = canvas.getContext('2d');
-};
-
 GridCanvas.prototype.checkProperty = function(object, property, value) {
   if (object && typeof object[property] === 'undefined') {
     object[property] = value;
@@ -53,9 +56,10 @@ GridCanvas.prototype.checkProperty = function(object, property, value) {
 };
 
 
-/****************************
- * GridSimulation - Backend *
- ****************************/
+
+/******************************
+ * GridSimulation Constructor *
+ ******************************/
 function GridSimulation(canvas) {
   this.canvas = canvas;
   this.initializeGrid();
@@ -63,6 +67,35 @@ function GridSimulation(canvas) {
   this.initializeEventHandlers();
 }
 
+GridSimulation.prototype.initializeGrid = function() {
+  var gridRows = this.canvas.settings.gridRows;
+  var gridCols = this.canvas.settings.gridCols;
+  this.grid = [];
+  for (var i=0; i<gridCols; i++) {
+    this.grid[i] = [];
+    for (var j=0; j<gridRows; j++) {
+      this.grid[i][j] = [];
+    }
+  }
+};
+
+GridSimulation.prototype.initializeSimulation = function() {
+  this.simulation = {
+    size: this.canvas.settings.gridRows * this.canvas.settings.gridCols,
+    running: true,
+    time: 0,
+  };
+};
+
+GridSimulation.prototype.initializeEventHandlers = function() {
+  window.addEventListener('focus', this.resume.bind(this), false);
+  window.addEventListener('blur', this.pause.bind(this), false);
+  window.addEventListener('keydown', this._keyboardInputHandler.bind(this), false);
+};
+
+/*****************************
+ * GridSimulation - Controls *
+ *****************************/
 GridSimulation.prototype.update = function() {
   console.log('Updating');
 };
@@ -82,31 +115,21 @@ GridSimulation.prototype.togglePause = function() {
   else { this.resume(); }
 };
 
-GridSimulation.prototype.initializeGrid = function() {
-  var gridRows = this.canvas.settings.gridRows;
-  var gridCols = this.canvas.settings.gridCols;
-  this.grid = [];
-  for (var i=0; i<gridCols; i++) {
-    this.grid[i] = [];
-    for (var j=0; j<gridRows; j++) {
-      this.grid[i][j] = [];
-    }
-  }
+GridSimulation.prototype.run = function() {
+  this.canvas.drawGrid(this.grid);
+  console.info('Running');
 };
 
-GridSimulation.prototype.initializeSimulation = function() {
-  this.simulation = {
-    running: true,
-    time: 0,
-  };
+/******************************
+ * GridSimulation - Utilities *
+ ******************************/
+GridSimulation.prototype.getGrid = function() {
+  return this.grid;
 };
 
-GridSimulation.prototype.initializeEventHandlers = function() {
-  window.addEventListener('focus', this.resume.bind(this), false);
-  window.addEventListener('blur', this.pause.bind(this), false);
-  window.addEventListener('keydown', this._keyboardInputHandler.bind(this), false);
-};
-
+/*****************************
+ * GridSimulation - Internal *
+ *****************************/
 GridSimulation.prototype._keyboardInputHandler = function(event) {
   switch (event.which) {
 
@@ -115,13 +138,4 @@ GridSimulation.prototype._keyboardInputHandler = function(event) {
     break;
 
   }
-};
-
-GridSimulation.prototype.getGrid = function() {
-  return this.grid;
-};
-
-GridSimulation.prototype.run = function() {
-  this.canvas.drawGrid(this.grid);
-  console.info('Running');
 };
