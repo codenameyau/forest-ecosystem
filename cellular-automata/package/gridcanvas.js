@@ -108,12 +108,12 @@ GridSimulation.prototype.update = function() {
 
 GridSimulation.prototype.pause = function() {
   this.simulation.running = false;
-  console.info('Paused');
+  // console.info('Paused');
 };
 
 GridSimulation.prototype.resume = function() {
   this.simulation.running = true;
-  console.info('Resuming');
+  // console.info('Resuming');
 };
 
 GridSimulation.prototype.togglePause = function() {
