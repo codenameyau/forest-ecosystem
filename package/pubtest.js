@@ -43,6 +43,10 @@ PubTest.prototype.clear = function() {
   console.clear();
 };
 
+PubTest.prototype.testCase = function(callback) {
+  callback();
+};
+
 
 /************************
  * PubTest - Assertions *
@@ -63,6 +67,7 @@ PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
   this._addCase(assertion);
   console.assert(assertion, message);
 };
+
 
 /******************************
  * PubTest - Internal Methods *
