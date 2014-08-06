@@ -59,18 +59,29 @@
   testSimulation.testCase(function() {
     var min = 0, max = 10;
     var randInt = simulation.randomInteger(min, max);
-    testSimulation.assertInteger(randInt, 'random number should be an integer');
-    testSimulation.assertRange(randInt, min, max);
+
+    testSimulation.assertInteger(randInt,
+      'random number should be an integer');
+
+    testSimulation.assertRange(randInt, min, max,
+      'range of random number should be between min and max');
   });
 
   // Test Case: randomPosition
   testSimulation.testCase(function() {
-    var trials = 100;
-    var passTest = true;
-    // for (var i=0; i<trials; i++) {
-    //   var randPosition = simulation.randomPosition();
+    var randPosition = simulation.randomPosition();
 
-    // }
+    testSimulation.assertArray(randPosition,
+      'random position should be an Array');
+
+    testSimulation.assertEqual(randPosition.length, 2,
+      'length of random position should be 2');
+
+    testSimulation.assertRange(randPosition[0], 0, CONFIG.gridRows,
+      'x position should be between 0 and number of rows');
+
+    testSimulation.assertRange(randPosition[0], 0, CONFIG.gridCols,
+      'y position should be between 0 and number of cols');
   });
 
   // Report testSimulation results
