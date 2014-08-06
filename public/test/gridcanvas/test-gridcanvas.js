@@ -1,19 +1,12 @@
-/*!
- * Forest Ecosystem Simulation
- * codenameyau.github.io
- */
-
 /*---------------JSHint---------------*/
-/* global GridCanvas, GridSimulation  */
-/* global ForestLife, PubTest         */
+/* global GridCanvas, PubTest         */
 /*------------------------------------*/
 'use strict';
 
+
 (function() {
 
-  var test = new PubTest();
-  console.log(test);
-  // Test GridCanvas
+  // Create GridCanvas
   var CONFIG = {
     canvasID: 'imagination',
     gridRows: 10,
@@ -26,7 +19,10 @@
     bearRatio: 0.02,
   };
   var canvas = new GridCanvas(CONFIG);
-  test.assertEqual(CONFIG, 1, 'Same');
+
+  // Begin test cases
+  var test = new PubTest('GridCanvas');
+  test.assert(CONFIG === canvas.settings, 'Matching settings for GridCanvas');
 
   // Report test results
   test.results();

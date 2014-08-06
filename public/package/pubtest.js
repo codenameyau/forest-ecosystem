@@ -1,5 +1,5 @@
 /*!
- * PubTest
+ * PubTest.js
  * MIT License (c) 2014
  * codenameyau.github.io
  *
@@ -14,7 +14,6 @@
  ***********************/
 function PubTest(name) {
   name = name || 'PubTest';
-  this.running = false;
   this.testing = name;
   this.cases = {
     total: 0,
@@ -28,13 +27,15 @@ function PubTest(name) {
  * PubTest - Public Methods *
  ****************************/
 PubTest.prototype.results = function() {
+  var passColor = (this.cases.pass) ? 'color: #007A00' : 'color: #E61111';
+  var failColor = (this.cases.fail) ? 'color: #E61111' : 'color: #007A00';
   console.log('');
-  console.log('============');
-  console.log('Test Results');
-  console.log('============');
-  console.log('Total:  %d', this.cases.total);
-  console.log('Passed: %d', this.cases.pass);
-  console.warn('Failed: %d', this.cases.fail);
+  console.log('%c============', failColor);
+  console.log('%cTest Results', failColor);
+  console.log('%c============', failColor);
+  console.log('%cTotal:  %d', failColor, this.cases.total);
+  console.log('%cPassed: %d', passColor, this.cases.pass);
+  console.log('%cFailed: %d', failColor, this.cases.fail);
   console.timeEnd(this.testing);
 };
 
@@ -47,6 +48,7 @@ PubTest.prototype.clear = function() {
  * PubTest - Assertions *
  ************************/
 PubTest.prototype.assert = function(expr, message) {
+  this._addCase(expr);
   console.assert(expr, message);
 };
 
