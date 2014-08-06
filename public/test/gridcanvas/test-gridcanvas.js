@@ -30,7 +30,8 @@
 
   // Test Case: initialization
   testCanvas.testCase(function() {
-    testCanvas.assertEqual(CONFIG, canvas.settings, 'matching settings for GridCanvas');
+    testCanvas.assertEqual(CONFIG, canvas.settings,
+      'matching settings for GridCanvas');
   });
 
   // Report testCanvas results
@@ -44,7 +45,32 @@
 
   // Test Case: initialization
   testSimulation.testCase(function() {
-    testSimulation.assertEqual(canvas, simulation.canvas, 'simulation canvas should match canvas');
+    testSimulation.assertEqual(canvas, simulation.canvas,
+      'simulation canvas should match canvas');
+  });
+
+  // Test Case: getSize
+  testSimulation.testCase(function() {
+    testSimulation.assertEqual(simulation.getSize(), 100,
+      'grid size should be rows x cols');
+  });
+
+  // Test Case: randomNumber
+  testSimulation.testCase(function() {
+    var min = 0, max = 10;
+    var randInt = simulation.randomInteger(min, max);
+    testSimulation.assertInteger(randInt, 'random number should be an integer');
+    testSimulation.assertRange(randInt, min, max);
+  });
+
+  // Test Case: randomPosition
+  testSimulation.testCase(function() {
+    var trials = 100;
+    var passTest = true;
+    // for (var i=0; i<trials; i++) {
+    //   var randPosition = simulation.randomPosition();
+
+    // }
   });
 
   // Report testSimulation results

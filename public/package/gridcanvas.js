@@ -137,14 +137,14 @@ GridSimulation.prototype.getSize = function() {
   return this.simulation.size;
 };
 
-GridSimulation.prototype.randomNumber = function(min, max) {
-  return Math.random() * (max - min) + min;
+GridSimulation.prototype.randomInteger = function(min, max) {
+  return parseInt(Math.random() * (max - min) + min, 10);
 };
 
 GridSimulation.prototype.randomPosition = function() {
   return [
-    parseInt(this.randomNumber(0, this.simulation.rows), 10),
-    parseInt(this.randomNumber(0, this.simulation.cols), 10),
+    this.randomInteger(0, this.simulation.rows),
+    this.randomInteger(0, this.simulation.cols),
   ];
 };
 
