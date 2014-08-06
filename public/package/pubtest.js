@@ -29,7 +29,6 @@ function PubTest(name) {
 PubTest.prototype.results = function() {
   var passColor = (this.cases.pass) ? 'color: #007A00' : 'color: #FE0000';
   var failColor = (this.cases.fail) ? 'color: #FE0000' : 'color: #007A00';
-  console.log('');
   console.log('%c============', failColor);
   console.log('%cTest Results', failColor);
   console.log('%c============', failColor);
@@ -37,6 +36,7 @@ PubTest.prototype.results = function() {
   console.log('%cPassed: %d', passColor, this.cases.pass);
   console.log('%cFailed: %d', failColor, this.cases.fail);
   console.timeEnd(this.testing);
+  console.log('');
 };
 
 PubTest.prototype.clear = function() {
@@ -47,48 +47,59 @@ PubTest.prototype.testCase = function(callback) {
   callback();
 };
 
+
 /***********************************
  * PubTest - Expression Assertions *
  ***********************************/
 PubTest.prototype.assert = function(expr, message) {
-  this._addCase(expr);
-  console.assert(expr, message);
+  this._addCase(expr, message);
 };
 
 PubTest.prototype.assertEqual = function(exprA, exprB, message) {
   var assertion = (exprA === exprB);
-  this._addCase(assertion);
-  console.assert(assertion, message);
+  this._addCase(assertion, message);
 };
 
 PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
   var assertion = (exprA !== exprB);
-  this._addCase(assertion);
-  console.assert(assertion, message);
+  this._addCase(assertion, message);
 };
 
 PubTest.prototype.assertRange = function(value, min, max, message) {
   var assertion = (value >= min && value <= max);
-  this._addCase(assertion);
-  console.assert(assertion, message);
+  this._addCase(assertion, message);
 };
 
 
 /*****************************
  * PubTest - Type Assertions *
  *****************************/
+PubTest.prototype.assertType = function(value, type, message) {
+  var assertion = (typeof value === type);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertString = function(value, message) {
+  this.assertType(value, 'string', message);
+};
+
 PubTest.prototype.assertInteger = function(value, message) {
   var assertion = isNaN(value) ? false : (parseInt(value, 10) === value);
-  this._addCase(assertion);
-  console.assert(assertion, message);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertArray = function(value, message) {
+  var assertion = (value instanceof Array);
+  this._addCase(assertion, message);
 };
 
 
 /******************************
  * PubTest - Internal Methods *
  ******************************/
-PubTest.prototype._addCase = function(assertion) {
+PubTest.prototype._addCase = function(assertion, message) {
   this.cases.total++;
+  console.assert(assertion, message);
   if (assertion) { this._passed(); }
   else { this._failed(); }
 };
