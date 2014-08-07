@@ -21,7 +21,7 @@ function ForestLife(lifetype) {
   this.type = lifetype;
   this.parameters = parameters;
   this.radius = parameters.radius.start;
-  this.age = 0;
+  this.age = parameters.startAge;
 }
 
 ForestLife.prototype.definition = {
@@ -31,22 +31,25 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.0, child: ''},
     color: 'rgba(20, 220, 20, 0.8)',
     movement: 0,
+    startAge: 0,
   },
 
   'tree': {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
-    radius: {start: 5, end: 6, growth: (6-5)/120},
+    radius: {start: 5, end: 8, growth: (8-5)/120},
     spawn: {chance: 0.1, child: 'sapling'},
     color: 'rgba(40, 200, 40, 0.8)',
     movement: 0,
+    startAge: 12,
   },
 
   'elder': {
     maturity: {age: 0, previous: 'tree', next: ''},
-    radius: {start: 6, end: 6, growth: 0},
+    radius: {start: 8, end: 8, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
     color: 'rgba(80, 180, 40, 0.8)',
     movement: 0,
+    startAge: 120,
   },
 
   'lumberjack': {
@@ -55,6 +58,7 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.0, child: ''},
     color: 'rgba(150, 20, 20, 0.8)',
     movement: 3,
+    startAge: 20,
   },
 
   'bear': {
@@ -63,6 +67,7 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.0, child: ''},
     color: 'rgba(150, 100, 50, 0.8)',
     movement: 5,
+    startAge: 5,
   },
 };
 
@@ -82,6 +87,14 @@ ForestLife.prototype.grow = function() {
       this.type = nextStage;
     }
   }
+};
+
+ForestLife.prototype.calculateGrowth = function(start, end) {
+
+};
+
+ForestLife.prototype.roundQuarter = function(number) {
+  return (Math.round(number * 4) / 4);
 };
 
 

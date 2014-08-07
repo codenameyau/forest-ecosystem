@@ -6,17 +6,34 @@
 
 (function() {
 
-  // ForestLife tests
+  // Create PubTest for ForestLife
   var test = new PubTest('ForestLife');
 
   //  Create all possible ForestLife
+  var definitions = ForestLife.prototype.definition;
   var sapling = new ForestLife('sapling');
   var tree = new ForestLife('tree');
   var elder = new ForestLife('elder');
   var lumberjack = new ForestLife('lumberjack');
   var bear = new ForestLife('bear');
 
-  console.log(sapling);
+  // Test Case: parameters match defintions
+  test.testCase(function() {
+    test.assertEqual(sapling.parameters, definitions.sapling,
+      'parameters of sapling should match definition of sapling');
+
+    test.assertEqual(tree.parameters, definitions.tree,
+      'parameters of tree should match definition of tree');
+
+    test.assertEqual(elder.parameters, definitions.elder,
+      'parameters of elder should match definition of elder');
+
+    test.assertEqual(lumberjack.parameters, definitions.lumberjack,
+      'parameters of lumberjack should match definition of lumberjack');
+
+    test.assertEqual(bear.parameters, definitions.bear,
+      'parameters of bear should match definition of bear');
+  });
 
   // Test Case: maturity age
   test.testCase(function() {
@@ -96,16 +113,16 @@
 
     // Test parameters before growing
     test.assertEqual(sapling.age, 0,
-      'age of sapling should be 0');
+      'age of the sapling should be 0');
 
     test.assertEqual(sapling.parameters.maturity.next, 'tree',
-      'next stage of sapling should be tree');
+      'next stage of the sapling should be tree');
 
     test.assertEqual(sapling.parameters.spawn.child, '',
-      'spawn child of sapling should be empty');
+      'spawn child of the sapling should be empty');
 
     test.assertEqual(sapling.parameters.spawn.chance, 0,
-      'spawn chance of sapling should be 0');
+      'spawn chance of the sapling should be 0');
 
     // [Stage 1] Grow for 12 months -> mature to 'tree'
     var treeAge = sapling.parameters.maturity.age;
@@ -114,24 +131,70 @@
 
     // Tests that sapling is now a tree
     test.assertEqual(sapling.age, 12,
-      'age of sapling should be 12');
+      'age of the sapling should be 12');
 
     test.assertEqual(sapling.type, 'tree',
-      'type of sapling should now be tree');
+      'type of the sapling should now be tree');
 
     test.assertEqual(sapling.radius, treeRadius,
-      'radius of sapling should now be the starting radius of tree');
+      'radius of the sapling should now be the starting radius of tree');
+
+    test.assertEqual(sapling.parameters.maturity.previous, 'sapling',
+      'previous stage of the sapling should be sapling');
 
     test.assertEqual(sapling.parameters.maturity.next, 'elder',
-      'next stage of sapling should be elder');
+      'next stage of the sapling should be elder');
 
     test.assertEqual(sapling.parameters.spawn.child, 'sapling',
-      'spawn child of sapling should be sapling');
+      'spawn child of the sapling should be sapling');
 
     test.assertEqual(sapling.parameters.spawn.chance, 0.1,
-      'spawn chance of sapling should be 0.1');
+      'spawn chance of the sapling should be 0.1');
 
-    // [Stage 2] Grow for 120 months -> mature to 'elder' tree
+    // [Stage 2] Grow for 100 more months -> mature to 'elder' tree
+    var nextAge = sapling.parameters.maturity.age - treeAge;
+    var elderRadius = sapling.parameters.radius.end;
+    for (var j=0; j<nextAge; j++) {sapling.grow();}
+    console.log(sapling);
+    // Tests that sapling is now a elder
+    test.assertEqual(sapling.age, 120,
+      'age of the sapling should be 120');
+
+    test.assertEqual(sapling.type, 'elder',
+      'type of the sapling should now be elder');
+
+    test.assertEqual(sapling.radius, elderRadius,
+      'radius of the sapling should now be the starting radius of elder');
+
+    test.assertEqual(sapling.parameters.maturity.previous, 'tree',
+      'previous stage of the sapling should be tree');
+
+    test.assertEqual(sapling.parameters.maturity.next, '',
+      'next stage of the sapling should be none');
+
+    test.assertEqual(sapling.parameters.spawn.child, 'sapling',
+      'spawn child of the sapling should be sapling');
+
+    test.assertEqual(sapling.parameters.spawn.chance, 0.2,
+      'spawn chance of the sapling should be 0.2');
+
+  });
+
+  // Test Case: rounding to nearest 0.25
+  test.testCase(function() {
+    var roundQuarter = ForestLife.prototype.roundQuarter;
+    test.assertEqual(roundQuarter(0), 0,'round 0');
+    test.assertEqual(roundQuarter(10), 10, 'round 10');
+    test.assertEqual(roundQuarter(-10), -10, 'round -10');
+    test.assertEqual(roundQuarter(10.24), 10.25, 'round 10.24');
+    test.assertEqual(roundQuarter(-10.24), -10.25, 'round -10.24');
+    test.assertEqual(roundQuarter(10.999), 11, 'round 10.999');
+    test.assertEqual(roundQuarter(-10.999), -11, 'round -10.999');
+  });
+
+  // Test Case: calculate radius growth
+  test.testCase(function() {
+
   });
 
   // Report test results
