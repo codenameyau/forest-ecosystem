@@ -125,12 +125,16 @@ GridSimulation.prototype.run = function() {
   console.info('Running');
 };
 
-GridSimulation.prototype.shuffle = function(array) {
-  console.log('shuffling');
-};
-
 GridSimulation.prototype.populate = function(array) {
-  console.log('populating');
+  var count = 0;
+  for (var i=0; i<this.simulation.rows; i++) {
+    for (var j=0; j<this.simulation.cols; j++) {
+      if (array[count] !== null) {
+        this.grid[i][j].push(array[count]);
+      }
+      count++;
+    }
+  }
 };
 
 /******************************
@@ -153,6 +157,15 @@ GridSimulation.prototype.randomPosition = function() {
     this.randomInteger(0, this.simulation.rows),
     this.randomInteger(0, this.simulation.cols),
   ];
+};
+
+GridSimulation.prototype.shuffle = function(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
 };
 
 /*****************************
