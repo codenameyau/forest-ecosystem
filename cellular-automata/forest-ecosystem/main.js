@@ -98,11 +98,15 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 10,
-    gridCols: 10,
-    cellSize: 10,
+    gridRows: 40,
+    gridCols: 40,
+    cellSize: 20,
     delay: 1000,
-    radius: 5,
+    radius: 5
+  };
+
+  // Specify starting population
+  var FOREST = {
     treeRatio: 0.5,
     lumberjackRatio: 0.1,
     bearRatio: 0.02,
@@ -136,9 +140,9 @@ ForestLife.prototype.grow = function() {
 
   // Generate random forest ecosystem based on ratio population
   var gridSize = simulation.getSize();
-  var jackPop = Math.round(gridSize * CONFIG.lumberjackRatio);
-  var treePop = Math.round(gridSize * CONFIG.treeRatio);
-  var bearPop = Math.round(gridSize * CONFIG.bearRatio);
+  var jackPop = Math.round(gridSize * FOREST.lumberjackRatio);
+  var treePop = Math.round(gridSize * FOREST.treeRatio);
+  var bearPop = Math.round(gridSize * FOREST.bearRatio);
   var emptyPop = gridSize - jackPop - treePop - bearPop;
   var initialForest = [];
   populateArray(initialForest, new ForestLife('lumberjack'), jackPop);
@@ -150,6 +154,6 @@ ForestLife.prototype.grow = function() {
   simulation.shuffle(initialForest);
   simulation.populate(initialForest);
   console.log(simulation);
-  // simulation.run();
+  simulation.run();
 
 })();

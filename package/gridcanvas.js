@@ -28,8 +28,9 @@ GridCanvas.prototype.initializeSettings = function(settings) {
 
 GridCanvas.prototype.initializeCanvas = function() {
   var canvas = document.getElementById(this.settings.canvasID);
-  canvas.width  = this.settings.gridCols * this.settings.cellSize;
-  canvas.height = this.settings.gridRows * this.settings.cellSize;
+  // [TODO] Changing size clears canvas
+  // canvas.width  = this.settings.gridCols * this.settings.cellSize;
+  // canvas.height = this.settings.gridRows * this.settings.cellSize;
   this.ctx = canvas.getContext('2d');
 };
 
@@ -43,18 +44,22 @@ GridCanvas.prototype.checkProperty = function(object, property, value) {
 };
 
 GridCanvas.prototype.drawGrid = function(grid) {
-  this.ctx.strokeStyle = 'rgb(30, 30, 30)';
-  var radius = 4;
-  var cellSize = 10;
-  for (var i=0; i<grid.length; ++i) {
-    var rows = grid[i].length;
-    for (var j=0; j<rows; ++j) {
-      var posX = i*cellSize+this.settings.radius+1;
-      var posY = j*cellSize+radius+1;
-      this.ctx.moveTo(posX, posY);
-      this.ctx.beginPath();
-      this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
-      this.ctx.stroke();
+  this.ctx.strokeStyle = 'rgb(30, 230, 30)';
+  this.ctx.fillStyle = 'rgb(30, 230, 30)';
+  var cellSize = this.settings.cellSize;
+  for (var i=0; i<grid.length; i++) {
+    var cols = grid[i].length;
+    for (var j=0; j<cols; j++) {
+      var occupant = grid[i][j];
+      if (occupant.length) {
+        var radius = occupant[0].radius;
+        var posX = i*cellSize+this.settings.radius+1;
+        var posY = j*cellSize+radius+1;
+        this.ctx.moveTo(posX, posY);
+        this.ctx.beginPath();
+        this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
+        this.ctx.fill();
+      }
     }
   }
 };
@@ -122,7 +127,6 @@ GridSimulation.prototype.togglePause = function() {
 
 GridSimulation.prototype.run = function() {
   this.canvas.drawGrid(this.grid);
-  console.info('Running');
 };
 
 GridSimulation.prototype.populate = function(array) {
