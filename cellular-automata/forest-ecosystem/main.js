@@ -112,7 +112,6 @@ ForestLife.prototype.grow = function() {
   // GridSimulation: handles the backend simulation
   var simulationCanvas = new GridCanvas(CONFIG);
   var simulation = new GridSimulation(simulationCanvas);
-  var grid = simulation.getGrid();
 
   // Keep track of statisitcs
   simulation.stats = {
@@ -128,18 +127,28 @@ ForestLife.prototype.grow = function() {
     bear: 0,
   };
 
-  // Generate random forest ecosystem based on ratio
-  var gridSize = simulation.getSize();
-  for (var i=0; i<gridSize; i++) {
-    while (true) {
-      var pos = simulation.randomPosition();
-      if (!grid[pos[0]][pos[1]].length) {
-        grid[pos[0]][pos[1]].push();
-        break;
-      }
+  // Function to generate initial population
+  var populateArray = function(array, value, number) {
+    for (var i=0; i<number; i++) {
+      array.push(value);
     }
-  }
+  };
 
+  // Generate random forest ecosystem based on ratio population
+  var gridSize = simulation.getSize();
+  var jackPop = Math.round(gridSize * CONFIG.lumberjackRatio);
+  var treePop = Math.round(gridSize * CONFIG.treeRatio);
+  var bearPop = Math.round(gridSize * CONFIG.bearRatio);
+  var emptyPop = gridSize - jackPop - treePop - bearPop;
+  var initialForest = [];
+  populateArray(initialForest, new ForestLife('lumberjack'), jackPop);
+  populateArray(initialForest, new ForestLife('tree'), treePop);
+  populateArray(initialForest, new ForestLife('bear'), bearPop);
+  populateArray(initialForest, null, emptyPop);
+
+  // Add forest population to simulation
+  simulation.shuffle(initialForest);
+  simulation.populate(initialForest);
   console.log(simulation);
   // simulation.run();
 

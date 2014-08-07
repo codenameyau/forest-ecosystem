@@ -125,6 +125,14 @@ GridSimulation.prototype.run = function() {
   console.info('Running');
 };
 
+GridSimulation.prototype.shuffle = function(array) {
+  console.log('shuffling');
+};
+
+GridSimulation.prototype.populate = function(array) {
+  console.log('populating');
+};
+
 /******************************
  * GridSimulation - Utilities *
  ******************************/

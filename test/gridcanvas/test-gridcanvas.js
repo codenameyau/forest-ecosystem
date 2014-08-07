@@ -57,13 +57,15 @@
 
   // Test Case: randomNumber
   testSimulation.testCase(function() {
-    var min = 0, max = 10;
-    var randInt = simulation.randomInteger(min, max);
+    var randInt = GridSimulation.prototype.randomInteger;
 
-    testSimulation.assertInteger(randInt,
+    testSimulation.assertInteger(randInt(1, 5),
       'random number should be an integer');
 
-    testSimulation.assertRange(randInt, min, max,
+    testSimulation.assertInteger(randInt(-10.2, 10.5),
+      'random number should be an integer');
+
+    testSimulation.assertRange(randInt(0, 10), 0, 10,
       'range of random number should be between min and max');
   });
 
@@ -82,6 +84,11 @@
 
     testSimulation.assertRange(randPosition[0], 0, CONFIG.gridCols,
       'y position should be between 0 and number of cols');
+  });
+
+  // Test Case: populate
+  testSimulation.testCase(function() {
+
   });
 
   // Report testSimulation results
