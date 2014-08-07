@@ -99,6 +99,7 @@ PubTest.prototype.assertArray = function(value, message) {
  * PubTest - Internal Methods *
  ******************************/
 PubTest.prototype._addCase = function(assertion, message) {
+  message = message || 'test case';
   this.cases.total++;
   console.assert(assertion, message);
   if (assertion) { this._passed(); }
