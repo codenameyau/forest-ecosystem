@@ -155,7 +155,7 @@
     var nextAge = sapling.parameters.maturity.age - treeAge;
     var elderRadius = sapling.parameters.radius.end;
     for (var j=0; j<nextAge; j++) {sapling.grow();}
-    console.log(sapling);
+
     // Tests that sapling is now a elder
     test.assertEqual(sapling.age, 120,
       'age of the sapling should be 120');
@@ -177,25 +177,8 @@
 
     test.assertEqual(sapling.parameters.spawn.chance, 0.2,
       'spawn chance of the sapling should be 0.2');
-
   });
 
-  // Test Case: rounding to nearest 0.25
-  test.testCase(function() {
-    var roundQuarter = ForestLife.prototype.roundQuarter;
-    test.assertEqual(roundQuarter(0), 0,'round 0');
-    test.assertEqual(roundQuarter(10), 10, 'round 10');
-    test.assertEqual(roundQuarter(-10), -10, 'round -10');
-    test.assertEqual(roundQuarter(10.24), 10.25, 'round 10.24');
-    test.assertEqual(roundQuarter(-10.24), -10.25, 'round -10.24');
-    test.assertEqual(roundQuarter(10.999), 11, 'round 10.999');
-    test.assertEqual(roundQuarter(-10.999), -11, 'round -10.999');
-  });
-
-  // Test Case: calculate radius growth
-  test.testCase(function() {
-
-  });
 
   // Report test results
   test.results();

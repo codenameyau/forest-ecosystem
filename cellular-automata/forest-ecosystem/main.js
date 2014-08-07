@@ -27,7 +27,7 @@ function ForestLife(lifetype) {
 ForestLife.prototype.definition = {
   'sapling': {
     maturity: {age: 12, previous: '', next: 'tree'},
-    radius: {start: 2, end: 5, growth: (5-2)/12},
+    radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
     color: 'rgba(20, 220, 20, 0.8)',
     movement: 0,
@@ -36,7 +36,7 @@ ForestLife.prototype.definition = {
 
   'tree': {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
-    radius: {start: 5, end: 8, growth: (8-5)/120},
+    radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
     color: 'rgba(40, 200, 40, 0.8)',
     movement: 0,
@@ -45,7 +45,7 @@ ForestLife.prototype.definition = {
 
   'elder': {
     maturity: {age: 0, previous: 'tree', next: ''},
-    radius: {start: 8, end: 8, growth: 0},
+    radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
     color: 'rgba(80, 180, 40, 0.8)',
     movement: 0,
@@ -89,14 +89,6 @@ ForestLife.prototype.grow = function() {
   }
 };
 
-ForestLife.prototype.calculateGrowth = function(start, end) {
-
-};
-
-ForestLife.prototype.roundQuarter = function(number) {
-  return (Math.round(number * 4) / 4);
-};
-
 
 /**************************
  * Program Initialization *
@@ -137,16 +129,16 @@ ForestLife.prototype.roundQuarter = function(number) {
   };
 
   // Generate random forest ecosystem based on ratio
-  // var gridSize = simulation.getSize();
-  // for (var i=0; i<gridSize; i++) {
-  //   while (true) {
-  //     var pos = simulation.randomPosition();
-  //     if (!grid[pos[0]][pos[1]].length) {
-  //       grid[pos[0]][pos[1]].push();
-  //       break;
-  //     }
-  //   }
-  // }
+  var gridSize = simulation.getSize();
+  for (var i=0; i<gridSize; i++) {
+    while (true) {
+      var pos = simulation.randomPosition();
+      if (!grid[pos[0]][pos[1]].length) {
+        grid[pos[0]][pos[1]].push();
+        break;
+      }
+    }
+  }
 
   console.log(simulation);
   // simulation.run();
