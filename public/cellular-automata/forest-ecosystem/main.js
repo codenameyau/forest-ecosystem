@@ -19,55 +19,55 @@
 function ForestLife(lifetype) {
   var parameters = this.parameters[lifetype];
   this.type = lifetype;
-  this.age = 0;
-  this.maturityAge = 0;
-  this.movement = 0;
+  this.parameters = parameters;
   this.radius = parameters.radius.start;
-  this.growth = 0;
-  this.spawnProbability = 0.0;
-  this.spawnChild = '';
+  this.age = 0;
 }
 
 ForestLife.prototype.parameters = {
   'sapling': {
     maturity: {age: 12, previous: '', next: 'tree'},
-    radius: {start: 2, end: 5},
+    radius: {start: 2, end: 5, growth: (5-2)/12},
     spawn: {chance: 0.0, child: ''},
+    color: 'rgba(20, 20, 20, 0.8)',
     movement: 0,
   },
 
   'tree': {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
-    radius: {start: 5, end: 6},
+    radius: {start: 5, end: 6, growth: (6-5)/120},
     spawn: {chance: 0.1, child: 'sapling'},
+    color: 'rgba(20, 20, 20, 0.8)',
     movement: 0,
   },
 
   'elder': {
     maturity: {age: 0, previous: 'tree', next: ''},
-    radius: {start: 6, end: 6},
+    radius: {start: 6, end: 6, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
+    color: 'rgba(20, 20, 20, 0.8)',
     movement: 0,
   },
 
   'lumberjack': {
     maturity: {age: 0, previous: '', next: ''},
-    radius: {start: 4, end: 4},
+    radius: {start: 4, end: 4, growth: 0},
     spawn: {chance: 0.0, child: ''},
+    color: 'rgba(20, 20, 20, 0.8)',
     movement: 3,
   },
 
   'bear': {
     maturity: {age: 0, previous: '', next: ''},
-    radius: {start: 5, end: 5},
+    radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
+    color: 'rgba(20, 20, 20, 0.8)',
     movement: 5,
   },
 };
 
 ForestLife.prototype.grow = function() {
   this.age++;
-  //Check maturity age
 };
 
 
@@ -108,9 +108,6 @@ ForestLife.prototype.grow = function() {
     lumberjack: 0,
     bear: 0,
   };
-
-  var tree = new ForestLife('tree');
-  console.log(tree);
 
   // Generate random forest ecosystem based on ratio
   // var gridSize = simulation.getSize();
