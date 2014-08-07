@@ -47,11 +47,17 @@
   testSimulation.testCase(function() {
     testSimulation.assertEqual(canvas, simulation.canvas,
       'simulation canvas should match canvas');
+
+    testSimulation.assertEqual(simulation.grid.length, CONFIG.gridRows,
+      'number of grid elements should match the number of rows');
+
+    testSimulation.assertEqual(simulation.grid[0].length, CONFIG.gridCols,
+      'number of grid elements should match the number of cols');
   });
 
   // Test Case: getSize
   testSimulation.testCase(function() {
-    testSimulation.assertEqual(simulation.getSize(), 100,
+    testSimulation.assertEqual(simulation.getSize(), CONFIG.gridRows * CONFIG.gridCols,
       'grid size should be rows x cols');
   });
 
@@ -86,9 +92,35 @@
       'y position should be between 0 and number of cols');
   });
 
+  // Test Case: shuffle
+  testSimulation.testCase(function() {
+    var shuffle = GridSimulation.prototype.shuffle;
+    var testArray = [1, 2, 3, 4, 5];
+    var testLength = testArray.length;
+    shuffle(testArray);
+
+    testSimulation.assertEqual(testArray.length, testLength,
+      'length of shuffled array should be the same as original');
+  });
+
   // Test Case: populate
   testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var population = [];
+    for (var i=0; i<demo.simulation.size; i++) {population.push(i);}
+    demo.populate(population);
 
+    var filled = true;
+    for (var row=0; row<CONFIG.gridRows; row++) {
+      for (var col=0; col<CONFIG.gridCols; col++) {
+        if (demo.grid[row][col].length === 0) {
+          filled = false;
+        }
+      }
+    }
+
+    testSimulation.assertEqual(filled, true,
+      'cells of simulation grid should be filled');
   });
 
   // Report testSimulation results
