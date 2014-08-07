@@ -17,19 +17,19 @@
  * Forest Life Constructor *
  ***************************/
 function ForestLife(lifetype) {
-  var parameters = this.parameters[lifetype];
+  var parameters = this.definition[lifetype];
   this.type = lifetype;
   this.parameters = parameters;
   this.radius = parameters.radius.start;
   this.age = 0;
 }
 
-ForestLife.prototype.parameters = {
+ForestLife.prototype.definition = {
   'sapling': {
     maturity: {age: 12, previous: '', next: 'tree'},
     radius: {start: 2, end: 5, growth: (5-2)/12},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(20, 20, 20, 0.8)',
+    color: 'rgba(20, 220, 20, 0.8)',
     movement: 0,
   },
 
@@ -37,7 +37,7 @@ ForestLife.prototype.parameters = {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
     radius: {start: 5, end: 6, growth: (6-5)/120},
     spawn: {chance: 0.1, child: 'sapling'},
-    color: 'rgba(20, 20, 20, 0.8)',
+    color: 'rgba(40, 200, 40, 0.8)',
     movement: 0,
   },
 
@@ -45,7 +45,7 @@ ForestLife.prototype.parameters = {
     maturity: {age: 0, previous: 'tree', next: ''},
     radius: {start: 6, end: 6, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
-    color: 'rgba(20, 20, 20, 0.8)',
+    color: 'rgba(80, 180, 40, 0.8)',
     movement: 0,
   },
 
@@ -53,7 +53,7 @@ ForestLife.prototype.parameters = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 4, end: 4, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(20, 20, 20, 0.8)',
+    color: 'rgba(150, 20, 20, 0.8)',
     movement: 3,
   },
 
@@ -61,13 +61,27 @@ ForestLife.prototype.parameters = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(20, 20, 20, 0.8)',
+    color: 'rgba(150, 100, 50, 0.8)',
     movement: 5,
   },
 };
 
 ForestLife.prototype.grow = function() {
   this.age++;
+
+  // Update the radius of ForestLife
+  if (this.parameters.radius.growth) {
+    this.radius += this.parameters.radius.growth;
+  }
+
+  // Check to see if ForestLife has matured
+  if (this.parameters.maturity.age > 0) {
+    if (this.age === this.parameters.maturity.age) {
+      var nextStage = this.parameters.maturity.next;
+      this.parameters = this.definition[nextStage];
+      this.type = nextStage;
+    }
+  }
 };
 
 

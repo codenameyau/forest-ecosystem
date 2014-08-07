@@ -36,6 +36,12 @@ GridCanvas.prototype.initializeCanvas = function() {
 /**************************
  * GridCanvas - Utilities *
  **************************/
+GridCanvas.prototype.checkProperty = function(object, property, value) {
+  if (object && typeof object[property] === 'undefined') {
+    object[property] = value;
+  }
+};
+
 GridCanvas.prototype.drawGrid = function(grid) {
   this.ctx.strokeStyle = 'rgb(30, 30, 30)';
   var radius = 4;
@@ -52,13 +58,6 @@ GridCanvas.prototype.drawGrid = function(grid) {
     }
   }
 };
-
-GridCanvas.prototype.checkProperty = function(object, property, value) {
-  if (object && typeof object[property] === 'undefined') {
-    object[property] = value;
-  }
-};
-
 
 
 /******************************
