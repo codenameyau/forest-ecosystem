@@ -90,6 +90,50 @@
       'movement of bear should be 5');
   });
 
+  // Test Case: grow sapling -> tree -> elder
+  test.testCase(function() {
+    var sapling = new ForestLife('sapling');
+
+    // Test parameters before growing
+    test.assertEqual(sapling.age, 0,
+      'age of sapling should be 0');
+
+    test.assertEqual(sapling.parameters.maturity.next, 'tree',
+      'next stage of sapling should be tree');
+
+    test.assertEqual(sapling.parameters.spawn.child, '',
+      'spawn child of sapling should be empty');
+
+    test.assertEqual(sapling.parameters.spawn.chance, 0,
+      'spawn chance of sapling should be 0');
+
+    // [Stage 1] Grow for 12 months -> mature to 'tree'
+    var treeAge = sapling.parameters.maturity.age;
+    var treeRadius = sapling.parameters.radius.end;
+    for (var i=0; i<treeAge; i++) { sapling.grow(); }
+
+    // Tests that sapling is now a tree
+    test.assertEqual(sapling.age, 12,
+      'age of sapling should be 12');
+
+    test.assertEqual(sapling.type, 'tree',
+      'type of sapling should now be tree');
+
+    test.assertEqual(sapling.radius, treeRadius,
+      'radius of sapling should now be the starting radius of tree');
+
+    test.assertEqual(sapling.parameters.maturity.next, 'elder',
+      'next stage of sapling should be elder');
+
+    test.assertEqual(sapling.parameters.spawn.child, 'sapling',
+      'spawn child of sapling should be sapling');
+
+    test.assertEqual(sapling.parameters.spawn.chance, 0.1,
+      'spawn chance of sapling should be 0.1');
+
+    // [Stage 2] Grow for 120 months -> mature to 'elder' tree
+  });
+
   // Report test results
   test.results();
 

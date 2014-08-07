@@ -27,5 +27,4 @@ build/Release
 node_modules
 
 # Ignored projects
-cellular-automata/forest-ecosystem-archive
 
