@@ -23,6 +23,7 @@ function PubTest(name) {
   console.time(name);
 }
 
+
 /****************************
  * PubTest - Public Methods *
  ****************************/
@@ -48,9 +49,9 @@ PubTest.prototype.testCase = function(callback) {
 };
 
 
-/***********************************
- * PubTest - Expression Assertions *
- ***********************************/
+/**********************************
+ * PubTest - Expression Assertion *
+ **********************************/
 PubTest.prototype.assert = function(expr, message) {
   this._addCase(expr, message);
 };
@@ -71,9 +72,9 @@ PubTest.prototype.assertRange = function(value, min, max, message) {
 };
 
 
-/*****************************
- * PubTest - Type Assertions *
- *****************************/
+/****************************
+ * PubTest - Type Assertion *
+ ****************************/
 PubTest.prototype.assertType = function(value, type, message) {
   var assertion = (typeof value === type);
   this._addCase(assertion, message);
