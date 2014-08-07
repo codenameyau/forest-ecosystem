@@ -110,6 +110,7 @@
     for (var i=0; i<demo.simulation.size; i++) {population.push(i);}
     demo.populate(population);
 
+    // Tests that all cells are filled
     var filled = true;
     for (var row=0; row<CONFIG.gridRows; row++) {
       for (var col=0; col<CONFIG.gridCols; col++) {
