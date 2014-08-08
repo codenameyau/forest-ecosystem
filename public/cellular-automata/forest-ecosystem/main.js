@@ -98,8 +98,8 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 50,
-    gridCols: 50,
+    gridRows: 30,
+    gridCols: 30,
     cellSize: 15,
     delay: 1000,
     radius: 5
@@ -146,7 +146,7 @@ ForestLife.prototype.grow = function() {
   var emptyPop = gridSize - jackPop - treePop - bearPop;
   var initialForest = [];
   populateArray(initialForest, new ForestLife('lumberjack'), jackPop);
-  populateArray(initialForest, new ForestLife('tree'), treePop);
+  populateArray(initialForest, new ForestLife('sapling'), treePop);
   populateArray(initialForest, new ForestLife('bear'), bearPop);
   populateArray(initialForest, null, emptyPop);
 
