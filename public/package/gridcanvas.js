@@ -15,6 +15,7 @@
 function GridCanvas(config) {
   this.initializeSettings(config);
   this.initializeCanvas();
+  this.initializePause(config);
 }
 
 GridCanvas.prototype.initializeSettings = function(settings) {
@@ -32,6 +33,24 @@ GridCanvas.prototype.initializeCanvas = function() {
   // canvas.width  = this.settings.gridCols * this.settings.cellSize;
   // canvas.height = this.settings.gridRows * this.settings.cellSize;
   this.ctx = canvas.getContext('2d');
+};
+
+GridCanvas.prototype.initializePause = function(config) {
+  if (!config.showPaused) {return;}
+  var container = document.createElement('div');
+  container.style.zIndex = '100';
+  container.style.position = 'fixed';
+  container.style.top = '0px';
+  container.style.right = '10px';
+
+  var header = document.createElement('h3');
+  header.id = 'paused-header';
+  header.innerText = 'Paused';
+  header.style.color = '#BC2C2C';
+  header.style.letterSpacing = '1px';
+
+  container.appendChild(header);
+  document.body.appendChild(container);
 };
 
 /**************************
@@ -80,6 +99,21 @@ GridCanvas.prototype.clearCanvas = function() {
   this.ctx.restore();
 };
 
+GridCanvas.prototype.showPaused = function() {
+  if (!this.settings.showPaused) {return;}
+  var element = document.getElementById('paused-header');
+  element.innerText = 'Paused';
+  element.style.color = '#BC2C2C';
+};
+
+GridCanvas.prototype.showRunning = function() {
+  if (!this.settings.showPaused) {return;}
+  var element = document.getElementById('paused-header');
+  element.innerText = 'Running';
+  element.style.color = '#2CBC2C';
+};
+
+
 /******************************
  * GridSimulation Constructor *
  ******************************/
@@ -114,8 +148,8 @@ GridSimulation.prototype.initializeSimulation = function() {
 };
 
 GridSimulation.prototype.initializeEventHandlers = function() {
-  window.addEventListener('focus', this.resume.bind(this), false);
-  window.addEventListener('blur', this.pause.bind(this), false);
+  // window.addEventListener('focus', this.resume.bind(this), false);
+  // window.addEventListener('blur', this.pause.bind(this), false);
   window.addEventListener('keydown', this._keyboardInputHandler.bind(this), false);
 };
 
@@ -124,10 +158,12 @@ GridSimulation.prototype.initializeEventHandlers = function() {
  *****************************/
 GridSimulation.prototype.pause = function() {
   this.simulation.running = false;
+  this.canvas.showPaused();
 };
 
 GridSimulation.prototype.resume = function() {
   this.simulation.running = true;
+  this.canvas.showRunning();
 };
 
 GridSimulation.prototype.togglePause = function() {
@@ -141,7 +177,6 @@ GridSimulation.prototype.setUpdater = function(callback) {
 
 GridSimulation.prototype.update = function(callback) {
   if (this.simulation.running) {
-    console.log('running');
     this.canvas.drawGrid(this.grid);
   }
 };
