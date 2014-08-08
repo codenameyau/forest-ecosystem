@@ -15,7 +15,7 @@
 function GridCanvas(config) {
   this.initializeSettings(config);
   this.initializeCanvas();
-  this.initializePause(config);
+  this.initializePause();
 }
 
 GridCanvas.prototype.initializeSettings = function(settings) {
@@ -35,8 +35,7 @@ GridCanvas.prototype.initializeCanvas = function() {
   this.ctx = canvas.getContext('2d');
 };
 
-GridCanvas.prototype.initializePause = function(config) {
-  if (!config.showPaused) {return;}
+GridCanvas.prototype.initializePause = function() {
   var container = document.createElement('div');
   container.style.zIndex = '100';
   container.style.position = 'fixed';
@@ -100,14 +99,12 @@ GridCanvas.prototype.clearCanvas = function() {
 };
 
 GridCanvas.prototype.showPaused = function() {
-  if (!this.settings.showPaused) {return;}
   var element = document.getElementById('paused-header');
   element.innerText = 'Paused';
   element.style.color = '#BC2C2C';
 };
 
 GridCanvas.prototype.showRunning = function() {
-  if (!this.settings.showPaused) {return;}
   var element = document.getElementById('paused-header');
   element.innerText = 'Running';
   element.style.color = '#2CBC2C';
@@ -175,13 +172,14 @@ GridSimulation.prototype.setUpdater = function(callback) {
   this.simulation.updater = callback;
 };
 
-GridSimulation.prototype.update = function(callback) {
-  if (this.simulation.running) {
-    this.canvas.drawGrid(this.grid);
-  }
+GridSimulation.prototype.update = function() {
+  if (!this.simulation.running) {return;}
+  this.simulation.time++;
+  this.simulation.updater();
+  this.canvas.drawGrid(this.grid);
 };
 
-GridSimulation.prototype.run = function(callback) {
+GridSimulation.prototype.run = function() {
   window.setInterval(this.update.bind(this), this.canvas.settings.delay);
 };
 
