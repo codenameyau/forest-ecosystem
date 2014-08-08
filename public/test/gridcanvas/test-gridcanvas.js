@@ -10,7 +10,6 @@
   // Create GridCanvas
   var CONFIG = {
     canvasID: 'imagination',
-    showPaused: false,
     gridRows: 10,
     gridCols: 10,
     cellSize: 10,

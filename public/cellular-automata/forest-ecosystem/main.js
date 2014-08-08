@@ -29,7 +29,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 12, previous: '', next: 'tree'},
     radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(61, 214, 22, 0.8)',
+    color: 'rgba(168, 245, 28, 0.8)',
     movement: 0,
     startAge: 0,
   },
@@ -38,7 +38,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
-    color: 'rgba(40, 200, 40, 0.9)',
+    color: 'rgba(100, 220, 40, 0.9)',
     movement: 0,
     startAge: 12,
   },
@@ -98,11 +98,10 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    showPaused: true,
-    gridRows: 30,
-    gridCols: 30,
+    gridRows: 40,
+    gridCols: 40,
     cellSize: 15,
-    delay: 1000,
+    delay: 500,
     radius: 5
   };
 
@@ -133,9 +132,10 @@ ForestLife.prototype.grow = function() {
   };
 
   // Function to generate initial population
-  var populateArray = function(array, value, number) {
+  var populateArray = function(array, type, number) {
     for (var i=0; i<number; i++) {
-      array.push(value);
+      var life = type ? new ForestLife(type) : null;
+      array.push(life);
     }
   };
 
@@ -146,9 +146,9 @@ ForestLife.prototype.grow = function() {
   var bearPop = Math.round(gridSize * FOREST.bearRatio);
   var emptyPop = gridSize - jackPop - treePop - bearPop;
   var initialForest = [];
-  populateArray(initialForest, new ForestLife('lumberjack'), jackPop);
-  populateArray(initialForest, new ForestLife('sapling'), treePop);
-  populateArray(initialForest, new ForestLife('bear'), bearPop);
+  populateArray(initialForest, 'lumberjack', jackPop);
+  populateArray(initialForest, 'sapling', treePop);
+  populateArray(initialForest, 'bear', bearPop);
   populateArray(initialForest, null, emptyPop);
 
   // Adjustments to canvas
@@ -157,6 +157,27 @@ ForestLife.prototype.grow = function() {
   // Add forest population to simulation
   simulation.shuffle(initialForest);
   simulation.populate(initialForest);
+
+  // Define updater
+  simulation.setUpdater(function() {
+    console.log(simulation.simulation.time);
+    // Phase 1: movement (double for)
+
+    // Phase 2: growing (triple for)
+    for (var i=0; i<simulation.grid.length; i++) {
+      for (var j=0; j<simulation.grid[i].length; j++) {
+        for (var k=0; k<simulation.grid[i][j].length; k++) {
+          var life = simulation.grid[i][j][k];
+          life.grow();
+        }
+      }
+    }
+
+    // Phase 3: events
+
+    // Phase 4: yearly events
+  });
+
   console.log(simulation);
   simulation.run();
 
