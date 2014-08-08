@@ -98,6 +98,7 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
+    showPaused: true,
     gridRows: 30,
     gridCols: 30,
     cellSize: 15,
