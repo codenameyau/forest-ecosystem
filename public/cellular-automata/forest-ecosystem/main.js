@@ -29,7 +29,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 12, previous: '', next: 'tree'},
     radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(20, 220, 20, 0.8)',
+    color: 'rgba(61, 214, 22, 0.8)',
     movement: 0,
     startAge: 0,
   },
@@ -38,7 +38,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
-    color: 'rgba(40, 200, 40, 0.8)',
+    color: 'rgba(40, 200, 40, 0.9)',
     movement: 0,
     startAge: 12,
   },
@@ -47,7 +47,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: 'tree', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
-    color: 'rgba(80, 180, 40, 0.8)',
+    color: 'rgba(80, 180, 70, 0.9)',
     movement: 0,
     startAge: 120,
   },
@@ -56,7 +56,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 4, end: 4, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(150, 20, 20, 0.8)',
+    color: 'rgba(214, 45, 48, 0.6)',
     movement: 3,
     startAge: 20,
   },
@@ -65,7 +65,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(150, 100, 50, 0.8)',
+    color: 'rgba(103, 0, 0, 0.6)',
     movement: 5,
     startAge: 5,
   },
@@ -98,9 +98,9 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 40,
-    gridCols: 40,
-    cellSize: 20,
+    gridRows: 50,
+    gridCols: 50,
+    cellSize: 15,
     delay: 1000,
     radius: 5
   };
@@ -149,6 +149,9 @@ ForestLife.prototype.grow = function() {
   populateArray(initialForest, new ForestLife('tree'), treePop);
   populateArray(initialForest, new ForestLife('bear'), bearPop);
   populateArray(initialForest, null, emptyPop);
+
+  // Adjustments to canvas
+  simulationCanvas.ctx.canvas.style.backgroundColor = 'rgba(204, 236, 146, 0.55)';
 
   // Add forest population to simulation
   simulation.shuffle(initialForest);

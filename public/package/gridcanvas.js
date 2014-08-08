@@ -44,20 +44,24 @@ GridCanvas.prototype.checkProperty = function(object, property, value) {
 };
 
 GridCanvas.prototype.drawGrid = function(grid) {
-  this.ctx.strokeStyle = 'rgb(30, 230, 30)';
-  this.ctx.fillStyle = 'rgb(30, 230, 30)';
   var cellSize = this.settings.cellSize;
+  this.ctx.strokeStyle = 'rgba(50, 50, 50, 0.5)';
+  this.ctx.fillStyle = '#9A8A7A';
+  this.ctx.fill();
+
   for (var i=0; i<grid.length; i++) {
     var cols = grid[i].length;
     for (var j=0; j<cols; j++) {
-      var occupant = grid[i][j];
-      if (occupant.length) {
-        var radius = occupant[0].radius;
-        var posX = i*cellSize+this.settings.radius+1;
-        var posY = j*cellSize+radius+1;
+      if (grid[i][j].length) {
+        var occupant = grid[i][j][0];
+        var radius = occupant.radius;
+        var posX = i*cellSize+this.settings.radius+5;
+        var posY = j*cellSize+radius+5;
+        this.ctx.fillStyle = occupant.parameters.color;
         this.ctx.moveTo(posX, posY);
         this.ctx.beginPath();
         this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
+        this.ctx.stroke();
         this.ctx.fill();
       }
     }
