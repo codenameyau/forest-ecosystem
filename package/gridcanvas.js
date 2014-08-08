@@ -45,9 +45,9 @@ GridCanvas.prototype.checkProperty = function(object, property, value) {
 
 GridCanvas.prototype.drawGrid = function(grid) {
   var cellSize = this.settings.cellSize;
+  this.clearCanvas();
   this.ctx.strokeStyle = 'rgba(50, 50, 50, 0.5)';
   this.ctx.fillStyle = '#9A8A7A';
-  this.ctx.fill();
 
   for (var i=0; i<grid.length; i++) {
     var cols = grid[i].length;
@@ -68,6 +68,17 @@ GridCanvas.prototype.drawGrid = function(grid) {
   }
 };
 
+GridCanvas.prototype.clearCanvas = function() {
+  // Store the current transformation matrix
+  this.ctx.save();
+
+  // Use the identity matrix while clearing the canvas
+  this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+  this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+  // Restore the transform
+  this.ctx.restore();
+};
 
 /******************************
  * GridSimulation Constructor *
@@ -98,6 +109,7 @@ GridSimulation.prototype.initializeSimulation = function() {
     cols: this.canvas.settings.gridCols,
     running: false,
     time: 0,
+    updater: null,
   };
 };
 
@@ -110,18 +122,12 @@ GridSimulation.prototype.initializeEventHandlers = function() {
 /*****************************
  * GridSimulation - Controls *
  *****************************/
-GridSimulation.prototype.update = function() {
-  console.log('Updating');
-};
-
 GridSimulation.prototype.pause = function() {
   this.simulation.running = false;
-  // console.info('Paused');
 };
 
 GridSimulation.prototype.resume = function() {
   this.simulation.running = true;
-  // console.info('Resuming');
 };
 
 GridSimulation.prototype.togglePause = function() {
@@ -129,8 +135,19 @@ GridSimulation.prototype.togglePause = function() {
   else { this.resume(); }
 };
 
-GridSimulation.prototype.run = function() {
-  this.canvas.drawGrid(this.grid);
+GridSimulation.prototype.setUpdater = function(callback) {
+  this.simulation.updater = callback;
+};
+
+GridSimulation.prototype.update = function(callback) {
+  if (this.simulation.running) {
+    console.log('running');
+    this.canvas.drawGrid(this.grid);
+  }
+};
+
+GridSimulation.prototype.run = function(callback) {
+  window.setInterval(this.update.bind(this), this.canvas.settings.delay);
 };
 
 GridSimulation.prototype.populate = function(array) {
