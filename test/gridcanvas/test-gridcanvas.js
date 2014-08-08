@@ -124,6 +124,17 @@
       'cells of simulation grid should be filled');
   });
 
+  // Test Case: move8
+  testSimulation.testCase(function() {
+
+  });
+
+  // Test Case: checkNeighbor8
+  testSimulation.testCase(function() {
+
+  });
+
+
   // Report testSimulation results
   testSimulation.results();
 

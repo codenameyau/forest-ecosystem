@@ -64,8 +64,7 @@ GridCanvas.prototype.checkProperty = function(object, property, value) {
 GridCanvas.prototype.drawGrid = function(grid) {
   var cellSize = this.settings.cellSize;
   this.clearCanvas();
-  this.ctx.strokeStyle = 'rgba(50, 50, 50, 0.5)';
-  this.ctx.fillStyle = '#9A8A7A';
+  this.ctx.strokeStyle = 'rgba(90, 90, 90, 0.5)';
 
   for (var i=0; i<grid.length; i++) {
     var cols = grid[i].length;
@@ -79,8 +78,8 @@ GridCanvas.prototype.drawGrid = function(grid) {
         this.ctx.moveTo(posX, posY);
         this.ctx.beginPath();
         this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
-        this.ctx.stroke();
         this.ctx.fill();
+        this.ctx.stroke();
       }
     }
   }
@@ -193,6 +192,17 @@ GridSimulation.prototype.populate = function(array) {
       count++;
     }
   }
+};
+
+GridSimulation.prototype.move8 = function(entity, movement, x, y) {
+  // Move amount of times based on movement
+  for (var i=0; i<movement; i++) {
+    var neighbors = this.checkNeighbor8(x, y);
+  }
+};
+
+GridSimulation.prototype.checkNeighbor8 = function(x, y) {
+  console.log(1);
 };
 
 /******************************

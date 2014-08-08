@@ -22,6 +22,7 @@ function ForestLife(lifetype) {
   this.parameters = parameters;
   this.radius = parameters.radius.start;
   this.age = parameters.startAge;
+  this.time = 0;
 }
 
 ForestLife.prototype.definition = {
@@ -98,8 +99,8 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 40,
-    gridCols: 40,
+    gridRows: 20,
+    gridCols: 20,
     cellSize: 15,
     delay: 500,
     radius: 5
@@ -160,22 +161,31 @@ ForestLife.prototype.grow = function() {
 
   // Define updater
   simulation.setUpdater(function() {
+    // Initialize updater
     console.log(simulation.simulation.time);
-    // Phase 1: movement (double for)
+    var i, j, k, life;
 
-    // Phase 2: growing (triple for)
-    for (var i=0; i<simulation.grid.length; i++) {
-      for (var j=0; j<simulation.grid[i].length; j++) {
-        for (var k=0; k<simulation.grid[i][j].length; k++) {
-          var life = simulation.grid[i][j][k];
+    // Phase 1: movement
+    for (i=0; i<simulation.grid.length; i++) {
+      for (j=0; j<simulation.grid[i].length; j++) {
+        for (k=0; k<simulation.grid[i][j].length; k++) {
+          life = simulation.grid[i][j][k];
+          simulation.move8(life, life.parameters.movement, i, j);
+        }
+      }
+    }
+
+    // Phase 2: events and growth
+    for (i=0; i<simulation.grid.length; i++) {
+      for (j=0; j<simulation.grid[i].length; j++) {
+        for (k=0; k<simulation.grid[i][j].length; k++) {
+          life = simulation.grid[i][j][k];
           life.grow();
         }
       }
     }
 
-    // Phase 3: events
-
-    // Phase 4: yearly events
+    // Phase 3: yearly events
   });
 
   console.log(simulation);
