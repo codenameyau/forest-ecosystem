@@ -124,9 +124,28 @@
       'cells of simulation grid should be filled');
   });
 
-  // Test Case: checkNeighbor8
+  // Test Case: validPosition
   testSimulation.testCase(function() {
+    testSimulation.assertTrue(simulation.validPosition(0, 0),
+      'position of top left cell should be a valid position');
 
+    testSimulation.assertTrue(simulation.validPosition(5, 5),
+      'position of center cell should be a valid position');
+
+    testSimulation.assertTrue(simulation.validPosition(CONFIG.gridRows-1, CONFIG.gridCols-1),
+      'position of bottom right cell should be a valid position');
+
+    testSimulation.assertFalse(simulation.validPosition(-1, 0),
+      'position of negative row cell should not be a valid position');
+
+    testSimulation.assertFalse(simulation.validPosition(0, -1),
+      'position of negative col cell should not be a valid position');
+
+    testSimulation.assertFalse(simulation.validPosition(CONFIG.gridRows, 0),
+      'position of out of range row cell should not be a valid position');
+
+    testSimulation.assertFalse(simulation.validPosition(0, CONFIG.gridCols),
+      'position of out of range col cell should not be a valid position');
   });
 
   // Test Case: move
@@ -188,7 +207,17 @@
     var bottomRightN = getNeighbor8(rows, cols);
     var rightN = getNeighbor8(1, cols);
 
-    // Check neighbor contents
+    // Check contents of neighbors
+    testSimulation.assertType(centerN, 'object',
+      'type of content in neighbors should be objects');
+
+    testSimulation.assertProperty(centerN, 'x',
+      'content of neighbor should have a property x');
+
+    testSimulation.assertProperty(centerN, 'y',
+      'content of neighbor should have a property y');
+
+    // Check length of neighbors
     testSimulation.assertEqual(topLeftN.length, 3,
       'length of neighbors for top left position should be 3');
 
