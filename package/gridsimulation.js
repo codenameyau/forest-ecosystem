@@ -200,17 +200,22 @@ GridSimulation.prototype.validPosition = function(row, col) {
           row >= 0 && col >= 0 );
 };
 
+GridSimulation.prototype.differentCell = function(row, col, i, j) {
+  return (row !== i || col !== j);
+};
+
 GridSimulation.prototype.move = function(x, y, z, row, col) {
-  if (!this.validPosition(row, col)) {return;}
+  if (!this.validPosition(row, col) || !this.differentCell(x, y, row, col))
+    {return;}
   var value = this.grid[x][y].splice(z, 1);
   this.grid[row][col].push(value[0]);
 };
 
 GridSimulation.prototype.getNeighbor8 = function(row, col) {
   var neighbors = [];
-  for (var i=row-1, nextRow=row+1; i<nextRow; i++) {
-    for (var j=col-1, nextCol=col+1; j<nextCol; j++) {
-      if (this.validPosition(i, j)) {
+  for (var i=row-1, nextRow=row+1; i<=nextRow; i++) {
+    for (var j=col-1, nextCol=col+1; j<=nextCol; j++) {
+      if (this.differentCell(row, col, i, j) && this.validPosition(i, j)) {
         neighbors.push({x: i, y: j});
       }
     }
