@@ -61,6 +61,16 @@ PubTest.prototype.assertEqual = function(exprA, exprB, message) {
   this._addCase(assertion, message);
 };
 
+PubTest.prototype.assertTrue = function(expr, message) {
+  var assertion = (expr === true);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertFalse = function(expr, message) {
+  var assertion = (expr === false);
+  this._addCase(assertion, message);
+};
+
 PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
   var assertion = (exprA !== exprB);
   this._addCase(assertion, message);
@@ -84,6 +94,10 @@ PubTest.prototype.assertString = function(value, message) {
   this.assertType(value, 'string', message);
 };
 
+PubTest.prototype.assertNumber = function(value, message) {
+  this.assertType(value, 'number', message);
+};
+
 PubTest.prototype.assertInteger = function(value, message) {
   var assertion = isNaN(value) ? false : (parseInt(value, 10) === value);
   this._addCase(assertion, message);
@@ -91,6 +105,11 @@ PubTest.prototype.assertInteger = function(value, message) {
 
 PubTest.prototype.assertArray = function(value, message) {
   var assertion = (value instanceof Array);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertProperty = function(object, property, message) {
+  var assertion = object.hasOwnProperty(property);
   this._addCase(assertion, message);
 };
 

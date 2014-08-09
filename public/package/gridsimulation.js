@@ -1,5 +1,5 @@
 /*!
- * GridCanvas Simulation
+ * GridSimulation
  * MIT License (c) 2014
  * codenameyau.github.io
  *
@@ -194,16 +194,28 @@ GridSimulation.prototype.populate = function(array) {
   }
 };
 
+GridSimulation.prototype.validPosition = function(row, col) {
+  return (row < this.simulation.rows &&
+          col < this.simulation.cols &&
+          row >= 0 && col >= 0 );
+};
+
 GridSimulation.prototype.move = function(x, y, z, row, col) {
-  if (row >= this.simulation.rows ||
-      col >= this.simulation.cols ||
-      row < 0 || col < 0 ) {return;}
+  if (!this.validPosition(row, col)) {return;}
   var value = this.grid[x][y].splice(z, 1);
   this.grid[row][col].push(value[0]);
 };
 
-GridSimulation.prototype.getNeighbor8 = function(x, y) {
-  return [];
+GridSimulation.prototype.getNeighbor8 = function(row, col) {
+  var neighbors = [];
+  for (var i=row-1, nextRow=row+1; i<nextRow; i++) {
+    for (var j=col-1, nextCol=col+1; j<nextCol; j++) {
+      if (this.validPosition(i, j)) {
+        neighbors.push({x: i, y: j});
+      }
+    }
+  }
+  return neighbors;
 };
 
 GridSimulation.prototype.moveRandom8 = function(movement, x, y, z) {
