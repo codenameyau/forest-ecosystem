@@ -7,7 +7,6 @@
 
 (function() {
 
-  // Create GridCanvas
   var CONFIG = {
     canvasID: 'imagination',
     gridRows: 10,
@@ -19,6 +18,8 @@
     lumberjackRatio: 0.1,
     bearRatio: 0.02,
   };
+
+  // Setup GridCanvas and GridSimulation to test
   var canvas = new GridCanvas(CONFIG);
   var simulation = new GridSimulation(canvas);
 
@@ -156,10 +157,10 @@
     testSimulation.assertFalse(simulation.differentCell(1, 0, 1, 0),
       'value of different cell should be false');
 
-    testSimulation.assertFalse(simulation.differentCell(0, 0, 1, 0),
+    testSimulation.assertTrue(simulation.differentCell(0, 0, 1, 0),
       'value of different cell should be true');
 
-    testSimulation.assertFalse(simulation.differentCell(0, 0, 0, 1),
+    testSimulation.assertTrue(simulation.differentCell(0, 0, 0, 1),
       'value of different cell should be true');
   });
 
@@ -240,14 +241,14 @@
     var rightN = simulation.getNeighbor8(1, cols);
 
     // Check contents of neighbors
-    testSimulation.assertType(centerN, 'object',
-      'type of content in neighbors should be objects');
+    testSimulation.assertArray(centerN,
+      'type of neighbors should be Array');
 
-    testSimulation.assertProperty(centerN, 'x',
-      'content of neighbor should have a property x');
+    testSimulation.assertArray(centerN[0],
+      'type of content of neighbors should be Array');
 
-    testSimulation.assertProperty(centerN, 'y',
-      'content of neighbor should have a property y');
+    testSimulation.assertEqual(centerN[0].length, 2,
+      'length of content of neighbor should be 2');
 
     // Check length of neighbors
     testSimulation.assertEqual(topLeftN.length, 3,
@@ -272,7 +273,7 @@
       'length of neighbors for right position should be 5');
   });
 
+
   // Report testSimulation results
   testSimulation.results();
-
 })();

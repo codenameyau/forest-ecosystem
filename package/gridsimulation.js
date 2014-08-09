@@ -18,6 +18,7 @@ function GridCanvas(config) {
   this.initializePause();
 }
 
+
 GridCanvas.prototype.initializeSettings = function(settings) {
   this.settings = settings;
   this.checkProperty(this.settings, 'gridRows', 50);
@@ -27,6 +28,7 @@ GridCanvas.prototype.initializeSettings = function(settings) {
   this.checkProperty(this.settings, 'running', true);
 };
 
+
 GridCanvas.prototype.initializeCanvas = function() {
   var canvas = document.getElementById(this.settings.canvasID);
   // [TODO] Changing size clears canvas
@@ -34,6 +36,7 @@ GridCanvas.prototype.initializeCanvas = function() {
   // canvas.height = this.settings.gridRows * this.settings.cellSize;
   this.ctx = canvas.getContext('2d');
 };
+
 
 GridCanvas.prototype.initializePause = function() {
   var container = document.createElement('div');
@@ -55,11 +58,13 @@ GridCanvas.prototype.initializePause = function() {
 /**************************
  * GridCanvas - Utilities *
  **************************/
+
 GridCanvas.prototype.checkProperty = function(object, property, value) {
   if (object && typeof object[property] === 'undefined') {
     object[property] = value;
   }
 };
+
 
 GridCanvas.prototype.drawGrid = function(grid) {
   var cellSize = this.settings.cellSize;
@@ -69,21 +74,21 @@ GridCanvas.prototype.drawGrid = function(grid) {
   for (var i=0; i<grid.length; i++) {
     var cols = grid[i].length;
     for (var j=0; j<cols; j++) {
-      if (grid[i][j].length) {
-        var occupant = grid[i][j][0];
-        var radius = occupant.radius;
-        var posX = i*cellSize+this.settings.radius+5;
-        var posY = j*cellSize+radius+5;
-        this.ctx.fillStyle = occupant.parameters.color;
-        this.ctx.moveTo(posX, posY);
-        this.ctx.beginPath();
-        this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
-        this.ctx.fill();
-        this.ctx.stroke();
-      }
+      if (!grid[i][j].length) {continue;}
+      var occupant = grid[i][j][0];
+      var radius = occupant.radius;
+      var posX = i*cellSize+this.settings.radius+5;
+      var posY = j*cellSize+radius+5;
+      this.ctx.fillStyle = occupant.parameters.color;
+      this.ctx.moveTo(posX, posY);
+      this.ctx.beginPath();
+      this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
+      this.ctx.fill();
+      this.ctx.stroke();
     }
   }
 };
+
 
 GridCanvas.prototype.clearCanvas = function() {
   // Store the current transformation matrix
@@ -97,11 +102,13 @@ GridCanvas.prototype.clearCanvas = function() {
   this.ctx.restore();
 };
 
+
 GridCanvas.prototype.showPaused = function() {
   var element = document.getElementById('paused-header');
   element.innerText = 'Paused';
   element.style.color = '#BC2C2C';
 };
+
 
 GridCanvas.prototype.showRunning = function() {
   var element = document.getElementById('paused-header');
@@ -120,6 +127,7 @@ function GridSimulation(canvas) {
   this.initializeEventHandlers();
 }
 
+
 GridSimulation.prototype.initializeGrid = function() {
   var gridRows = this.canvas.settings.gridRows;
   var gridCols = this.canvas.settings.gridCols;
@@ -132,6 +140,7 @@ GridSimulation.prototype.initializeGrid = function() {
   }
 };
 
+
 GridSimulation.prototype.initializeSimulation = function() {
   this.simulation = {
     size: this.canvas.settings.gridRows * this.canvas.settings.gridCols,
@@ -143,6 +152,7 @@ GridSimulation.prototype.initializeSimulation = function() {
   };
 };
 
+
 GridSimulation.prototype.initializeEventHandlers = function() {
   // window.addEventListener('focus', this.resume.bind(this), false);
   // window.addEventListener('blur', this.pause.bind(this), false);
@@ -152,24 +162,29 @@ GridSimulation.prototype.initializeEventHandlers = function() {
 /*****************************
  * GridSimulation - Controls *
  *****************************/
+
 GridSimulation.prototype.pause = function() {
   this.simulation.running = false;
   this.canvas.showPaused();
 };
+
 
 GridSimulation.prototype.resume = function() {
   this.simulation.running = true;
   this.canvas.showRunning();
 };
 
+
 GridSimulation.prototype.togglePause = function() {
   if (this.simulation.running) { this.pause(); }
   else { this.resume(); }
 };
 
+
 GridSimulation.prototype.setUpdater = function(callback) {
   this.simulation.updater = callback;
 };
+
 
 GridSimulation.prototype.update = function() {
   if (!this.simulation.running) {return;}
@@ -178,9 +193,11 @@ GridSimulation.prototype.update = function() {
   this.canvas.drawGrid(this.grid);
 };
 
+
 GridSimulation.prototype.run = function() {
   window.setInterval(this.update.bind(this), this.canvas.settings.delay);
 };
+
 
 GridSimulation.prototype.populate = function(array) {
   var count = 0;
@@ -194,15 +211,18 @@ GridSimulation.prototype.populate = function(array) {
   }
 };
 
+
 GridSimulation.prototype.validPosition = function(row, col) {
   return (row < this.simulation.rows &&
           col < this.simulation.cols &&
           row >= 0 && col >= 0 );
 };
 
+
 GridSimulation.prototype.differentCell = function(row, col, i, j) {
   return (row !== i || col !== j);
 };
+
 
 GridSimulation.prototype.move = function(x, y, z, row, col) {
   if (!this.validPosition(row, col) || !this.differentCell(x, y, row, col))
@@ -211,39 +231,38 @@ GridSimulation.prototype.move = function(x, y, z, row, col) {
   this.grid[row][col].push(value[0]);
 };
 
+
 GridSimulation.prototype.getNeighbor8 = function(row, col) {
   var neighbors = [];
   for (var i=row-1, nextRow=row+1; i<=nextRow; i++) {
     for (var j=col-1, nextCol=col+1; j<=nextCol; j++) {
       if (this.differentCell(row, col, i, j) && this.validPosition(i, j)) {
-        neighbors.push({x: i, y: j});
+        neighbors.push([i, j]);
       }
     }
   }
   return neighbors;
 };
 
-GridSimulation.prototype.moveRandom8 = function(movement, x, y, z) {
-  // Move amount of times based on movement
-  for (var i=0; i<movement; i++) {
-    var neighbors = this.checkNeighbor8(x, y);
-  }
-};
 
 /******************************
  * GridSimulation - Utilities *
  ******************************/
+
 GridSimulation.prototype.getGrid = function() {
   return this.grid;
 };
+
 
 GridSimulation.prototype.getSize = function() {
   return this.simulation.size;
 };
 
+
 GridSimulation.prototype.randomInteger = function(min, max) {
   return parseInt(Math.random() * (max - min) + min, 10);
 };
+
 
 GridSimulation.prototype.randomPosition = function() {
   return [
@@ -251,6 +270,7 @@ GridSimulation.prototype.randomPosition = function() {
     this.randomInteger(0, this.simulation.cols),
   ];
 };
+
 
 GridSimulation.prototype.shuffle = function(array) {
   for (var i = array.length - 1; i > 0; i--) {
@@ -264,6 +284,7 @@ GridSimulation.prototype.shuffle = function(array) {
 /*****************************
  * GridSimulation - Internal *
  *****************************/
+
 GridSimulation.prototype._keyboardInputHandler = function(event) {
   switch (event.which) {
 
