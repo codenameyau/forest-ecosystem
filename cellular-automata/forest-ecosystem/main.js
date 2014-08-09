@@ -162,29 +162,34 @@ ForestLife.prototype.grow = function() {
   // Define updater
   simulation.setUpdater(function() {
     console.log(simulation.simulation.time);
+
+    // Get reference to old grid and create new grid
     var i, j, k, life, move, neighbors, randIndex, moveTo;
+    var grid = simulation.getGrid();
+    simulation.initializeGrid();
 
     // Phase 1: movement
-    for (i=0; i<simulation.grid.length; i++) {
-      for (j=0; j<simulation.grid[i].length; j++) {
-        for (k=0; k<simulation.grid[i][j].length; k++) {
-          life = simulation.grid[i][j][k];
+    for (i=0; i<grid.length; i++) {
+      for (j=0; j<grid[i].length; j++) {
+        for (k=0; k<grid[i][j].length; k++) {
+          life = grid[i][j][k];
           if (!life) {continue;}
           for (move=0; move<life.parameters.movement; move++) {
             neighbors = simulation.getNeighbor8(i, j);
             randIndex = simulation.randomInteger(0, neighbors.length);
             moveTo = neighbors[randIndex];
             simulation.move(i, j, k, moveTo[0], moveTo[1]);
+            console.log(grid[moveTo[0]], moveTo[1]);
           }
         }
       }
     }
 
     // Phase 2: events and growth
-    for (i=0; i<simulation.grid.length; i++) {
-      for (j=0; j<simulation.grid[i].length; j++) {
-        for (k=0; k<simulation.grid[i][j].length; k++) {
-          life = simulation.grid[i][j][k];
+    for (i=0; i<grid.length; i++) {
+      for (j=0; j<grid[i].length; j++) {
+        for (k=0; k<grid[i][j].length; k++) {
+          life = grid[i][j][k];
           if (!life) {continue;}
           life.grow();
         }

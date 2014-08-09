@@ -175,8 +175,8 @@
     grid[0][0].push('C');
 
     // Move: does not move if same cell
-    demo.move(0, 0, 0, 0, 0);
-    demo.move(0, 0, 1, 0, 0);
+    demo.move(0, 0, 0, grid, 0, 0);
+    demo.move(0, 0, 1, grid, 0, 0);
 
     testSimulation.assertEqual(grid[0][0].length, 3,
       'length of cell should still be 3');
@@ -188,36 +188,53 @@
       'value of second element in cell should still be B');
 
     testSimulation.assertEqual(grid[0][0][2], 'C',
-      'value of second element in cell should still be C');
+      'value of third element in cell should still be C');
 
-    // Move: top left corner -> 1 space right
-    demo.move(0, 0, 0, 0, 1);
-    demo.move(0, 0, 1, 1, 0);
+    // Move: top left corner -> right
+    demo.move(0, 0, 0, grid, 0, 1);
 
-    testSimulation.assertEqual(grid[0][0].length, 1,
-      'length of original cell is 1');
+    testSimulation.assertEqual(grid[0][0].length, 2,
+      'length of original cell is 2');
 
     testSimulation.assertEqual(grid[0][1].length, 1,
       'length of right cell should be 1');
 
-    testSimulation.assertEqual(grid[1][0].length, 1,
-      'length of bottom cell should be 1');
-
     testSimulation.assertEqual(grid[0][0][0], 'B',
       'value of original cell should be B');
+
+    testSimulation.assertEqual(grid[0][0][1], 'C',
+      'value of bottom cell should contain C');
 
     testSimulation.assertEqual(grid[0][1][0], 'A',
       'value of right cell should contains A');
 
+    // Move: move again to right
+    demo.move(0, 1, 0, grid, 0, 2);
+
+    testSimulation.assertEqual(grid[0][1].length, 0,
+      'length of right cell should be 0');
+
+    testSimulation.assertEqual(grid[0][2][0], 'A',
+      'value of right cell should contains A');
+
+    // Move: top left corner -> bottom
+    demo.move(0, 0, 1, grid, 1, 0);
+
+    testSimulation.assertEqual(grid[0][0].length, 1,
+      'length of original cell is 1');
+
+    testSimulation.assertEqual(grid[1][0].length, 1,
+      'length of bottom cell should be 1');
+
     testSimulation.assertEqual(grid[1][0][0], 'C',
-      'value of bottom cell should contain C');
+      'value of bottom cell should be C');
 
     // Move: does not move if out of bounds
     var rows = demo.simulation.rows-1;
     var cols = demo.simulation.cols-1;
     grid[rows][cols].push('D');
-    demo.move(0, 0, 0, -1, -1);
-    demo.move(rows, cols, 0, 100, 100);
+    demo.move(0, 0, 0, grid, -1, -1);
+    demo.move(rows, cols, 0, grid, 100, 100);
 
     testSimulation.assertEqual(grid[0][0].length, 1,
       'length of top left corner should still be 1');
