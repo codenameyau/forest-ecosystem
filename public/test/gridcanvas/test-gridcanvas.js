@@ -148,15 +148,48 @@
       'position of out of range col cell should not be a valid position');
   });
 
+  // Test Case: differentCell
+  testSimulation.testCase(function() {
+    testSimulation.assertFalse(simulation.differentCell(0, 0, 0, 0),
+      'value of different cell should be false');
+
+    testSimulation.assertFalse(simulation.differentCell(1, 0, 1, 0),
+      'value of different cell should be false');
+
+    testSimulation.assertFalse(simulation.differentCell(0, 0, 1, 0),
+      'value of different cell should be true');
+
+    testSimulation.assertFalse(simulation.differentCell(0, 0, 0, 1),
+      'value of different cell should be true');
+  });
+
   // Test Case: move
   testSimulation.testCase(function() {
     var demo = new GridSimulation(canvas);
     var grid = demo.getGrid();
 
-    // Move: top left corner -> 1 space right
+    // Sample values
     grid[0][0].push('A');
     grid[0][0].push('B');
     grid[0][0].push('C');
+
+    // Move: does not move if same cell
+    demo.move(0, 0, 0, 0, 0);
+    demo.move(0, 0, 1, 0, 0);
+
+    testSimulation.assertEqual(grid[0][0].length, 3,
+      'length of cell should still be 3');
+
+    testSimulation.assertEqual(grid[0][0][0], 'A',
+      'value of first element in cell should still be A');
+
+    testSimulation.assertEqual(grid[0][0][1], 'B',
+      'value of second element in cell should still be B');
+
+    testSimulation.assertEqual(grid[0][0][2], 'C',
+      'value of second element in cell should still be C');
+
+    // Move: top left corner -> 1 space right
     demo.move(0, 0, 0, 0, 1);
     demo.move(0, 0, 1, 1, 0);
 
@@ -194,18 +227,17 @@
 
   // Test Case: getNeighbor8
   testSimulation.testCase(function() {
-    var getNeighbor8 = GridSimulation.prototype.getNeighbor8;
     var rows = simulation.simulation.rows-1;
     var cols = simulation.simulation.cols-1;
 
     // Neighbors to check
-    var topLeftN = getNeighbor8(0, 0);
-    var bottomLeftN = getNeighbor8(rows, 0);
-    var leftN = getNeighbor8(1, 0);
-    var centerN = getNeighbor8(1, 1);
-    var topRightN = getNeighbor8(0, cols);
-    var bottomRightN = getNeighbor8(rows, cols);
-    var rightN = getNeighbor8(1, cols);
+    var topLeftN = simulation.getNeighbor8(0, 0);
+    var bottomLeftN = simulation.getNeighbor8(rows, 0);
+    var leftN = simulation.getNeighbor8(1, 0);
+    var centerN = simulation.getNeighbor8(1, 1);
+    var topRightN = simulation.getNeighbor8(0, cols);
+    var bottomRightN = simulation.getNeighbor8(rows, cols);
+    var rightN = simulation.getNeighbor8(1, cols);
 
     // Check contents of neighbors
     testSimulation.assertType(centerN, 'object',
@@ -238,7 +270,6 @@
 
     testSimulation.assertEqual(rightN.length, 5,
       'length of neighbors for right position should be 5');
-
   });
 
   // Report testSimulation results
