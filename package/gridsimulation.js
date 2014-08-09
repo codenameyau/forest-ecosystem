@@ -15,7 +15,6 @@
 function GridCanvas(config) {
   this.initializeSettings(config);
   this.initializeCanvas();
-  this.initializePause();
 }
 
 
@@ -72,17 +71,18 @@ GridCanvas.prototype.drawGrid = function(grid) {
   this.ctx.strokeStyle = 'rgba(90, 90, 90, 0.5)';
   for (var i=0; i<grid.length; i++) {
     for (var j=0; j<grid[i].length; j++) {
-      if (grid[i][j].length <= 0) {continue;}
-      var occupant = grid[i][j][0];
-      var radius = occupant.radius;
-      var posX = i*cellSize+this.settings.radius+5;
-      var posY = j*cellSize+radius+5;
-      this.ctx.fillStyle = occupant.parameters.color;
-      this.ctx.moveTo(posX, posY);
-      this.ctx.beginPath();
-      this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
-      this.ctx.fill();
-      this.ctx.stroke();
+      for (var k=0; k<grid[i][j].length; k++) {
+        var occupant = grid[i][j][k];
+        var radius = occupant.radius;
+        var posX = i*cellSize+this.settings.radius+5;
+        var posY = j*cellSize+radius+5;
+        this.ctx.fillStyle = occupant.parameters.color;
+        this.ctx.moveTo(posX, posY);
+        this.ctx.beginPath();
+        this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
+        this.ctx.fill();
+        this.ctx.stroke();
+      }
     }
   }
 };
@@ -222,11 +222,16 @@ GridSimulation.prototype.differentCell = function(row, col, i, j) {
 };
 
 
-GridSimulation.prototype.move = function(x, y, z, grid, row, col) {
+GridSimulation.prototype.move = function(x, y, z, row, col) {
   if (!this.validPosition(row, col) || !this.differentCell(x, y, row, col))
     {return;}
   var value = this.grid[x][y].splice(z, 1);
-  grid[row][col].push(value[0]);
+  this.grid[row][col].push(value[0]);
+};
+
+
+GridSimulation.prototype.copy = function(grid, x, y, z, row, col) {
+  this.grid[row][col].push(grid[x][y][z]);
 };
 
 

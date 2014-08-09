@@ -117,6 +117,7 @@ ForestLife.prototype.grow = function() {
   // GridSimulation: handles the backend simulation
   var simulationCanvas = new GridCanvas(CONFIG);
   var simulation = new GridSimulation(simulationCanvas);
+  simulationCanvas.initializePause();
 
   // Keep track of statisitcs
   simulation.stats = {
@@ -174,22 +175,29 @@ ForestLife.prototype.grow = function() {
         for (k=0; k<grid[i][j].length; k++) {
           life = grid[i][j][k];
           if (!life) {continue;}
+          var moveRow = i;
+          var moveCol = j;
+
+          // Repeat movements
           for (move=0; move<life.parameters.movement; move++) {
-            neighbors = simulation.getNeighbor8(i, j);
+            neighbors = simulation.getNeighbor8(moveRow, moveCol);
             randIndex = simulation.randomInteger(0, neighbors.length);
             moveTo = neighbors[randIndex];
-            simulation.move(i, j, k, moveTo[0], moveTo[1]);
-            console.log(grid[moveTo[0]], moveTo[1]);
+            moveRow = moveTo[0];
+            moveCol = moveTo[1];
           }
+
+          // Copy old cell contents to row and col of new grid
+          simulation.copy(grid, i, j, k, moveRow, moveCol);
         }
       }
     }
 
     // Phase 2: events and growth
-    for (i=0; i<grid.length; i++) {
-      for (j=0; j<grid[i].length; j++) {
-        for (k=0; k<grid[i][j].length; k++) {
-          life = grid[i][j][k];
+    for (i=0; i<simulation.grid.length; i++) {
+      for (j=0; j<simulation.grid[i].length; j++) {
+        for (k=0; k<simulation.grid[i][j].length; k++) {
+          life = simulation.grid[i][j][k];
           if (!life) {continue;}
           life.grow();
         }
