@@ -194,15 +194,23 @@ GridSimulation.prototype.populate = function(array) {
   }
 };
 
-GridSimulation.prototype.move8 = function(entity, movement, x, y) {
+GridSimulation.prototype.move = function(x, y, z, row, col) {
+  if (row >= this.simulation.rows ||
+      col >= this.simulation.cols ||
+      row < 0 || col < 0 ) {return;}
+  var value = this.grid[x][y].splice(z, 1);
+  this.grid[row][col].push(value[0]);
+};
+
+GridSimulation.prototype.getNeighbor8 = function(x, y) {
+  console.log(1);
+};
+
+GridSimulation.prototype.moveRandom8 = function(movement, x, y, z) {
   // Move amount of times based on movement
   for (var i=0; i<movement; i++) {
     var neighbors = this.checkNeighbor8(x, y);
   }
-};
-
-GridSimulation.prototype.checkNeighbor8 = function(x, y) {
-  console.log(1);
 };
 
 /******************************

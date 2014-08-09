@@ -170,7 +170,7 @@ ForestLife.prototype.grow = function() {
       for (j=0; j<simulation.grid[i].length; j++) {
         for (k=0; k<simulation.grid[i][j].length; k++) {
           life = simulation.grid[i][j][k];
-          simulation.move8(life, life.parameters.movement, i, j);
+          simulation.moveRandom8(life.parameters.movement, i, j, k);
         }
       }
     }
