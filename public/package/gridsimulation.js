@@ -70,11 +70,9 @@ GridCanvas.prototype.drawGrid = function(grid) {
   var cellSize = this.settings.cellSize;
   this.clearCanvas();
   this.ctx.strokeStyle = 'rgba(90, 90, 90, 0.5)';
-
   for (var i=0; i<grid.length; i++) {
-    var cols = grid[i].length;
-    for (var j=0; j<cols; j++) {
-      if (!grid[i][j].length) {continue;}
+    for (var j=0; j<grid[i].length; j++) {
+      if (grid[i][j].length <= 0) {continue;}
       var occupant = grid[i][j][0];
       var radius = occupant.radius;
       var posX = i*cellSize+this.settings.radius+5;
@@ -224,11 +222,11 @@ GridSimulation.prototype.differentCell = function(row, col, i, j) {
 };
 
 
-GridSimulation.prototype.move = function(x, y, z, row, col) {
+GridSimulation.prototype.move = function(x, y, z, grid, row, col) {
   if (!this.validPosition(row, col) || !this.differentCell(x, y, row, col))
     {return;}
   var value = this.grid[x][y].splice(z, 1);
-  this.grid[row][col].push(value[0]);
+  grid[row][col].push(value[0]);
 };
 
 
