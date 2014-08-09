@@ -203,7 +203,7 @@ GridSimulation.prototype.move = function(x, y, z, row, col) {
 };
 
 GridSimulation.prototype.getNeighbor8 = function(x, y) {
-  console.log(1);
+  return [];
 };
 
 GridSimulation.prototype.moveRandom8 = function(movement, x, y, z) {

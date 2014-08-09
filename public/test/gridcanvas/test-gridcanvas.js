@@ -173,6 +173,44 @@
       'length of bottom right cell should still be 1');
   });
 
+  // Test Case: getNeighbor8
+  testSimulation.testCase(function() {
+    var getNeighbor8 = GridSimulation.prototype.getNeighbor8;
+    var rows = simulation.simulation.rows-1;
+    var cols = simulation.simulation.cols-1;
+
+    // Neighbors to check
+    var topLeftN = getNeighbor8(0, 0);
+    var bottomLeftN = getNeighbor8(rows, 0);
+    var leftN = getNeighbor8(1, 0);
+    var centerN = getNeighbor8(1, 1);
+    var topRightN = getNeighbor8(0, cols);
+    var bottomRightN = getNeighbor8(rows, cols);
+    var rightN = getNeighbor8(1, cols);
+
+    // Check neighbor contents
+    testSimulation.assertEqual(topLeftN.length, 3,
+      'length of neighbors for top left position should be 3');
+
+    testSimulation.assertEqual(bottomLeftN.length, 3,
+      'length of neighbors for bottom left position should be 3');
+
+    testSimulation.assertEqual(leftN.length, 5,
+      'length of neighbors for left position should be 5');
+
+    testSimulation.assertEqual(centerN.length, 8,
+      'length of neighbors for center position should be 8');
+
+    testSimulation.assertEqual(topRightN.length, 3,
+      'length of neighbors for top right position should be 3');
+
+    testSimulation.assertEqual(bottomRightN.length, 3,
+      'length of neighbors for bottom right position should be 3');
+
+    testSimulation.assertEqual(rightN.length, 5,
+      'length of neighbors for right position should be 5');
+
+  });
 
   // Report testSimulation results
   testSimulation.results();

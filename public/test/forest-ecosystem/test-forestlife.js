@@ -11,14 +11,11 @@
 
   //  Create all possible ForestLife
   var definitions = ForestLife.prototype.definition;
-  var sapling = new ForestLife('sapling');
-  var tree = new ForestLife('tree');
-  var elder = new ForestLife('elder');
-  var lumberjack = new ForestLife('lumberjack');
-  var bear = new ForestLife('bear');
 
   // Test Case: sapling
   test.testCase(function() {
+    var sapling = new ForestLife('sapling');
+
     test.assertEqual(sapling.parameters, definitions.sapling,
       'parameters of sapling should match definition of sapling');
 
@@ -37,6 +34,8 @@
 
   // Test Case: tree
   test.testCase(function() {
+    var tree = new ForestLife('tree');
+
     test.assertEqual(tree.parameters, definitions.tree,
       'parameters of tree should match definition of tree');
 
@@ -55,6 +54,8 @@
 
   // Test Case: elder
   test.testCase(function() {
+    var elder = new ForestLife('elder');
+
     test.assertEqual(elder.parameters, definitions.elder,
       'parameters of elder should match definition of elder');
 
@@ -73,6 +74,8 @@
 
   // Test Case: lumberjack
   test.testCase(function() {
+    var lumberjack = new ForestLife('lumberjack');
+
     test.assertEqual(lumberjack.parameters, definitions.lumberjack,
       'parameters of lumberjack should match definition of lumberjack');
 
@@ -91,6 +94,8 @@
 
   // Test Case: bear
   test.testCase(function() {
+    var bear = new ForestLife('bear');
+
     test.assertEqual(bear.parameters, definitions.bear,
       'parameters of bear should match definition of bear');
 
@@ -111,7 +116,6 @@
   test.testCase(function() {
     var sapling = new ForestLife('sapling');
 
-    // Test parameters before growing
     test.assertEqual(sapling.age, 0,
       'age of the sapling should be 0');
 
