@@ -161,16 +161,21 @@ ForestLife.prototype.grow = function() {
 
   // Define updater
   simulation.setUpdater(function() {
-    // Initialize updater
     console.log(simulation.simulation.time);
-    var i, j, k, life;
+    var i, j, k, life, move, neighbors, randIndex, moveTo;
 
     // Phase 1: movement
     for (i=0; i<simulation.grid.length; i++) {
       for (j=0; j<simulation.grid[i].length; j++) {
         for (k=0; k<simulation.grid[i][j].length; k++) {
           life = simulation.grid[i][j][k];
-          simulation.moveRandom8(life.parameters.movement, i, j, k);
+          if (!life) {continue;}
+          for (move=0; move<life.parameters.movement; move++) {
+            neighbors = simulation.getNeighbor8(i, j);
+            randIndex = simulation.randomInteger(0, neighbors.length);
+            moveTo = neighbors[randIndex];
+            simulation.move(i, j, k, moveTo[0], moveTo[1]);
+          }
         }
       }
     }
@@ -180,6 +185,7 @@ ForestLife.prototype.grow = function() {
       for (j=0; j<simulation.grid[i].length; j++) {
         for (k=0; k<simulation.grid[i][j].length; k++) {
           life = simulation.grid[i][j][k];
+          if (!life) {continue;}
           life.grow();
         }
       }
