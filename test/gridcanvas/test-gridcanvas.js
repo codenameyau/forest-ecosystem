@@ -124,14 +124,53 @@
       'cells of simulation grid should be filled');
   });
 
-  // Test Case: move8
+  // Test Case: checkNeighbor8
   testSimulation.testCase(function() {
 
   });
 
-  // Test Case: checkNeighbor8
+  // Test Case: move
   testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
 
+    // Move: top left corner -> 1 space right
+    grid[0][0].push('A');
+    grid[0][0].push('B');
+    grid[0][0].push('C');
+    demo.move(0, 0, 0, 0, 1);
+    demo.move(0, 0, 1, 1, 0);
+
+    testSimulation.assertEqual(grid[0][0].length, 1,
+      'length of original cell is 1');
+
+    testSimulation.assertEqual(grid[0][1].length, 1,
+      'length of right cell should be 1');
+
+    testSimulation.assertEqual(grid[1][0].length, 1,
+      'length of bottom cell should be 1');
+
+    testSimulation.assertEqual(grid[0][0][0], 'B',
+      'value of original cell should be B');
+
+    testSimulation.assertEqual(grid[0][1][0], 'A',
+      'value of right cell should contains A');
+
+    testSimulation.assertEqual(grid[1][0][0], 'C',
+      'value of bottom cell should contain C');
+
+    // Move: does not move if out of bounds
+    var rows = demo.simulation.rows-1;
+    var cols = demo.simulation.cols-1;
+    grid[rows][cols].push('D');
+    demo.move(0, 0, 0, -1, -1);
+    demo.move(rows, cols, 0, 100, 100);
+
+    testSimulation.assertEqual(grid[0][0].length, 1,
+      'length of top left corner should still be 1');
+
+    testSimulation.assertEqual(grid[rows][cols].length, 1,
+      'length of bottom right cell should still be 1');
   });
 
 
