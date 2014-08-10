@@ -274,8 +274,12 @@ GridSimulation.prototype.getOpenSpace8 = function(row, col) {
       }
     }
   }
-  console.log(openSpace);
   return openSpace;
+};
+
+
+GridSimulation.prototype.getCell = function(row, col) {
+  return this.grid[row][col];
 };
 
 
