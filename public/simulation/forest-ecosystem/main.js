@@ -34,6 +34,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 12, previous: '', next: 'tree'},
     radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
+    score: {},
     color: 'rgba(168, 245, 28, 0.2)',
     movement: 0,
     startAge: 0,
@@ -43,6 +44,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
+    score: {lumber: 1},
     color: 'rgba(100, 220, 40, 0.2)',
     movement: 0,
     startAge: 12,
@@ -52,6 +54,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: 'tree', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
+    score: {lumber: 2},
     color: 'rgba(80, 180, 70, 0.2)',
     movement: 0,
     startAge: 120,
@@ -61,6 +64,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 4, end: 4, growth: 0},
     spawn: {chance: 0.0, child: ''},
+    score: {maul: 1},
     color: 'rgba(214, 45, 48, 0.2)',
     movement: 3,
     startAge: 20,
@@ -106,14 +110,14 @@ ForestLife.prototype.grow = function() {
     gridRows: 10,
     gridCols: 10,
     cellSize: 15,
-    delay: 100,
+    delay: 200,
     radius: 5
   };
 
   // Specify starting population
   var FOREST = {
     treeRatio: 0.5,
-    lumberjackRatio: 0.05,
+    lumberjackRatio: 0.04,
     bearRatio: 0.0,
   };
 
@@ -229,43 +233,24 @@ ForestLife.prototype.grow = function() {
         var moveTo = neighbors[randIndex];
         var newX = moveTo[0];
         var newY = moveTo[1];
-        var newZ = grid[newX][newY].length;
-        life = simulation.move(posX, posY, posZ, newX, newY);
+        var newZ = simulation.cellLength(newX, newY);
+        simulation.move(posX, posY, posZ, newX, newY);
+        life.position = [newX, newY];
+
+        // Event: encountered mature tree
+        var cell = simulation.getCell(newX, newY);
+        for (k=0; k<cell.length; k++) {
+          var occupant = cell[k];
+          if (occupant.type === 'tree' || occupant.type === 'elder') {
+            simulation.splice(newX, newY, k);
+            simulation.stats.lumber.year += occupant.parameters.score.lumber;
+            simulation.stats.lumber.total += occupant.parameters.score.lumber;
+          }
+        }
       }
     }
 
-
-
-    // // Phase 3: lumberjack events
-    // else if (life.type === 'lumberjack') {
-    //   // Move lumberjack to random adjacent square
-    //   for (var move=0; move<life.parameters.movement; move++) {
-    //     var neighbors = simulation.getNeighbor8(currentRow, currentCol);
-    //     var randIndex = simulation.randomInteger(0, neighbors.length);
-    //     var moveTo = neighbors[randIndex];
-    //     currentRow = moveTo[0];
-    //     currentCol = moveTo[1];
-
-    //     // Check for encounter events
-    //     var content = simulation.getCell(currentRow, currentCol);
-    //     for (var m=0; m<content.length; m++) {
-    //       var encounter = content[m];
-
-    //       // Event: encounters tree or elder
-    //       if (encounter.type === 'tree' || encounter.type === 'elder') {
-    //         move = life.parameters.movement;
-    //         // [TODO] too many issues
-    //         console.log(m);
-    //         console.log(simulation.grid[currentRow][currentCol]);
-    //         simulation.splice(currentRow, currentCol, m);
-    //         simulation.stats.lumber.year++;
-    //         simulation.stats.lumber.total++;
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
-
+    // Phase 3: bear events
 
   });
 
