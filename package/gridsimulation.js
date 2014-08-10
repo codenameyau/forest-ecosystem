@@ -241,12 +241,10 @@ GridSimulation.prototype.move = function(x, y, z, row, col) {
   if (!this.validPosition(row, col) || !this.differentCell(x, y, row, col))
     {return;}
   var value = this.splice(x, y, z);
-  this.grid[row][col].push(value[0]);
-};
-
-
-GridSimulation.prototype.copy = function(grid, x, y, z, row, col) {
-  this.grid[row][col].push(grid[x][y][z]);
+  value = value[0];
+  this.grid[row][col].push(value);
+  value.position = [row, col, this.grid[row][col].length-1];
+  return value;
 };
 
 
@@ -282,6 +280,14 @@ GridSimulation.prototype.getCell = function(row, col) {
   return this.grid[row][col];
 };
 
+
+GridSimulation.prototype.cellIndex = function(row, col, value) {
+  var len = this.grid[row][col].length;
+  var cell = this.grid[row][col];
+  for (var i=0; i<len; i++) {
+    if (cell[i] === value) {return i;}
+  }
+};
 
 /******************************
  * GridSimulation - Utilities *
@@ -332,6 +338,7 @@ GridSimulation.prototype._keyboardInputHandler = function(event) {
   switch (event.which) {
 
   case 32: // spacebar
+    event.preventDefault();
     this.togglePause();
     break;
 
