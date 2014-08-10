@@ -45,7 +45,7 @@ ForestLife.prototype.definition = {
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
     score: {lumber: 1},
-    color: 'rgba(100, 220, 40, 0.2)',
+    color: 'rgba(100, 200, 40, 0.3)',
     movement: 0,
     startAge: 12,
   },
@@ -55,17 +55,17 @@ ForestLife.prototype.definition = {
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
     score: {lumber: 2},
-    color: 'rgba(80, 180, 70, 0.2)',
+    color: 'rgba(80, 140, 70, 0.3)',
     movement: 0,
     startAge: 120,
   },
 
   'lumberjack': {
     maturity: {age: 0, previous: '', next: ''},
-    radius: {start: 4, end: 4, growth: 0},
+    radius: {start: 3, end: 3, growth: 0},
     spawn: {chance: 0.0, child: ''},
     score: {maul: 1},
-    color: 'rgba(214, 45, 48, 0.2)',
+    color: 'rgba(214, 45, 48, 0.5)',
     movement: 3,
     startAge: 20,
   },
@@ -74,7 +74,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(103, 0, 0, 0.2)',
+    color: 'rgba(120, 30, 0, 0.3)',
     movement: 5,
     startAge: 5,
   },
@@ -99,41 +99,46 @@ ForestLife.prototype.grow = function() {
 };
 
 
-/**************************
- * Program Initialization *
- **************************/
+/****************
+ * Main Program *
+ ***************/
 (function() {
 
-  // Specify configuration
+  /**********************************
+   * Forest Ecosystem Configuration *
+   **********************************/
+
+  // Simulation options
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 10,
-    gridCols: 10,
+    gridRows: 20,
+    gridCols: 20,
     cellSize: 15,
-    delay: 200,
+    delay: 500,
     radius: 5
   };
 
-  // Specify starting population
+  // Starting population ratio
   var FOREST = {
     treeRatio: 0.5,
     lumberjackRatio: 0.04,
-    bearRatio: 0.0,
+    bearRatio: 0.02,
   };
 
   // GridCanvas: visualizes the simulation
-  // GridSimulation: handles the backend simulation
   var simulationCanvas = new GridCanvas(CONFIG);
+
+  // GridSimulation: handles the backend simulation
   var simulation = new GridSimulation(simulationCanvas);
+
+  // Simulation GUI
+  simulationCanvas.setBackground('rgba(180, 240, 90, 0.10)');
   simulationCanvas.initializePause();
 
-  // Keep track of statisitcs
+  // Simulation statisitcs
   simulation.stats = {
-    // Simulation information
     lumber: {year: 0, total: 0},
     maul: {year: 0, total: 0},
-
-    // ForestLife count
     sapling: 0,
     tree: 0,
     elder: 0,
@@ -141,7 +146,10 @@ ForestLife.prototype.grow = function() {
     bear: 0,
   };
 
-  // Function to generate initial population
+
+  /******************************
+   * Forest Ecosystem Functions *
+   ******************************/
   var populateArray = function(array, type, number) {
     for (var i=0; i<number; i++) {
       var life = type ? new ForestLife(type) : null;
@@ -149,7 +157,15 @@ ForestLife.prototype.grow = function() {
     }
   };
 
-  // Generate random forest ecosystem based on ratio population
+  var resetYearlyStats = function() {
+    simulation.stats.lumber.year = 0;
+    simulation.stats.maul.year = 0;
+  };
+
+
+  /***********************************
+   * Forest Ecosystem Initialization *
+   ***********************************/
   var gridSize = simulation.getSize();
   var jackPop = Math.round(gridSize * FOREST.lumberjackRatio);
   var treePop = Math.round(gridSize * FOREST.treeRatio);
@@ -160,25 +176,22 @@ ForestLife.prototype.grow = function() {
   populateArray(initialForest, 'tree', treePop);
   populateArray(initialForest, 'bear', bearPop);
   populateArray(initialForest, null, emptyPop);
-
-  // Adjustments to canvas
-  simulationCanvas.ctx.canvas.style.backgroundColor = 'rgba(204, 236, 146, 0.55)';
-
-  // Add forest population to simulation
   simulation.shuffle(initialForest);
   simulation.populate(initialForest);
 
-  // Define simulation updater
+
+  /****************************
+   * Forest Ecosystem Updater *
+   ****************************/
   simulation.setUpdater(function() {
     // console.log(simulation.simulation.time);
 
     // Events for new year
     if (simulation.simulation.time % 12 === 1) {
-      simulation.stats.lumber.year = 0;
-      simulation.stats.maul.year = 0;
+      resetYearlyStats();
     }
 
-    // console.log(simulation.stats.lumber);
+    console.log(simulation.stats.maul);
 
     // Get reference to old grid and create new grid
     var i, j, k, life, pos;
@@ -225,6 +238,7 @@ ForestLife.prototype.grow = function() {
 
       // Move lumberjack
       for (j=0; j<life.parameters.movement; j++) {
+        var triggeredEvent = false;
         var posX = life.position[0];
         var posY = life.position[1];
         var posZ = simulation.cellIndex(posX, posY, life);
@@ -237,16 +251,31 @@ ForestLife.prototype.grow = function() {
         simulation.move(posX, posY, posZ, newX, newY);
         life.position = [newX, newY];
 
-        // Event: encountered mature tree
         var cell = simulation.getCell(newX, newY);
         for (k=0; k<cell.length; k++) {
           var occupant = cell[k];
+
+          // Event: encountered tree -> collect lumber
           if (occupant.type === 'tree' || occupant.type === 'elder') {
             simulation.splice(newX, newY, k);
             simulation.stats.lumber.year += occupant.parameters.score.lumber;
             simulation.stats.lumber.total += occupant.parameters.score.lumber;
+            triggeredEvent = true;
+          }
+
+          // Event: encountered bear -> maul accident
+          if (occupant.type === 'bear') {
+            console.log('Encountered bear!');
+            simulation.splice(newX, newY, newZ);
+            simulation.stats.maul.year += 1;
+            simulation.stats.maul.total += 1;
+            triggeredEvent = true;
+            break;
           }
         }
+
+        // Triggered event -> stop movement
+        if (triggeredEvent) {break;}
       }
     }
 
@@ -256,5 +285,4 @@ ForestLife.prototype.grow = function() {
 
   console.log(simulation);
   simulation.run();
-
 })();

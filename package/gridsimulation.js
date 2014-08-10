@@ -88,6 +88,11 @@ GridCanvas.prototype.drawGrid = function(grid) {
 };
 
 
+GridCanvas.prototype.setBackground = function(color) {
+  this.ctx.canvas.style.backgroundColor = color;
+};
+
+
 GridCanvas.prototype.clearCanvas = function() {
   // Store the current transformation matrix
   this.ctx.save();
