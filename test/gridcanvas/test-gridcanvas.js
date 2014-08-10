@@ -93,6 +93,62 @@
       'y position should be between 0 and number of cols');
   });
 
+  // Test Case: cellLength
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 0);
+    demo.spawn('C', 0, 0);
+
+    testSimulation.assertEqual(demo.cellLength(0, 0), 3,
+      'length of cell in position (0, 0) should be 3');
+  });
+
+  // Test Case: getCell
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+    var cellContent = demo.getCell(0, 0);
+
+    testSimulation.assertEqual(cellContent.length, 0,
+      'length of cell Array should be 0');
+
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 0);
+    cellContent = demo.getCell(0, 0);
+
+    testSimulation.assertEqual(cellContent.length, 2,
+      'length of cell Array should be 2');
+
+    testSimulation.assertEqual(cellContent[0], 'A',
+      'value in index 0 should be A');
+
+    testSimulation.assertEqual(cellContent[1], 'B',
+      'value in index 1 should be B');
+  });
+
+  // Test Case: cellIndex
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 0);
+    demo.spawn('C', 0, 0);
+
+    testSimulation.assertEqual(grid[0][0].length, 3,
+      'length of cell in position (0, 0) should be 3');
+
+    testSimulation.assertEqual(demo.cellIndex(0, 0, 'A'), 0,
+      'index of A in cell should be 0');
+
+    testSimulation.assertEqual(demo.cellIndex(0, 0, 'B'), 1,
+      'index of B in cell should be 1');
+
+    testSimulation.assertEqual(demo.cellIndex(0, 0, 'C'), 2,
+      'index of C in cell should be 2');
+  });
+
   // Test Case: shuffle
   testSimulation.testCase(function() {
     var shuffle = GridSimulation.prototype.shuffle;
@@ -372,50 +428,6 @@
     var openspaceF = demo.getOpenSpace8(rows, cols);
     testSimulation.assertEqual(openspaceF.length, 3,
       'length of openspace for F should be 3');
-  });
-
-  // Test Case: getCell
-  testSimulation.testCase(function() {
-    var demo = new GridSimulation(canvas);
-    var grid = demo.getGrid();
-    var cellContent = demo.getCell(0, 0);
-
-    testSimulation.assertEqual(cellContent.length, 0,
-      'length of cell Array should be 0');
-
-    demo.spawn('A', 0, 0);
-    demo.spawn('B', 0, 0);
-    cellContent = demo.getCell(0, 0);
-
-    testSimulation.assertEqual(cellContent.length, 2,
-      'length of cell Array should be 2');
-
-    testSimulation.assertEqual(cellContent[0], 'A',
-      'value in index 0 should be A');
-
-    testSimulation.assertEqual(cellContent[1], 'B',
-      'value in index 1 should be B');
-  });
-
-  // Test Case: cellIndex
-  testSimulation.testCase(function() {
-    var demo = new GridSimulation(canvas);
-    var grid = demo.getGrid();
-    demo.spawn('A', 0, 0);
-    demo.spawn('B', 0, 0);
-    demo.spawn('C', 0, 0);
-
-    testSimulation.assertEqual(grid[0][0].length, 3,
-      'length of cell in position (0, 0) should be 3');
-
-    testSimulation.assertEqual(demo.cellIndex(0, 0, 'A'), 0,
-      'index of A in cell should be 0');
-
-    testSimulation.assertEqual(demo.cellIndex(0, 0, 'B'), 1,
-      'index of B in cell should be 1');
-
-    testSimulation.assertEqual(demo.cellIndex(0, 0, 'C'), 2,
-      'index of C in cell should be 2');
   });
 
   // Report testSimulation results
