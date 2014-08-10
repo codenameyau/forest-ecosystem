@@ -27,6 +27,7 @@ function ForestLife(lifetype) {
   this.parameters = parameters;
   this.radius = parameters.radius.start;
   this.age = parameters.startAge;
+  this.time = 0;
 }
 
 ForestLife.prototype.definition = {
@@ -34,7 +35,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 12, previous: '', next: 'tree'},
     radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(168, 245, 28, 0.8)',
+    color: 'rgba(168, 245, 28, 0.2)',
     movement: 0,
     startAge: 0,
   },
@@ -43,7 +44,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
-    color: 'rgba(100, 220, 40, 0.9)',
+    color: 'rgba(100, 220, 40, 0.2)',
     movement: 0,
     startAge: 12,
   },
@@ -52,7 +53,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: 'tree', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
-    color: 'rgba(80, 180, 70, 0.9)',
+    color: 'rgba(80, 180, 70, 0.2)',
     movement: 0,
     startAge: 120,
   },
@@ -61,7 +62,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 4, end: 4, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(214, 45, 48, 0.6)',
+    color: 'rgba(214, 45, 48, 0.2)',
     movement: 3,
     startAge: 20,
   },
@@ -70,7 +71,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(103, 0, 0, 0.6)',
+    color: 'rgba(103, 0, 0, 0.2)',
     movement: 5,
     startAge: 5,
   },
@@ -78,6 +79,7 @@ ForestLife.prototype.definition = {
 
 ForestLife.prototype.grow = function() {
   this.age++;
+  this.time++;
 
   // Update the radius of ForestLife
   if (this.parameters.radius.growth) {
@@ -164,7 +166,7 @@ ForestLife.prototype.grow = function() {
   simulation.shuffle(initialForest);
   simulation.populate(initialForest);
 
-  // Define updater
+  // Define simulation updater
   simulation.setUpdater(function() {
     console.log(simulation.simulation.time);
 
@@ -174,28 +176,49 @@ ForestLife.prototype.grow = function() {
       simulation.stats.maul.year = 0;
     }
 
-    console.log(simulation.stats.lumber);
-
+    // console.log(simulation.stats.lumber);
 
     // Get reference to old grid and create new grid
-    var i, j, k;
+    var i, j, k, life;
     var grid = simulation.getGrid();
-    simulation.initializeGrid();
+    var treeList = [];
+    var jackList = [];
+    var bearList = [];
 
-    // Run simulation: row -> col -> index
+    // Phase 0: store life into lists
+    for (i=0; i<grid.length; i++) {
+      for (j=0; j<grid[i].length; j++) {
+        for (k=0; k<grid[i][j].length; k++) {
+          life = grid[i][j][k];
+          life.grow();
+          switch (life.type) {
+
+          case 'sapling':
+          case 'tree':
+          case 'elder':
+            treeList.push(life);
+            break;
+          case 'lumberjack':
+            jackList.push(life);
+            break;
+          case 'bear':
+            bearList.push(life);
+            break;
+          }
+        }
+      }
+    }
+
+    // Phase: tree
     for (i=0; i<grid.length; i++) {
       for (j=0; j<grid[i].length; j++) {
         for (k=0; k<grid[i][j].length; k++) {
           var life = grid[i][j][k];
-          var currentRow = i;
-          var currentCol = j;
-
-          // Phase 1: growth
           life.grow();
 
           // Phase 2: tree events
-          if (life.type === 'tree' || life.type === 'elder') {
-            var space = simulation.getOpenSpace8(currentRow, currentCol);
+          if (life.type === 'sapling' || life.type === 'tree' || life.type === 'elder') {
+            var space = simulation.getOpenSpace8(i, j, grid);
             for (var l=0; l<space.length; l++) {
               if (simulation.randomChance() <= life.parameters.spawn.chance) {
                 var newSapling = new ForestLife(life.parameters.spawn.child);
@@ -203,43 +226,73 @@ ForestLife.prototype.grow = function() {
                 break;
               }
             }
+
+            // Copy life from old grid to new grid
+            simulation.copy(grid, i, j, k, i, j);
           }
-
-          // Phase 3: lumberjack events
-          else if (life.type === 'lumberjack') {
-            // Move lumberjack to random adjacent square
-            for (var move=0; move<life.parameters.movement; move++) {
-              var neighbors = simulation.getNeighbor8(currentRow, currentCol);
-              var randIndex = simulation.randomInteger(0, neighbors.length);
-              var moveTo = neighbors[randIndex];
-              currentRow = moveTo[0];
-              currentCol = moveTo[1];
-
-              // Check for encounter events
-              var content = simulation.getCell(currentRow, currentCol);
-              for (var m=0; m<content.length; m++) {
-                var encounter = content[m];
-
-                // Event: encounters tree or elder
-                if (encounter.type === 'tree' || encounter.type === 'elder') {
-                  move = life.parameters.movement;
-                  // [TODO] too many issues
-                  console.log(m);
-                  console.log(simulation.grid[currentRow][currentCol]);
-                  simulation.splice(currentRow, currentCol, m);
-                  simulation.stats.lumber.year++;
-                  simulation.stats.lumber.total++;
-                  break;
-                }
-              }
-            }
-          }
-
-          // Copy life from old grid to new grid
-          simulation.copy(grid, i, j, k, currentRow, currentCol);
         }
       }
     }
+
+    // Phase: lumberjack
+    // for (i=0; i<grid.length; i++) {
+    //   for (j=0; j<grid[i].length; j++) {
+    //     for (k=0; k<grid[i][j].length; k++) {
+    //       var life = grid[i][j][k];
+    //       var currentRow = i;
+    //       var currentCol = j;
+
+    //       // Phase 1: growth
+    //       life.grow();
+
+    //       // Phase 2: tree events
+    //       if (life.type === 'tree' || life.type === 'elder') {
+    //         var space = simulation.getOpenSpace8(currentRow, currentCol);
+    //         for (var l=0; l<space.length; l++) {
+    //           if (simulation.randomChance() <= life.parameters.spawn.chance) {
+    //             var newSapling = new ForestLife(life.parameters.spawn.child);
+    //             simulation.spawn(newSapling, space[l][0], space[l][1]);
+    //             break;
+    //           }
+    //         }
+    //       }
+
+    //       // Copy life from old grid to new grid
+    //       simulation.copy(grid, i, j, k, currentRow, currentCol);
+    //     }
+    //   }
+    // }
+
+    //       // Phase 3: lumberjack events
+    //       else if (life.type === 'lumberjack') {
+    //         // Move lumberjack to random adjacent square
+    //         for (var move=0; move<life.parameters.movement; move++) {
+    //           var neighbors = simulation.getNeighbor8(currentRow, currentCol);
+    //           var randIndex = simulation.randomInteger(0, neighbors.length);
+    //           var moveTo = neighbors[randIndex];
+    //           currentRow = moveTo[0];
+    //           currentCol = moveTo[1];
+
+    //           // Check for encounter events
+    //           var content = simulation.getCell(currentRow, currentCol);
+    //           for (var m=0; m<content.length; m++) {
+    //             var encounter = content[m];
+
+    //             // Event: encounters tree or elder
+    //             if (encounter.type === 'tree' || encounter.type === 'elder') {
+    //               move = life.parameters.movement;
+    //               // [TODO] too many issues
+    //               console.log(m);
+    //               console.log(simulation.grid[currentRow][currentCol]);
+    //               simulation.splice(currentRow, currentCol, m);
+    //               simulation.stats.lumber.year++;
+    //               simulation.stats.lumber.total++;
+    //               break;
+    //             }
+    //           }
+    //         }
+    //       }
+
 
   });
 
