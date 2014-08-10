@@ -364,14 +364,37 @@
       'length of openspace for A should be 1');
 
     // Test openspace of D
-    var openSpaceD = demo.getOpenSpace8(1, 1);
-    testSimulation.assertEqual(openspaceA.length, 4,
+    var openspaceD = demo.getOpenSpace8(1, 1);
+    testSimulation.assertEqual(openspaceD.length, 4,
       'length of openspace for D should be 4');
 
     // Test openspace of F
     var openspaceF = demo.getOpenSpace8(rows, cols);
-    testSimulation.assertEqual(openspaceA.length, 3,
+    testSimulation.assertEqual(openspaceF.length, 3,
       'length of openspace for F should be 3');
+  });
+
+  // Test Case: getCell
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+    var cellContent = demo.getCell(0, 0);
+
+    testSimulation.assertEqual(cellContent.length, 0,
+      'length of cell Array should be 0');
+
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 0);
+    cellContent = demo.getCell(0, 0);
+
+    testSimulation.assertEqual(cellContent.length, 2,
+      'length of cell Array should be 2');
+
+    testSimulation.assertEqual(cellContent[0], 'A',
+      'value in index 0 should be A');
+
+    testSimulation.assertEqual(cellContent[1], 'B',
+      'value in index 1 should be B');
   });
 
   // Report testSimulation results

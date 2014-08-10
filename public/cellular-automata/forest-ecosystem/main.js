@@ -5,6 +5,11 @@
  * Challenge Description:
  * http://redd.it/27h53e
  * http://codegolf.stackexchange.com/q/35322/30051
+ *
+ * Suggested Improvements:
+ * (1) Flexible canvas size
+ * (2) Avoid new Array grid during updates
+ * (3) Decouple stats from code
  */
 
 /*---------------JSHint---------------*/
@@ -148,7 +153,7 @@ ForestLife.prototype.grow = function() {
   var emptyPop = gridSize - jackPop - treePop - bearPop;
   var initialForest = [];
   populateArray(initialForest, 'lumberjack', jackPop);
-  populateArray(initialForest, 'sapling', treePop);
+  populateArray(initialForest, 'tree', treePop);
   populateArray(initialForest, 'bear', bearPop);
   populateArray(initialForest, null, emptyPop);
 
@@ -162,6 +167,15 @@ ForestLife.prototype.grow = function() {
   // Define updater
   simulation.setUpdater(function() {
     console.log(simulation.simulation.time);
+
+    // Events for new year
+    if (simulation.simulation.time % 12 === 1) {
+      simulation.stats.lumber.year = 0;
+      simulation.stats.maul.year = 0;
+    }
+
+    console.log(simulation.stats.lumber);
+
 
     // Get reference to old grid and create new grid
     var i, j, k;
@@ -191,13 +205,34 @@ ForestLife.prototype.grow = function() {
             }
           }
 
-          // Phase 3: movement
-          for (var move=0; move<life.parameters.movement; move++) {
-            var neighbors = simulation.getNeighbor8(currentRow, currentCol);
-            var randIndex = simulation.randomInteger(0, neighbors.length);
-            var moveTo = neighbors[randIndex];
-            currentRow = moveTo[0];
-            currentCol = moveTo[1];
+          // Phase 3: lumberjack events
+          else if (life.type === 'lumberjack') {
+            // Move lumberjack to random adjacent square
+            for (var move=0; move<life.parameters.movement; move++) {
+              var neighbors = simulation.getNeighbor8(currentRow, currentCol);
+              var randIndex = simulation.randomInteger(0, neighbors.length);
+              var moveTo = neighbors[randIndex];
+              currentRow = moveTo[0];
+              currentCol = moveTo[1];
+
+              // Check for encounter events
+              var content = simulation.getCell(currentRow, currentCol);
+              for (var m=0; m<content.length; m++) {
+                var encounter = content[m];
+
+                // Event: encounters tree or elder
+                if (encounter.type === 'tree' || encounter.type === 'elder') {
+                  move = life.parameters.movement;
+                  // [TODO] too many issues
+                  console.log(m);
+                  console.log(simulation.grid[currentRow][currentCol]);
+                  simulation.splice(currentRow, currentCol, m);
+                  simulation.stats.lumber.year++;
+                  simulation.stats.lumber.total++;
+                  break;
+                }
+              }
+            }
           }
 
           // Copy life from old grid to new grid
