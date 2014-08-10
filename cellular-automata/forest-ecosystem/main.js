@@ -22,7 +22,6 @@ function ForestLife(lifetype) {
   this.parameters = parameters;
   this.radius = parameters.radius.start;
   this.age = parameters.startAge;
-  this.time = 0;
 }
 
 ForestLife.prototype.definition = {
@@ -165,46 +164,48 @@ ForestLife.prototype.grow = function() {
     console.log(simulation.simulation.time);
 
     // Get reference to old grid and create new grid
-    var i, j, k, life, move, neighbors, randIndex, moveTo;
+    var i, j, k;
     var grid = simulation.getGrid();
     simulation.initializeGrid();
 
-    // Phase 1: movement
+    // Run simulation: row -> col -> index
     for (i=0; i<grid.length; i++) {
       for (j=0; j<grid[i].length; j++) {
         for (k=0; k<grid[i][j].length; k++) {
-          life = grid[i][j][k];
-          if (!life) {continue;}
-          var moveRow = i;
-          var moveCol = j;
+          var life = grid[i][j][k];
+          var currentRow = i;
+          var currentCol = j;
 
-          // Repeat movements
-          for (move=0; move<life.parameters.movement; move++) {
-            neighbors = simulation.getNeighbor8(moveRow, moveCol);
-            randIndex = simulation.randomInteger(0, neighbors.length);
-            moveTo = neighbors[randIndex];
-            moveRow = moveTo[0];
-            moveCol = moveTo[1];
+          // Phase 1: growth
+          life.grow();
+
+          // Phase 2: tree events
+          if (life.type === 'tree' || life.type === 'elder') {
+            var space = simulation.getOpenSpace8(currentRow, currentCol);
+            for (var l=0; l<space.length; l++) {
+              if (simulation.randomChance() <= life.parameters.spawn.chance) {
+                var newSapling = new ForestLife(life.parameters.spawn.child);
+                simulation.spawn(newSapling, space[l][0], space[l][1]);
+                break;
+              }
+            }
           }
 
-          // Copy old cell contents to row and col of new grid
-          simulation.copy(grid, i, j, k, moveRow, moveCol);
+          // Phase 3: movement
+          for (var move=0; move<life.parameters.movement; move++) {
+            var neighbors = simulation.getNeighbor8(currentRow, currentCol);
+            var randIndex = simulation.randomInteger(0, neighbors.length);
+            var moveTo = neighbors[randIndex];
+            currentRow = moveTo[0];
+            currentCol = moveTo[1];
+          }
+
+          // Copy life from old grid to new grid
+          simulation.copy(grid, i, j, k, currentRow, currentCol);
         }
       }
     }
 
-    // Phase 2: events and growth
-    for (i=0; i<simulation.grid.length; i++) {
-      for (j=0; j<simulation.grid[i].length; j++) {
-        for (k=0; k<simulation.grid[i][j].length; k++) {
-          life = simulation.grid[i][j][k];
-          if (!life) {continue;}
-          life.grow();
-        }
-      }
-    }
-
-    // Phase 3: yearly events
   });
 
   console.log(simulation);

@@ -197,6 +197,11 @@ GridSimulation.prototype.run = function() {
 };
 
 
+GridSimulation.prototype.spawn = function(value, row, col) {
+  this.grid[row][col].push(value);
+};
+
+
 GridSimulation.prototype.populate = function(array) {
   var count = 0;
   for (var i=0; i<this.simulation.rows; i++) {
@@ -222,10 +227,15 @@ GridSimulation.prototype.differentCell = function(row, col, i, j) {
 };
 
 
+GridSimulation.prototype.splice = function(row, col, index) {
+  return this.grid[row][col].splice(index, 1);
+};
+
+
 GridSimulation.prototype.move = function(x, y, z, row, col) {
   if (!this.validPosition(row, col) || !this.differentCell(x, y, row, col))
     {return;}
-  var value = this.grid[x][y].splice(z, 1);
+  var value = this.splice(x, y, z);
   this.grid[row][col].push(value[0]);
 };
 
@@ -248,6 +258,11 @@ GridSimulation.prototype.getNeighbor8 = function(row, col) {
 };
 
 
+GridSimulation.prototype.getOpenSpace8 = function(row, col) {
+
+};
+
+
 /******************************
  * GridSimulation - Utilities *
  ******************************/
@@ -259,6 +274,11 @@ GridSimulation.prototype.getGrid = function() {
 
 GridSimulation.prototype.getSize = function() {
   return this.simulation.size;
+};
+
+
+GridSimulation.prototype.randomChance = function() {
+  return Math.random();
 };
 
 
