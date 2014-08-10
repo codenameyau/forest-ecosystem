@@ -27,7 +27,6 @@ function ForestLife(lifetype) {
   this.parameters = parameters;
   this.radius = parameters.radius.start;
   this.age = parameters.startAge;
-  this.time = 0;
 }
 
 ForestLife.prototype.definition = {
@@ -79,7 +78,6 @@ ForestLife.prototype.definition = {
 
 ForestLife.prototype.grow = function() {
   this.age++;
-  this.time++;
 
   // Update the radius of ForestLife
   if (this.parameters.radius.growth) {
@@ -105,8 +103,8 @@ ForestLife.prototype.grow = function() {
   // Specify configuration
   var CONFIG = {
     canvasID: 'imagination',
-    gridRows: 20,
-    gridCols: 20,
+    gridRows: 10,
+    gridCols: 10,
     cellSize: 15,
     delay: 500,
     radius: 5
@@ -179,21 +177,21 @@ ForestLife.prototype.grow = function() {
     // console.log(simulation.stats.lumber);
 
     // Get reference to old grid and create new grid
-    var i, j, k, life;
+    var i, j, k, life, pos;
     var grid = simulation.getGrid();
     var treeList = [];
     var jackList = [];
     var bearList = [];
 
-    // Phase 0: store life into lists
+    // Phase 0: separate life into lists
     for (i=0; i<grid.length; i++) {
       for (j=0; j<grid[i].length; j++) {
         for (k=0; k<grid[i][j].length; k++) {
           life = grid[i][j][k];
           life.grow();
+          life.position = [i, j, k];
           switch (life.type) {
 
-          case 'sapling':
           case 'tree':
           case 'elder':
             treeList.push(life);
@@ -209,30 +207,21 @@ ForestLife.prototype.grow = function() {
       }
     }
 
-    // Phase: tree
-    for (i=0; i<grid.length; i++) {
-      for (j=0; j<grid[i].length; j++) {
-        for (k=0; k<grid[i][j].length; k++) {
-          var life = grid[i][j][k];
-          life.grow();
-
-          // Phase 2: tree events
-          if (life.type === 'sapling' || life.type === 'tree' || life.type === 'elder') {
-            var space = simulation.getOpenSpace8(i, j, grid);
-            for (var l=0; l<space.length; l++) {
-              if (simulation.randomChance() <= life.parameters.spawn.chance) {
-                var newSapling = new ForestLife(life.parameters.spawn.child);
-                simulation.spawn(newSapling, space[l][0], space[l][1]);
-                break;
-              }
-            }
-
-            // Copy life from old grid to new grid
-            simulation.copy(grid, i, j, k, i, j);
-          }
+    // Phase 1: tree events
+    for (i=0; i<treeList.length; i++) {
+      life = treeList[i];
+      pos = life.position;
+      var space = simulation.getOpenSpace8(pos[0], pos[1]);
+      for (var c=0; c<space.length; c++) {
+        if (simulation.randomChance() <= life.parameters.spawn.chance) {
+          var newSapling = new ForestLife(life.parameters.spawn.child);
+          simulation.spawn(newSapling, space[c][0], space[c][1]);
+          break;
         }
       }
     }
+
+    // Phase 2: lumberjack events
 
     // Phase: lumberjack
     // for (i=0; i<grid.length; i++) {
