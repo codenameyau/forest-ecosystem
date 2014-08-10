@@ -205,9 +205,9 @@
     var grid = demo.getGrid();
 
     // Sample values
-    grid[0][0].push('A');
-    grid[0][0].push('B');
-    grid[0][0].push('C');
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 0);
+    demo.spawn('C', 0, 0);
 
     // Move: does not move if same cell
     demo.move(0, 0, 0, 0, 0);
@@ -267,15 +267,19 @@
     // Move: does not move if out of bounds
     var rows = demo.simulation.rows-1;
     var cols = demo.simulation.cols-1;
-    grid[rows][cols].push('D');
+    demo.spawn('D', rows, cols);
+    demo.spawn('E', rows, cols);
     demo.move(0, 0, 0, -1, -1);
     demo.move(rows, cols, 0, 100, 100);
 
     testSimulation.assertEqual(grid[0][0].length, 1,
       'length of top left corner should still be 1');
 
-    testSimulation.assertEqual(grid[rows][cols].length, 1,
-      'length of bottom right cell should still be 1');
+    testSimulation.assertEqual(grid[rows][cols].length, 2,
+      'length of bottom right cell should be 2');
+
+    testSimulation.assertEqual(grid[rows][cols][0], 'D',
+      'value of cell in first index should be D');
   });
 
   // Test Case: getNeighbor8
@@ -325,6 +329,50 @@
       'length of neighbors for right position should be 5');
   });
 
+  // Test Case: unoccupied
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+
+    testSimulation.assertTrue(demo.unoccupied(0, 0),
+      'value of unoccupied should be true');
+
+    demo.spawn('A', 0, 0);
+
+    testSimulation.assertFalse(demo.unoccupied(0, 0),
+      'value of unoccupied should be false');
+  });
+
+  // Test Case: getOpenSpace8
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+    var rows = simulation.simulation.rows-1;
+    var cols = simulation.simulation.cols-1;
+
+    // Sample values
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 1);
+    demo.spawn('C', 0, 2);
+    demo.spawn('D', 1, 1);
+    demo.spawn('E', 2, 1);
+    demo.spawn('F', rows, cols);
+
+    // Test openspace of A
+    var openspaceA = demo.getOpenSpace8(0, 0);
+    testSimulation.assertEqual(openspaceA.length, 1,
+      'length of openspace for A should be 1');
+
+    // Test openspace of D
+    var openSpaceD = demo.getOpenSpace8(1, 1);
+    testSimulation.assertEqual(openspaceA.length, 4,
+      'length of openspace for D should be 4');
+
+    // Test openspace of F
+    var openspaceF = demo.getOpenSpace8(rows, cols);
+    testSimulation.assertEqual(openspaceA.length, 3,
+      'length of openspace for F should be 3');
+  });
 
   // Report testSimulation results
   testSimulation.results();

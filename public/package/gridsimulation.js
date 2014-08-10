@@ -227,6 +227,11 @@ GridSimulation.prototype.differentCell = function(row, col, i, j) {
 };
 
 
+GridSimulation.prototype.unoccupied = function(row, col) {
+  return this.grid[row][col].length === 0;
+};
+
+
 GridSimulation.prototype.splice = function(row, col, index) {
   return this.grid[row][col].splice(index, 1);
 };
@@ -259,7 +264,18 @@ GridSimulation.prototype.getNeighbor8 = function(row, col) {
 
 
 GridSimulation.prototype.getOpenSpace8 = function(row, col) {
-
+  var openSpace = [];
+  for (var i=row-1, nextRow=row+1; i<=nextRow; i++) {
+    for (var j=col-1, nextCol=col+1; j<=nextCol; j++) {
+      if (this.differentCell(row, col, i, j) &&
+          this.validPosition(i, j) &&
+          this.unoccupied(i, j)) {
+        openSpace.push([i, j]);
+      }
+    }
+  }
+  console.log(openSpace);
+  return openSpace;
 };
 
 
