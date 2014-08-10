@@ -164,6 +164,41 @@
       'value of different cell should be true');
   });
 
+  // Test Case: spawn
+  testSimulation.testCase(function() {
+    var demo = new GridSimulation(canvas);
+    var grid = demo.getGrid();
+
+    testSimulation.assertEqual(grid[0][0].length, 0,
+      'length of cell in position (0, 0) should be 0');
+
+    testSimulation.assertEqual(grid[0][1].length, 0,
+      'length of cell in position (0, 1) should be 0');
+
+    testSimulation.assertEqual(grid[1][0].length, 0,
+      'length of cell in position (1, 0) should be 0');
+
+    demo.spawn('A', 0, 0);
+    demo.spawn('B', 0, 0);
+    demo.spawn('C', 0, 1);
+    demo.spawn('D', 1, 0);
+
+    testSimulation.assertEqual(grid[0][0].length, 2,
+      'length of cell in position (0, 0) should be 2');
+
+    testSimulation.assertEqual(grid[0][1].length, 1,
+      'length of cell in position (0, 1) should be 0');
+
+    testSimulation.assertEqual(grid[1][0].length, 1,
+      'length of cell in position (1, 0) should be 0');
+
+    testSimulation.assertEqual(grid[0][0][0], 'A',
+      'value of cell in first index should be A');
+
+    testSimulation.assertEqual(grid[0][0][1], 'B',
+      'value of cell in second index should be B');
+  });
+
   // Test Case: move
   testSimulation.testCase(function() {
     var demo = new GridSimulation(canvas);
