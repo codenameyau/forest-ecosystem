@@ -211,76 +211,67 @@ ForestLife.prototype.grow = function() {
     for (i=0; i<treeList.length; i++) {
       life = treeList[i];
       pos = life.position;
+
+      // Spawn child sapling
       var space = simulation.getOpenSpace8(pos[0], pos[1]);
-      for (var c=0; c<space.length; c++) {
+      for (j=0; j<space.length; j++) {
         if (simulation.randomChance() <= life.parameters.spawn.chance) {
           var newSapling = new ForestLife(life.parameters.spawn.child);
-          simulation.spawn(newSapling, space[c][0], space[c][1]);
+          simulation.spawn(newSapling, space[j][0], space[j][1]);
           break;
         }
       }
     }
 
     // Phase 2: lumberjack events
+    for (i=0; i<jackList.length; i++) {
+      life = jackList[i];
 
-    // Phase: lumberjack
-    // for (i=0; i<grid.length; i++) {
-    //   for (j=0; j<grid[i].length; j++) {
-    //     for (k=0; k<grid[i][j].length; k++) {
-    //       var life = grid[i][j][k];
-    //       var currentRow = i;
-    //       var currentCol = j;
+      // Move lumberjack
+      for (j=0; j<life.parameters.movement; j++) {
+        var posX = life.position[0];
+        var posY = life.position[1];
+        var posZ = life.position[2];
+        var neighbors = simulation.getNeighbor8(pos[0], pos[1]);
+        var randIndex = simulation.randomInteger(0, neighbors.length);
+        var moveTo = neighbors[randIndex];
+        var newX = moveTo[0];
+        var newY = moveTo[1];
+        var newZ = grid[newX][newY].length;
+        life.position = [newX, newY, newZ];
+        simulation.move(posX, posY, posZ, newX, newY);
+      }
+    }
 
-    //       // Phase 1: growth
-    //       life.grow();
+    // // Phase 3: lumberjack events
+    // else if (life.type === 'lumberjack') {
+    //   // Move lumberjack to random adjacent square
+    //   for (var move=0; move<life.parameters.movement; move++) {
+    //     var neighbors = simulation.getNeighbor8(currentRow, currentCol);
+    //     var randIndex = simulation.randomInteger(0, neighbors.length);
+    //     var moveTo = neighbors[randIndex];
+    //     currentRow = moveTo[0];
+    //     currentCol = moveTo[1];
 
-    //       // Phase 2: tree events
-    //       if (life.type === 'tree' || life.type === 'elder') {
-    //         var space = simulation.getOpenSpace8(currentRow, currentCol);
-    //         for (var l=0; l<space.length; l++) {
-    //           if (simulation.randomChance() <= life.parameters.spawn.chance) {
-    //             var newSapling = new ForestLife(life.parameters.spawn.child);
-    //             simulation.spawn(newSapling, space[l][0], space[l][1]);
-    //             break;
-    //           }
-    //         }
+    //     // Check for encounter events
+    //     var content = simulation.getCell(currentRow, currentCol);
+    //     for (var m=0; m<content.length; m++) {
+    //       var encounter = content[m];
+
+    //       // Event: encounters tree or elder
+    //       if (encounter.type === 'tree' || encounter.type === 'elder') {
+    //         move = life.parameters.movement;
+    //         // [TODO] too many issues
+    //         console.log(m);
+    //         console.log(simulation.grid[currentRow][currentCol]);
+    //         simulation.splice(currentRow, currentCol, m);
+    //         simulation.stats.lumber.year++;
+    //         simulation.stats.lumber.total++;
+    //         break;
     //       }
-
-    //       // Copy life from old grid to new grid
-    //       simulation.copy(grid, i, j, k, currentRow, currentCol);
     //     }
     //   }
     // }
-
-    //       // Phase 3: lumberjack events
-    //       else if (life.type === 'lumberjack') {
-    //         // Move lumberjack to random adjacent square
-    //         for (var move=0; move<life.parameters.movement; move++) {
-    //           var neighbors = simulation.getNeighbor8(currentRow, currentCol);
-    //           var randIndex = simulation.randomInteger(0, neighbors.length);
-    //           var moveTo = neighbors[randIndex];
-    //           currentRow = moveTo[0];
-    //           currentCol = moveTo[1];
-
-    //           // Check for encounter events
-    //           var content = simulation.getCell(currentRow, currentCol);
-    //           for (var m=0; m<content.length; m++) {
-    //             var encounter = content[m];
-
-    //             // Event: encounters tree or elder
-    //             if (encounter.type === 'tree' || encounter.type === 'elder') {
-    //               move = life.parameters.movement;
-    //               // [TODO] too many issues
-    //               console.log(m);
-    //               console.log(simulation.grid[currentRow][currentCol]);
-    //               simulation.splice(currentRow, currentCol, m);
-    //               simulation.stats.lumber.year++;
-    //               simulation.stats.lumber.total++;
-    //               break;
-    //             }
-    //           }
-    //         }
-    //       }
 
 
   });
