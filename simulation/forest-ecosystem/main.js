@@ -7,9 +7,9 @@
  * http://codegolf.stackexchange.com/q/35322/30051
  *
  * Suggested Improvements:
- * (1) Flexible canvas size
- * (2) Avoid new Array grid during updates
- * (3) Decouple stats from code
+ * - [done] Avoid new Array grid during updates
+ * - Flexible canvas size
+ * - Decouple stats from code
  */
 
 /*---------------JSHint---------------*/
@@ -107,8 +107,6 @@ ForestLife.prototype.grow = function() {
   /**********************************
    * Forest Ecosystem Configuration *
    **********************************/
-
-  // Simulation options
   var CONFIG = {
     canvasID: 'imagination',
     gridRows: 20,
@@ -162,6 +160,74 @@ ForestLife.prototype.grow = function() {
     simulation.stats.maul.year = 0;
   };
 
+  var lumberEvent = function(x, y, z, lumber) {
+    simulation.splice(x, y, z);
+    simulation.stats.lumber.year += lumber;
+    simulation.stats.lumber.total += lumber;
+  };
+
+  var maulEvent = function(x, y, z) {
+    console.log('Maul!');
+    simulation.splice(x, y, z);
+    simulation.stats.maul.year += 1;
+    simulation.stats.maul.total += 1;
+
+    // Spawn lumberjack if last one is mauled
+  };
+
+  var moveForestLife = function(life) {
+    var posX = life.position[0];
+    var posY = life.position[1];
+    var posZ = simulation.cellIndex(posX, posY, life);
+    var neighbors = simulation.getNeighbor8(posX, posY);
+    var randIndex = simulation.randomInteger(0, neighbors.length);
+    var moveTo = neighbors[randIndex];
+    var newX = moveTo[0];
+    var newY = moveTo[1];
+    simulation.move(posX, posY, posZ, newX, newY);
+    life.position = [newX, newY];
+  };
+
+  var lumberjackEvent = function(life) {
+    var x = life.position[0];
+    var y = life.position[1];
+    var cell = simulation.getCell(x, y);
+    var triggeredEvent = false;
+    for (var i=0; i<cell.length; i++) {
+      var occupant = cell[i];
+
+      // Event: encountered tree -> collect lumber
+      if (occupant.type === 'tree' || occupant.type === 'elder') {
+        lumberEvent(x, y, i, occupant.parameters.score.lumber);
+        triggeredEvent = true;
+      }
+
+      // Event: encountered bear -> maul accident
+      if (occupant.type === 'bear') {
+        maulEvent(x, y, simulation.cellLength(x, y)-1);
+        triggeredEvent = true;
+        break;
+      }
+    }
+    return triggeredEvent;
+  };
+
+  var bearEvent = function(life) {
+    var x = life.position[0];
+    var y = life.position[1];
+    var cell = simulation.getCell(x, y);
+    var triggeredEvent = false;
+    for (var i=0; i<cell.length; i++) {
+      var occupant = cell[i];
+
+      // Event: encountered lumberjack -> maul accident
+      if (occupant.type === 'lumberjack') {
+        maulEvent(x, y, i);
+        triggeredEvent = true;
+      }
+    }
+    return triggeredEvent;
+  };
 
   /***********************************
    * Forest Ecosystem Initialization *
@@ -191,7 +257,7 @@ ForestLife.prototype.grow = function() {
       resetYearlyStats();
     }
 
-    console.log(simulation.stats.maul);
+    // console.log(simulation.stats.maul);
 
     // Get reference to old grid and create new grid
     var i, j, k, life, pos;
@@ -235,51 +301,20 @@ ForestLife.prototype.grow = function() {
     // Phase 2: lumberjack events
     for (i=0; i<jackList.length; i++) {
       life = jackList[i];
-
-      // Move lumberjack
       for (j=0; j<life.parameters.movement; j++) {
-        var triggeredEvent = false;
-        var posX = life.position[0];
-        var posY = life.position[1];
-        var posZ = simulation.cellIndex(posX, posY, life);
-        var neighbors = simulation.getNeighbor8(posX, posY);
-        var randIndex = simulation.randomInteger(0, neighbors.length);
-        var moveTo = neighbors[randIndex];
-        var newX = moveTo[0];
-        var newY = moveTo[1];
-        var newZ = simulation.cellLength(newX, newY);
-        simulation.move(posX, posY, posZ, newX, newY);
-        life.position = [newX, newY];
-
-        var cell = simulation.getCell(newX, newY);
-        for (k=0; k<cell.length; k++) {
-          var occupant = cell[k];
-
-          // Event: encountered tree -> collect lumber
-          if (occupant.type === 'tree' || occupant.type === 'elder') {
-            simulation.splice(newX, newY, k);
-            simulation.stats.lumber.year += occupant.parameters.score.lumber;
-            simulation.stats.lumber.total += occupant.parameters.score.lumber;
-            triggeredEvent = true;
-          }
-
-          // Event: encountered bear -> maul accident
-          if (occupant.type === 'bear') {
-            console.log('Encountered bear!');
-            simulation.splice(newX, newY, newZ);
-            simulation.stats.maul.year += 1;
-            simulation.stats.maul.total += 1;
-            triggeredEvent = true;
-            break;
-          }
-        }
-
-        // Triggered event -> stop movement
-        if (triggeredEvent) {break;}
+        moveForestLife(life);
+        if (lumberjackEvent(life)) {break;}
       }
     }
 
     // Phase 3: bear events
+    for (i=0; i<bearList.length; i++) {
+      life = bearList[i];
+      for (j=0; j<life.parameters.movement; j++) {
+        moveForestLife(life);
+        if (bearEvent(life)) {break;}
+      }
+    }
 
   });
 
