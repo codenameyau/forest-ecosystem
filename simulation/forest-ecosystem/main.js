@@ -8,8 +8,8 @@
  *
  * Suggested Improvements:
  * - [done] Avoid new Array grid during updates
+ * - [done] Decouple stats from code
  * - Flexible canvas size
- * - Decouple stats from code
  */
 
 /*---------------JSHint---------------*/
@@ -81,6 +81,14 @@ ForestLife.prototype.definition = {
 };
 
 
+/********************************
+ * Forest Ecosystem Constructor *
+ ********************************/
+function ForestEcosystem() {
+
+}
+
+
 /****************
  * Main Program *
  ***************/
@@ -94,7 +102,7 @@ ForestLife.prototype.definition = {
     gridRows: 20,
     gridCols: 20,
     cellSize: 15,
-    delay: 500,
+    delay: 100,
     radius: 5
   };
 
@@ -147,9 +155,11 @@ ForestLife.prototype.definition = {
     // Check to see if ForestLife has matured
     if (life.parameters.maturity.age > 0) {
       if (life.age === life.parameters.maturity.age) {
+        updatePopulation(life.type, -1);
         var nextStage = life.parameters.maturity.next;
         life.parameters = life.definition[nextStage];
         life.type = nextStage;
+        updatePopulation(life.type, 1);
       }
     }
   };
@@ -264,7 +274,7 @@ ForestLife.prototype.definition = {
    * Forest Ecosystem Updater *
    ****************************/
   simulation.setUpdater(function() {
-    // console.log(simulation.simulation.time);
+    console.log(simulation.simulation.time);
 
     // Events for new year
     if (simulation.simulation.time % 12 === 1) {
