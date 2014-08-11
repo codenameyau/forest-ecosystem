@@ -84,9 +84,165 @@ ForestLife.prototype.definition = {
 /********************************
  * Forest Ecosystem Constructor *
  ********************************/
-function ForestEcosystem() {
-
+function ForestEcosystem(config) {
+  this.config = config;
+  this.initializeCanvasGUI();
+  this.initializeSimulation();
 }
+
+ForestEcosystem.prototype.initializeCanvasGUI = function() {
+  this.gridCanvas = new GridCanvas(this.config);
+  this.gridCanvas.setBackground('rgba(180, 240, 90, 0.10)');
+  this.gridCanvas.simulationCanvas.initializePause();
+};
+
+ForestEcosystem.prototype.initializeSimulation = function() {
+  this.simulation = new GridSimulation(this.canvas);
+  this.simulation.stats = {
+    lumber: {year: 0, total: 0},
+    maul: {year: 0, total: 0},
+    sapling: 0,
+    tree: 0,
+    elder: 0,
+    lumberjack: 0,
+    bear: 0,
+  };
+};
+
+ForestEcosystem.prototype.populateForest = function() {
+  // Determine population from grid size and starting ratio
+  var gridSize = this.simulation.getSize();
+  var jackPop = Math.round(gridSize * this.config.lumberjackRatio);
+  var treePop = Math.round(gridSize * this.config.treeRatio);
+  var bearPop = Math.round(gridSize * this.config.bearRatio);
+  var emptyPop = gridSize - jackPop - treePop - bearPop;
+  this.updatePopulation('lumberjack', jackPop);
+  this.updatePopulation('tree', treePop);
+  this.updatePopulation('bear', bearPop);
+
+  // Create and shuffle starting population
+  var initialForest = [];
+  this.populateArray(initialForest, 'lumberjack', jackPop);
+  this.populateArray(initialForest, 'tree', treePop);
+  this.populateArray(initialForest, 'bear', bearPop);
+  this.populateArray(initialForest, null, emptyPop);
+  this.simulation.shuffle(initialForest);
+  this.simulation.populate(initialForest);
+};
+
+ForestEcosystem.prototype.updatePopulation = function(type, value) {
+  if (type in this.simulation.stats) {
+    this.simulation.stats[type] += value;
+  }
+};
+
+ForestEcosystem.prototype.growForestLife = function(life) {
+  life.age++;
+
+  // Update the radius of ForestLife
+  if (life.parameters.radius.growth) {
+    life.radius += life.parameters.radius.growth;
+  }
+
+  // Check to see if ForestLife has matured
+  if (life.parameters.maturity.age > 0) {
+    if (life.age === life.parameters.maturity.age) {
+      this.updatePopulation(life.type, -1);
+      var nextStage = life.parameters.maturity.next;
+      life.parameters = life.definition[nextStage];
+      life.type = nextStage;
+      this.updatePopulation(life.type, 1);
+    }
+  }
+};
+
+ForestEcosystem.prototype.populateArray = function(array, type, number) {
+  for (var i=0; i<number; i++) {
+    var life = type ? new ForestLife(type) : null;
+    array.push(life);
+  }
+};
+
+ForestEcosystem.prototype.resetYearlyStats = function() {
+  this.simulation.stats.lumber.year = 0;
+  this.simulation.stats.maul.year = 0;
+};
+
+ForestEcosystem.prototype.spawnForestLife = function(type, x, y) {
+  var newSapling = new ForestLife(type);
+  this.simulation.spawn(newSapling, x, y);
+  this.updatePopulation(type, 1);
+};
+
+ForestEcosystem.prototype.lumberEvent = function(life, x, y, z) {
+  this.simulation.splice(x, y, z);
+  this.simulation.stats.lumber.year += life.parameters.score.lumber;
+  this.simulation.stats.lumber.total += life.parameters.score.lumber;
+  this.updatePopulation(life.type, -1);
+};
+
+ForestEcosystem.prototype.maulEvent = function(x, y, z) {
+  console.log('Maul!');
+  this.simulation.splice(x, y, z);
+  this.simulation.stats.maul.year += 1;
+  this.simulation.stats.maul.total += 1;
+  this.updatePopulation('lumberjack', -1);
+  // Spawn lumberjack if last one is mauled
+};
+
+ForestEcosystem.prototype.moveForestLife = function(life) {
+  var posX = life.position[0];
+  var posY = life.position[1];
+  var posZ = this.simulation.cellIndex(posX, posY, life);
+  var neighbors = this.simulation.getNeighbor8(posX, posY);
+  var randIndex = this.simulation.randomInteger(0, neighbors.length);
+  var moveTo = neighbors[randIndex];
+  var newX = moveTo[0];
+  var newY = moveTo[1];
+  this.simulation.move(posX, posY, posZ, newX, newY);
+  life.position = [newX, newY];
+};
+
+ForestEcosystem.prototype.lumberjackEvent = function(life) {
+  var x = life.position[0];
+  var y = life.position[1];
+  var cell = this.simulation.getCell(x, y);
+  var triggeredEvent = false;
+  for (var i=0; i<cell.length; i++) {
+    var occupant = cell[i];
+
+    // Event: encountered tree -> collect lumber
+    if (occupant.type === 'tree' || occupant.type === 'elder') {
+      this.lumberEvent(occupant, x, y, i);
+      triggeredEvent = true;
+    }
+
+    // Event: encountered bear -> maul accident
+    if (occupant.type === 'bear') {
+      this.maulEvent(x, y, this.simulation.cellLength(x, y)-1);
+      this.triggeredEvent = true;
+      break;
+    }
+  }
+  return triggeredEvent;
+};
+
+ForestEcosystem.prototype.bearEvent = function(life) {
+  var x = life.position[0];
+  var y = life.position[1];
+  var cell = this.simulation.getCell(x, y);
+  var triggeredEvent = false;
+  for (var i=0; i<cell.length; i++) {
+    var occupant = cell[i];
+
+    // Event: encountered lumberjack -> maul accident
+    if (occupant.type === 'lumberjack') {
+      this.maulEvent(x, y, i);
+      triggeredEvent = true;
+    }
+  }
+  return triggeredEvent;
+};
 
 
 /****************
@@ -98,182 +254,27 @@ function ForestEcosystem() {
    * Forest Ecosystem Configuration *
    **********************************/
   var CONFIG = {
+    // GridSimulation
     canvasID: 'imagination',
     gridRows: 20,
     gridCols: 20,
     cellSize: 15,
     delay: 100,
-    radius: 5
-  };
+    radius: 5,
 
-  // Starting population ratio
-  var FOREST = {
+    // Strating population
     treeRatio: 0.5,
     lumberjackRatio: 0.04,
     bearRatio: 0.02,
   };
 
-  // GridCanvas: visualizes the simulation
-  var simulationCanvas = new GridCanvas(CONFIG);
-
-  // GridSimulation: handles the backend simulation
-  var simulation = new GridSimulation(simulationCanvas);
-
-  // Simulation GUI
-  simulationCanvas.setBackground('rgba(180, 240, 90, 0.10)');
-  simulationCanvas.initializePause();
-
-  // Simulation statisitcs
-  simulation.stats = {
-    lumber: {year: 0, total: 0},
-    maul: {year: 0, total: 0},
-    sapling: 0,
-    tree: 0,
-    elder: 0,
-    lumberjack: 0,
-    bear: 0,
-  };
-
-
-  /******************************
-   * Forest Ecosystem Functions *
-   ******************************/
-  var updatePopulation = function(type, value) {
-    if (type in simulation.stats) {
-      simulation.stats[type] += value;
-    }
-  };
-
-  var growForestLife = function(life) {
-    life.age++;
-
-    // Update the radius of ForestLife
-    if (life.parameters.radius.growth) {
-      life.radius += life.parameters.radius.growth;
-    }
-
-    // Check to see if ForestLife has matured
-    if (life.parameters.maturity.age > 0) {
-      if (life.age === life.parameters.maturity.age) {
-        updatePopulation(life.type, -1);
-        var nextStage = life.parameters.maturity.next;
-        life.parameters = life.definition[nextStage];
-        life.type = nextStage;
-        updatePopulation(life.type, 1);
-      }
-    }
-  };
-
-  var populateArray = function(array, type, number) {
-    for (var i=0; i<number; i++) {
-      var life = type ? new ForestLife(type) : null;
-      array.push(life);
-      updatePopulation(type, 1);
-    }
-  };
-
-  var resetYearlyStats = function() {
-    simulation.stats.lumber.year = 0;
-    simulation.stats.maul.year = 0;
-  };
-
-  var spawnForestLife = function(type, x, y) {
-    var newSapling = new ForestLife(type);
-    simulation.spawn(newSapling, x, y);
-    updatePopulation(type, 1);
-  };
-
-  var lumberEvent = function(life, x, y, z) {
-    simulation.splice(x, y, z);
-    simulation.stats.lumber.year += life.parameters.score.lumber;
-    simulation.stats.lumber.total += life.parameters.score.lumber;
-    updatePopulation(life.type, -1);
-  };
-
-  var maulEvent = function(x, y, z) {
-    console.log('Maul!');
-    simulation.splice(x, y, z);
-    simulation.stats.maul.year += 1;
-    simulation.stats.maul.total += 1;
-    updatePopulation('lumberjack', -1);
-    // Spawn lumberjack if last one is mauled
-  };
-
-  var moveForestLife = function(life) {
-    var posX = life.position[0];
-    var posY = life.position[1];
-    var posZ = simulation.cellIndex(posX, posY, life);
-    var neighbors = simulation.getNeighbor8(posX, posY);
-    var randIndex = simulation.randomInteger(0, neighbors.length);
-    var moveTo = neighbors[randIndex];
-    var newX = moveTo[0];
-    var newY = moveTo[1];
-    simulation.move(posX, posY, posZ, newX, newY);
-    life.position = [newX, newY];
-  };
-
-  var lumberjackEvent = function(life) {
-    var x = life.position[0];
-    var y = life.position[1];
-    var cell = simulation.getCell(x, y);
-    var triggeredEvent = false;
-    for (var i=0; i<cell.length; i++) {
-      var occupant = cell[i];
-
-      // Event: encountered tree -> collect lumber
-      if (occupant.type === 'tree' || occupant.type === 'elder') {
-        lumberEvent(occupant, x, y, i);
-        triggeredEvent = true;
-      }
-
-      // Event: encountered bear -> maul accident
-      if (occupant.type === 'bear') {
-        maulEvent(x, y, simulation.cellLength(x, y)-1);
-        triggeredEvent = true;
-        break;
-      }
-    }
-    return triggeredEvent;
-  };
-
-  var bearEvent = function(life) {
-    var x = life.position[0];
-    var y = life.position[1];
-    var cell = simulation.getCell(x, y);
-    var triggeredEvent = false;
-    for (var i=0; i<cell.length; i++) {
-      var occupant = cell[i];
-
-      // Event: encountered lumberjack -> maul accident
-      if (occupant.type === 'lumberjack') {
-        maulEvent(x, y, i);
-        triggeredEvent = true;
-      }
-    }
-    return triggeredEvent;
-  };
 
   /***********************************
    * Forest Ecosystem Initialization *
    ***********************************/
-  var gridSize = simulation.getSize();
-  var jackPop = Math.round(gridSize * FOREST.lumberjackRatio);
-  var treePop = Math.round(gridSize * FOREST.treeRatio);
-  var bearPop = Math.round(gridSize * FOREST.bearRatio);
-  var emptyPop = gridSize - jackPop - treePop - bearPop;
-  var initialForest = [];
-  populateArray(initialForest, 'lumberjack', jackPop);
-  populateArray(initialForest, 'tree', treePop);
-  populateArray(initialForest, 'bear', bearPop);
-  populateArray(initialForest, null, emptyPop);
-  simulation.shuffle(initialForest);
-  simulation.populate(initialForest);
-
-
-  /****************************
-   * Forest Ecosystem Updater *
-   ****************************/
-  simulation.setUpdater(function() {
+  var forest = new ForestEcosystem(CONFIG);
+  forest.populateForest();
+  forest.updater(function() {
     console.log(simulation.simulation.time);
 
     // Events for new year
@@ -342,6 +343,7 @@ function ForestEcosystem() {
 
   });
 
-  console.log(simulation);
-  simulation.run();
+  // Start forest simulation
+  forest.startSimulation();
+
 })();
