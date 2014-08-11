@@ -80,24 +80,6 @@ ForestLife.prototype.definition = {
   },
 };
 
-ForestLife.prototype.grow = function() {
-  this.age++;
-
-  // Update the radius of ForestLife
-  if (this.parameters.radius.growth) {
-    this.radius += this.parameters.radius.growth;
-  }
-
-  // Check to see if ForestLife has matured
-  if (this.parameters.maturity.age > 0) {
-    if (this.age === this.parameters.maturity.age) {
-      var nextStage = this.parameters.maturity.next;
-      this.parameters = this.definition[nextStage];
-      this.type = nextStage;
-    }
-  }
-};
-
 
 /****************
  * Main Program *
@@ -148,10 +130,35 @@ ForestLife.prototype.grow = function() {
   /******************************
    * Forest Ecosystem Functions *
    ******************************/
+  var updatePopulation = function(type, value) {
+    if (type in simulation.stats) {
+      simulation.stats[type] += value;
+    }
+  };
+
+  var growForestLife = function(life) {
+    life.age++;
+
+    // Update the radius of ForestLife
+    if (life.parameters.radius.growth) {
+      life.radius += life.parameters.radius.growth;
+    }
+
+    // Check to see if ForestLife has matured
+    if (life.parameters.maturity.age > 0) {
+      if (life.age === life.parameters.maturity.age) {
+        var nextStage = life.parameters.maturity.next;
+        life.parameters = life.definition[nextStage];
+        life.type = nextStage;
+      }
+    }
+  };
+
   var populateArray = function(array, type, number) {
     for (var i=0; i<number; i++) {
       var life = type ? new ForestLife(type) : null;
       array.push(life);
+      updatePopulation(type, 1);
     }
   };
 
@@ -160,10 +167,17 @@ ForestLife.prototype.grow = function() {
     simulation.stats.maul.year = 0;
   };
 
-  var lumberEvent = function(x, y, z, lumber) {
+  var spawnForestLife = function(type, x, y) {
+    var newSapling = new ForestLife(type);
+    simulation.spawn(newSapling, x, y);
+    updatePopulation(type, 1);
+  };
+
+  var lumberEvent = function(life, x, y, z) {
     simulation.splice(x, y, z);
-    simulation.stats.lumber.year += lumber;
-    simulation.stats.lumber.total += lumber;
+    simulation.stats.lumber.year += life.parameters.score.lumber;
+    simulation.stats.lumber.total += life.parameters.score.lumber;
+    updatePopulation(life.type, -1);
   };
 
   var maulEvent = function(x, y, z) {
@@ -171,7 +185,7 @@ ForestLife.prototype.grow = function() {
     simulation.splice(x, y, z);
     simulation.stats.maul.year += 1;
     simulation.stats.maul.total += 1;
-
+    updatePopulation('lumberjack', -1);
     // Spawn lumberjack if last one is mauled
   };
 
@@ -198,7 +212,7 @@ ForestLife.prototype.grow = function() {
 
       // Event: encountered tree -> collect lumber
       if (occupant.type === 'tree' || occupant.type === 'elder') {
-        lumberEvent(x, y, i, occupant.parameters.score.lumber);
+        lumberEvent(occupant, x, y, i);
         triggeredEvent = true;
       }
 
@@ -255,9 +269,10 @@ ForestLife.prototype.grow = function() {
     // Events for new year
     if (simulation.simulation.time % 12 === 1) {
       resetYearlyStats();
+      // [TODO] maul tracking
     }
 
-    // console.log(simulation.stats.maul);
+    console.log(simulation.stats);
 
     // Get reference to old grid and create new grid
     var i, j, k, life, pos;
@@ -271,15 +286,14 @@ ForestLife.prototype.grow = function() {
         for (k=0; k<grid[i][j].length; k++) {
           life = grid[i][j][k];
           life.position = [i, j];
-          life.grow();
+          growForestLife(life);
 
           // Phase 1: spawn sapling
           if (life.parameters.spawn.chance > 0) {
             var space = simulation.getOpenSpace8(i, j);
             for (var s=0; s<space.length; s++) {
               if (simulation.randomChance() <= life.parameters.spawn.chance) {
-                var newSapling = new ForestLife(life.parameters.spawn.child);
-                simulation.spawn(newSapling, space[s][0], space[s][1]);
+                spawnForestLife(life.parameters.spawn.child, space[s][0], space[s][1]);
                 break;
               }
             }

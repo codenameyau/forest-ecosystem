@@ -40,10 +40,6 @@ PubTest.prototype.results = function() {
   console.log('');
 };
 
-PubTest.prototype.clear = function() {
-  console.clear();
-};
-
 PubTest.prototype.testCase = function(callback) {
   callback();
 };
@@ -61,6 +57,11 @@ PubTest.prototype.assertEqual = function(exprA, exprB, message) {
   this._addCase(assertion, message);
 };
 
+PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
+  var assertion = (exprA !== exprB);
+  this._addCase(assertion, message);
+};
+
 PubTest.prototype.assertTrue = function(expr, message) {
   var assertion = (expr === true);
   this._addCase(assertion, message);
@@ -71,13 +72,13 @@ PubTest.prototype.assertFalse = function(expr, message) {
   this._addCase(assertion, message);
 };
 
-PubTest.prototype.assertNotEqual = function(exprA, exprB, message) {
-  var assertion = (exprA !== exprB);
+PubTest.prototype.assertRange = function(value, min, max, message) {
+  var assertion = (value >= min && value <= max);
   this._addCase(assertion, message);
 };
 
-PubTest.prototype.assertRange = function(value, min, max, message) {
-  var assertion = (value >= min && value <= max);
+PubTest.prototype.assertNotRange = function(value, min, max, message) {
+  var assertion = (value <= min && value >= max);
   this._addCase(assertion, message);
 };
 
