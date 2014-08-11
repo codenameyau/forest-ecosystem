@@ -93,11 +93,11 @@ function ForestEcosystem(config) {
 ForestEcosystem.prototype.initializeCanvasGUI = function() {
   this.gridCanvas = new GridCanvas(this.config);
   this.gridCanvas.setBackground('rgba(180, 240, 90, 0.10)');
-  this.gridCanvas.simulationCanvas.initializePause();
+  this.gridCanvas.initializePause();
 };
 
 ForestEcosystem.prototype.initializeSimulation = function() {
-  this.simulation = new GridSimulation(this.canvas);
+  this.simulation = new GridSimulation(this.gridCanvas);
   this.simulation.stats = {
     lumber: {year: 0, total: 0},
     maul: {year: 0, total: 0},
@@ -244,50 +244,56 @@ ForestEcosystem.prototype.bearEvent = function(life) {
   return triggeredEvent;
 };
 
+ForestEcosystem.prototype.setUpdater = function(callback) {
+  this.simulation.setUpdater(callback);
+};
+
+ForestEcosystem.prototype.startSimulation = function() {
+  this.simulation.run();
+};
+
 
 /****************
  * Main Program *
  ***************/
 (function() {
 
-  /**********************************
-   * Forest Ecosystem Configuration *
-   **********************************/
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 20,
-    gridCols: 20,
+    gridRows: 10,
+    gridCols: 10,
     cellSize: 15,
     delay: 100,
     radius: 5,
 
     // Strating population
     treeRatio: 0.5,
-    lumberjackRatio: 0.04,
-    bearRatio: 0.02,
+    lumberjackRatio: 0.20,
+    bearRatio: 0.20,
   };
 
-
-  /***********************************
-   * Forest Ecosystem Initialization *
-   ***********************************/
   var forest = new ForestEcosystem(CONFIG);
   forest.populateForest();
-  forest.updater(function() {
-    console.log(simulation.simulation.time);
+
+  /****************************
+   * Forest Ecosystem Updater *
+   ****************************/
+  forest.setUpdater(function() {
+
+    // console.log(forest.simulation.simulation.time);
 
     // Events for new year
-    if (simulation.simulation.time % 12 === 1) {
-      resetYearlyStats();
+    if (forest.simulation.simulation.time % 12 === 1) {
+      forest.resetYearlyStats();
       // [TODO] maul tracking
     }
 
-    console.log(simulation.stats);
+    // console.log(forest.simulation.stats);
 
     // Get reference to old grid and create new grid
     var i, j, k, life, pos;
-    var grid = simulation.getGrid();
+    var grid = forest.simulation.getGrid();
     var jackList = [];
     var bearList = [];
 
@@ -297,14 +303,14 @@ ForestEcosystem.prototype.bearEvent = function(life) {
         for (k=0; k<grid[i][j].length; k++) {
           life = grid[i][j][k];
           life.position = [i, j];
-          growForestLife(life);
+          forest.growForestLife(life);
 
           // Phase 1: spawn sapling
           if (life.parameters.spawn.chance > 0) {
-            var space = simulation.getOpenSpace8(i, j);
+            var space = forest.simulation.getOpenSpace8(i, j);
             for (var s=0; s<space.length; s++) {
-              if (simulation.randomChance() <= life.parameters.spawn.chance) {
-                spawnForestLife(life.parameters.spawn.child, space[s][0], space[s][1]);
+              if (forest.simulation.randomChance() <= life.parameters.spawn.chance) {
+                forest.spawnForestLife(life.parameters.spawn.child, space[s][0], space[s][1]);
                 break;
               }
             }
@@ -327,8 +333,8 @@ ForestEcosystem.prototype.bearEvent = function(life) {
     for (i=0; i<jackList.length; i++) {
       life = jackList[i];
       for (j=0; j<life.parameters.movement; j++) {
-        moveForestLife(life);
-        if (lumberjackEvent(life)) {break;}
+        forest.moveForestLife(life);
+        if (forest.lumberjackEvent(life)) {break;}
       }
     }
 
@@ -336,14 +342,12 @@ ForestEcosystem.prototype.bearEvent = function(life) {
     for (i=0; i<bearList.length; i++) {
       life = bearList[i];
       for (j=0; j<life.parameters.movement; j++) {
-        moveForestLife(life);
-        if (bearEvent(life)) {break;}
+        forest.moveForestLife(life);
+        if (forest.bearEvent(life)) {break;}
       }
     }
-
   });
 
-  // Start forest simulation
   forest.startSimulation();
 
 })();

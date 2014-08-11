@@ -112,7 +112,6 @@
       'movement of bear should be 5');
   });
 
-
   // Report test results
   test.results();
 
