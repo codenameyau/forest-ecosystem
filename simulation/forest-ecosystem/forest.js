@@ -86,6 +86,23 @@ ForestLife.prototype.setPosition = function(x, y) {
   this.position = [x, y];
 };
 
+ForestLife.prototype.grow = function() {
+  this.age++;
+
+  // Update the radius of ForestLife
+  if (this.parameters.radius.growth) {
+    this.radius += this.parameters.radius.growth;
+  }
+
+  // Check to see if ForestLife has matured
+  if (this.parameters.maturity.age > 0) {
+    if (this.age === this.parameters.maturity.age) {
+      var nextStage = this.parameters.maturity.next;
+      this.parameters = this.definition[nextStage];
+      this.type = nextStage;
+    }
+  }
+};
 
 /********************************
  * Forest Ecosystem Constructor *
@@ -112,11 +129,6 @@ ForestEcosystem.prototype.initializeSimulation = function() {
   this.stats = {
     lumber: {year: 0, total: 0},
     maul: {year: 0, total: 0},
-    sapling: 0,
-    tree: 0,
-    elder: 0,
-    lumberjack: 0,
-    bear: 0,
   };
 };
 
@@ -134,9 +146,6 @@ ForestEcosystem.prototype.populateForest = function() {
   var treePop = Math.round(gridSize * this.config.treeRatio);
   var bearPop = Math.round(gridSize * this.config.bearRatio);
   var emptyPop = gridSize - jackPop - treePop - bearPop;
-  this.updatePopulation('lumberjack', jackPop);
-  this.updatePopulation('tree', treePop);
-  this.updatePopulation('bear', bearPop);
 
   // Create and shuffle starting population
   var initialForest = [];
@@ -162,12 +171,6 @@ ForestEcosystem.prototype.populateGrid = function(grid, population) {
       }
       count++;
     }
-  }
-};
-
-ForestEcosystem.prototype.updatePopulation = function(type, value) {
-  if (type in this.stats) {
-    this.stats[type] += value;
   }
 };
 
@@ -208,26 +211,6 @@ ForestEcosystem.prototype.startSimulation = function() {
 /***************************
  * Forest Ecosystem Events *
  ***************************/
-ForestEcosystem.prototype.growLife = function(life) {
-  life.age++;
-
-  // Update the radius of ForestLife
-  if (life.parameters.radius.growth) {
-    life.radius += life.parameters.radius.growth;
-  }
-
-  // Check to see if ForestLife has matured
-  if (life.parameters.maturity.age > 0) {
-    if (life.age === life.parameters.maturity.age) {
-      this.updatePopulation(life.type, -1);
-      var nextStage = life.parameters.maturity.next;
-      life.parameters = life.definition[nextStage];
-      life.type = nextStage;
-      this.updatePopulation(life.type, 1);
-    }
-  }
-};
-
 ForestEcosystem.prototype.moveForestLife = function(life) {
   var posX = life.position[0];
   var posY = life.position[1];
@@ -244,7 +227,6 @@ ForestEcosystem.prototype.moveForestLife = function(life) {
 ForestEcosystem.prototype.spawnForestLife = function(type, x, y) {
   var life = new ForestLife(type);
   this.simulation.spawn(life, x, y);
-  this.updatePopulation(type, 1);
 };
 
 ForestEcosystem.prototype.spawnRandom = function(type) {
@@ -265,14 +247,12 @@ ForestEcosystem.prototype.lumberEvent = function(life, x, y, z) {
   this.simulation.splice(x, y, z);
   this.stats.lumber.year += life.parameters.score.lumber;
   this.stats.lumber.total += life.parameters.score.lumber;
-  this.updatePopulation(life.type, -1);
 };
 
 ForestEcosystem.prototype.maulEvent = function(x, y, z) {
   this.simulation.splice(x, y, z);
   this.stats.maul.year += 1;
   this.stats.maul.total += 1;
-  this.updatePopulation('lumberjack', -1);
   this.longLiveHumanity();
 };
 
@@ -375,7 +355,7 @@ ForestEcosystem.prototype.trapBears = function() {
    ****************************/
   forest.setUpdater(function() {
 
-    // console.log(forest.simulation.simulation.time);
+    console.log(forest.simulation.simulation.time);
 
     // Events for new year
     if (forest.simulation.simulation.time % 12 === 1) {
@@ -387,63 +367,81 @@ ForestEcosystem.prototype.trapBears = function() {
 
     // console.log(forest.simulation.stats.lumberjack);
 
-    // Get reference to old grid and create new grid
-    var i, j, k, life, pos;
+    // Get reference to grid
     var grid = forest.simulation.getGrid();
-    var jackQueue = [];
-    var bearQueue = [];
-    this.clearList(jackList);
-    this.clearList(bearList);
+    var dimension = forest.simulation.getDimensions();
+    var rows = dimension[0];
+    var cols = dimension[1];
+    var i, j, k, len, life, pos, x, y, z;
+    // this.clearList(jackList);
+    // this.clearList(bearList);
 
-    // Phase 0: separate life into lists
-    for (i=0; i<grid.length; i++) {
-      for (j=0; j<grid[i].length; j++) {
-        for (k=0; k<grid[i][j].length; k++) {
-          life = grid[i][j][k];
-          life.position = [i, j];
-          forest.growLife(life);
+    // Phase 1: tree events
+    for (i=0, len=forest.population.tree.length; i<len; i++) {
+      life = forest.population.tree[i];
+      life.grow();
 
-          // Phase 1: spawn sapling
-          if (life.parameters.spawn.chance > 0) {
-            var space = forest.simulation.getOpenSpace8(i, j);
-            for (var s=0; s<space.length; s++) {
-              if (forest.simulation.randomChance() <= life.parameters.spawn.chance) {
-                forest.spawnForestLife(life.parameters.spawn.child, space[s][0], space[s][1]);
-                break;
-              }
-            }
-          }
-
-          // Perform lumberjack events later
-          else if (life.type === 'lumberjack') {
-            jackList.push(life);
-          }
-
-          // Perform bear events later
-          else if (life.type === 'bear') {
-            bearList.push(life);
+      // Spawn sapling in adjacent open space
+      if (life.parameters.spawn.chance > 0) {
+        var space = forest.simulation.getOpenSpace8(life.position.x, life.position.y);
+        for (j=0; j<space.length; j++) {
+          if (forest.simulation.randomChance() <= life.parameters.spawn.chance) {
+            forest.spawnForestLife(life.parameters.spawn.child, space[j][0], space[j][1]);
+            break;
           }
         }
       }
     }
 
-    // Phase 2: lumberjack events
-    for (i=0; i<jackList.length; i++) {
-      life = jackList[i];
-      for (j=0; j<life.parameters.movement; j++) {
-        forest.moveForestLife(life);
-        if (forest.lumberjackEvent(life)) {break;}
-      }
-    }
+    // Phase 0: separate life into lists
+    // for (i=0; i<grid.length; i++) {
+    //   for (j=0; j<grid[i].length; j++) {
+    //     for (k=0; k<grid[i][j].length; k++) {
+    //       life = grid[i][j][k];
+    //       life.position = [i, j];
+    //       forest.growLife(life);
 
-    // Phase 3: bear events
-    for (i=0; i<bearList.length; i++) {
-      life = bearList[i];
-      for (j=0; j<life.parameters.movement; j++) {
-        forest.moveForestLife(life);
-        if (forest.bearEvent(life)) {break;}
-      }
-    }
+    //       // Phase 1: spawn sapling
+    //       if (life.parameters.spawn.chance > 0) {
+    //         var space = forest.simulation.getOpenSpace8(i, j);
+    //         for (var s=0; s<space.length; s++) {
+    //           if (forest.simulation.randomChance() <= life.parameters.spawn.chance) {
+    //             forest.spawnForestLife(life.parameters.spawn.child, space[s][0], space[s][1]);
+    //             break;
+    //           }
+    //         }
+    //       }
+
+    //       // Perform lumberjack events later
+    //       else if (life.type === 'lumberjack') {
+    //         jackList.push(life);
+    //       }
+
+    //       // Perform bear events later
+    //       else if (life.type === 'bear') {
+    //         bearList.push(life);
+    //       }
+    //     }
+    //   }
+    // }
+
+    // // Phase 2: lumberjack events
+    // for (i=0; i<jackList.length; i++) {
+    //   life = jackList[i];
+    //   for (j=0; j<life.parameters.movement; j++) {
+    //     forest.moveForestLife(life);
+    //     if (forest.lumberjackEvent(life)) {break;}
+    //   }
+    // }
+
+    // // Phase 3: bear events
+    // for (i=0; i<bearList.length; i++) {
+    //   life = bearList[i];
+    //   for (j=0; j<life.parameters.movement; j++) {
+    //     forest.moveForestLife(life);
+    //     if (forest.bearEvent(life)) {break;}
+    //   }
+    // }
   });
 
   forest.startSimulation();
