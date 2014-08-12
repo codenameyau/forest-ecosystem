@@ -10,8 +10,9 @@
  * - [done] Avoid new Array grid during updates
  * - [done] Decouple stats from code
  * - [done] Modularize into components
- * - Flexible canvas size
+ * - [done] Define species to simplify loops
  * - Elegantly solve loop and splice
+ * - Flexible canvas size
  */
 
 /*---------------JSHint---------------*/
@@ -68,7 +69,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 3, end: 3, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    species: 'human',
+    species: 'lumberjack',
     color: 'rgba(210, 45, 45, 0.5)',
     movement: 3,
     startAge: 20,
@@ -126,7 +127,7 @@ ForestEcosystem.prototype.initializeSimulation = function() {
   this.simulation = new GridSimulation(this.gridCanvas);
   this.population = {
     tree: [],
-    human: [],
+    lumberjack: [],
     bear: [],
   };
   this.stats = {
@@ -231,6 +232,7 @@ ForestEcosystem.prototype.spawnForestLife = function(type, x, y) {
   var life = new ForestLife(type);
   life.position = [x, y];
   this.simulation.spawn(life, x, y);
+  this.populateList(life);
 };
 
 ForestEcosystem.prototype.spawnRandom = function(type) {
@@ -238,11 +240,26 @@ ForestEcosystem.prototype.spawnRandom = function(type) {
   this.spawnForestLife(type, randPos[0], randPos[1]);
 };
 
-ForestEcosystem.prototype.removeRandom = function(forestList) {
+ForestEcosystem.prototype.removeForestLife = function(life, index) {
+  var species = life.parameters.species;
+  var row = life.position[0];
+  var col = life.position[1];
+  var cellIndex = this.simulation.cellIndex(row, col, life);
+  this.simulation.splice(row, col, cellIndex);
+  this.population[species].splice(index, 1);
+};
+
+ForestEcosystem.prototype.removeRandom = function(species) {
+  var population = this.population[species];
+  if (population.length > 0) {
+    var randIndex = this.simulation.randomInteger(0, population.length);
+    var life = population[randIndex];
+    this.removeForestLife(life, randIndex);
+  }
 };
 
 ForestEcosystem.prototype.longLiveHumanity = function() {
-  if (this.stats.lumberjack <= 0) {
+  if (this.population.lumberjack <= 0) {
     this.spawnRandom('lumberjack');
   }
 };
@@ -257,7 +274,6 @@ ForestEcosystem.prototype.maulEvent = function(x, y, z) {
   this.simulation.splice(x, y, z);
   this.stats.maul.year += 1;
   this.stats.maul.total += 1;
-  this.longLiveHumanity();
 };
 
 ForestEcosystem.prototype.lumberjackEvent = function(life) {
@@ -310,24 +326,26 @@ ForestEcosystem.prototype.bearEvent = function(life) {
 
 ForestEcosystem.prototype.manageLumberjacks = function() {
   var lumberCollected = this.stats.lumber.year;
-  var numLumberjacks = this.stats.lumberjack;
+  var jackPopulation = this.population.lumberjack.length;
 
-  // Hire lumberjacks
-  if (lumberCollected >= numLumberjacks) {
-    var hires = Math.floor(lumberCollected / numLumberjacks);
-    for (var i=0; i<hires; i++) { this.spawnRandom('lumberjack'); }
+  // Hire lumberjacks - too high
+  if (lumberCollected >= jackPopulation) {
+    var hires = Math.floor(lumberCollected / jackPopulation);
+    for (var i=0; i<hires; i++) {
+      this.spawnRandom('lumberjack');
+    }
   }
 
   else {
+    console.log('fall short');
     this.removeRandom('lumberjack');
+    this.longLiveHumanity();
   }
 };
 
 ForestEcosystem.prototype.trapBears = function() {
 
 };
-
-
 
 
 /****************
@@ -338,8 +356,8 @@ ForestEcosystem.prototype.trapBears = function() {
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 5,
-    gridCols: 5,
+    gridRows: 10,
+    gridCols: 10,
     cellSize: 15,
     delay: 200,
     radius: 5,
@@ -359,15 +377,7 @@ ForestEcosystem.prototype.trapBears = function() {
    ****************************/
   forest.setUpdater(function() {
 
-    // console.log(forest.simulation.simulation.time);
-
-    // Events for new year
-    if (forest.simulation.simulation.time % 12 === 1) {
-      // forest.manageLumberjacks();
-      // forest.trapBears();
-      forest.resetYearlyStats();
-      // [TODO] maul tracking
-    }
+    console.log(forest.simulation.simulation.time);
 
     // console.log(forest.stats);
 
@@ -396,8 +406,8 @@ ForestEcosystem.prototype.trapBears = function() {
     }
 
     // [Phase 2]: lumberjack events
-    for (i=0, len=forest.population.human.length; i<len; i++) {
-      life = forest.population.human[i];
+    for (i=0, len=forest.population.lumberjack.length; i<len; i++) {
+      life = forest.population.lumberjack[i];
       life.grow();
 
       // Move lumberjack and check events
@@ -419,9 +429,9 @@ ForestEcosystem.prototype.trapBears = function() {
       }
     }
 
-    // Last phase: refill population
+    // Standby Phase: calibrate population to grid
     forest.clearList(forest.population.tree);
-    forest.clearList(forest.population.human);
+    forest.clearList(forest.population.lumberjack);
     forest.clearList(forest.population.bear);
     for (i=0; i<rows; i++) {
       for (j=0; j<cols; j++) {
@@ -431,6 +441,20 @@ ForestEcosystem.prototype.trapBears = function() {
         }
       }
     }
+
+    forest.removeRandom('bear');
+
+    // Respawn lumberjack if population is 0
+    forest.longLiveHumanity();
+
+    // [Phase 4]: tracking events for new year
+    if (forest.simulation.simulation.time % 12 === 0) {
+      forest.manageLumberjacks();
+      // forest.trapBears();
+      forest.resetYearlyStats();
+      // [TODO] maul tracking
+    }
+
   });
 
   forest.startSimulation();
