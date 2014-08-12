@@ -180,6 +180,10 @@ ForestEcosystem.prototype.spawnRandom = function(type) {
   this.spawnForestLife(type, randPos[0], randPos[1]);
 };
 
+ForestEcosystem.prototype.removeRandom = function(type) {
+
+};
+
 ForestEcosystem.prototype.longLiveHumanity = function() {
   if (this.stats.lumberjack <= 0) {
     this.spawnRandom('lumberjack');
@@ -262,17 +266,27 @@ ForestEcosystem.prototype.bearEvent = function(life) {
   return triggeredEvent;
 };
 
-ForestEcosystem.prototype.hireLumberjacks = function() {
+ForestEcosystem.prototype.manageLumberjacks = function() {
   var lumberCollected = this.stats.lumber.year;
-  var lumberjacks = this.stats.lumberjack;
-  if (lumberCollected >= lumberjacks) {
-    var hires = Math.floor(lumberCollected / lumberjacks);
-    this.spawnRandom('lumberjack');
+  var numLumberjacks = this.stats.lumberjack;
+
+  // Hire lumberjacks
+  if (lumberCollected >= numLumberjacks) {
+    var hires = Math.floor(lumberCollected / numLumberjacks);
+    for (var i=0; i<hires; i++) { this.spawnRandom('lumberjack'); }
+  }
+
+  else {
+    this.removeRandom('lumberjack');
   }
 };
 
 ForestEcosystem.prototype.trapBears = function() {
 
+};
+
+ForestEcosystem.prototype.clearList = function(list) {
+  while (list.length > 0) {list.pop();}
 };
 
 ForestEcosystem.prototype.setUpdater = function(callback) {
@@ -316,8 +330,8 @@ ForestEcosystem.prototype.startSimulation = function() {
 
     // Events for new year
     if (forest.simulation.simulation.time % 12 === 1) {
-      forest.hireLumberjacks();
-      forest.trapBears();
+      // forest.manageLumberjacks();
+      // forest.trapBears();
       forest.resetYearlyStats();
       // [TODO] maul tracking
     }
