@@ -264,6 +264,12 @@ ForestEcosystem.prototype.longLiveHumanity = function() {
   }
 };
 
+ForestEcosystem.prototype.lovesAnimals = function() {
+  if (this.population.bear <= 0) {
+    this.spawnRandom('bear');
+  }
+};
+
 ForestEcosystem.prototype.lumberEvent = function(life, x, y, z) {
   this.simulation.splice(x, y, z);
   this.stats.lumber.year += life.parameters.score.lumber;
@@ -324,27 +330,37 @@ ForestEcosystem.prototype.bearEvent = function(life) {
   return triggeredEvent;
 };
 
-ForestEcosystem.prototype.manageLumberjacks = function() {
+ForestEcosystem.prototype.lumberTracking = function() {
   var lumberCollected = this.stats.lumber.year;
-  var jackPopulation = this.population.lumberjack.length;
+  var expectedLumber = this.population.lumberjack.length * 3;
 
-  // Hire lumberjacks - too high
-  if (lumberCollected >= jackPopulation) {
-    var hires = Math.floor(lumberCollected / jackPopulation);
+  console.log('Lumber: ' + lumberCollected);
+  console.log('Quota: ' + expectedLumber);
+
+  // Hire lumberjacks
+  if (lumberCollected >= expectedLumber) {
+    var hires = Math.floor(lumberCollected / expectedLumber);
+    console.log('Hiring: ' + hires);
     for (var i=0; i<hires; i++) {
       this.spawnRandom('lumberjack');
     }
   }
 
   else {
-    console.log('fall short');
     this.removeRandom('lumberjack');
     this.longLiveHumanity();
   }
 };
 
-ForestEcosystem.prototype.trapBears = function() {
-
+ForestEcosystem.prototype.maulTracking = function() {
+  var mauls = this.stats.maul.year;
+  console.log('Mauls: ' + mauls);
+  if (mauls) {
+    this.removeRandom('bear');
+  }
+  else {
+    this.spawnRandom('bear');
+  }
 };
 
 
@@ -356,8 +372,8 @@ ForestEcosystem.prototype.trapBears = function() {
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 10,
-    gridCols: 10,
+    gridRows: 30,
+    gridCols: 30,
     cellSize: 15,
     delay: 200,
     radius: 5,
@@ -376,10 +392,6 @@ ForestEcosystem.prototype.trapBears = function() {
    * Forest Ecosystem Updater *
    ****************************/
   forest.setUpdater(function() {
-
-    console.log(forest.simulation.simulation.time);
-
-    // console.log(forest.stats);
 
     // Get reference to grid
     var grid = forest.simulation.getGrid();
@@ -442,17 +454,16 @@ ForestEcosystem.prototype.trapBears = function() {
       }
     }
 
-    forest.removeRandom('bear');
-
-    // Respawn lumberjack if population is 0
+    // Respawn if population is 0
     forest.longLiveHumanity();
+    forest.lovesAnimals();
 
     // [Phase 4]: tracking events for new year
     if (forest.simulation.simulation.time % 12 === 0) {
-      forest.manageLumberjacks();
-      // forest.trapBears();
+      console.log('\nMonth: ' + forest.simulation.simulation.time);
+      forest.lumberTracking();
+      forest.maulTracking();
       forest.resetYearlyStats();
-      // [TODO] maul tracking
     }
 
   });
