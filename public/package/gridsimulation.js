@@ -208,19 +208,6 @@ GridSimulation.prototype.spawn = function(value, row, col) {
 };
 
 
-GridSimulation.prototype.populate = function(array) {
-  var count = 0;
-  for (var i=0; i<this.simulation.rows; i++) {
-    for (var j=0; j<this.simulation.cols; j++) {
-      if (array[count] !== null) {
-        this.grid[i][j].push(array[count]);
-      }
-      count++;
-    }
-  }
-};
-
-
 GridSimulation.prototype.validPosition = function(row, col) {
   return (row < this.simulation.rows &&
           col < this.simulation.cols &&

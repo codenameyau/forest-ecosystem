@@ -82,6 +82,10 @@ ForestLife.prototype.definition = {
   },
 };
 
+ForestLife.prototype.setPosition = function(x, y) {
+  this.position = [x, y];
+};
+
 
 /********************************
  * Forest Ecosystem Constructor *
@@ -119,6 +123,10 @@ ForestEcosystem.prototype.initializeSimulation = function() {
 /******************************
  * Forest Ecosystem Utilities *
  ******************************/
+ForestEcosystem.prototype.populateList = function(life) {
+  this.population[life.type].push(life);
+};
+
 ForestEcosystem.prototype.populateForest = function() {
   // Determine population from grid size and starting ratio
   var gridSize = this.simulation.getSize();
@@ -137,7 +145,24 @@ ForestEcosystem.prototype.populateForest = function() {
   this.fillArray(initialForest, 'bear', bearPop);
   this.fillArray(initialForest, null, emptyPop);
   this.shuffle(initialForest);
-  this.simulation.populate(initialForest);
+  this.populateGrid(this.simulation.getGrid(), initialForest);
+};
+
+ForestEcosystem.prototype.populateGrid = function(grid, population) {
+  var count = 0;
+  var rows = this.config.gridRows;
+  var cols = this.config.gridCols;
+  for (var i=0; i<rows; i++) {
+    for (var j=0; j<cols; j++) {
+      var life = population[count];
+      if (life) {
+        life.setPosition(i, j);
+        this.populateList(life);
+        grid[i][j].push(life);
+      }
+      count++;
+    }
+  }
 };
 
 ForestEcosystem.prototype.updatePopulation = function(type, value) {
