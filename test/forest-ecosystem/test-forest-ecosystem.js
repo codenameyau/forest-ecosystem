@@ -95,10 +95,25 @@
       'spawn chance of the sapling should be 0.2');
   });
 
-  // Test Case: hireLumberjacks
+  // Test Case: clearList
+  test.testCase(function() {
+    var clearList = ForestEcosystem.prototype.clearList;
+    var demoList = [1, 2, 3, 4, 5];
+
+    test.assertEqual(demoList.length, 5,
+      'length of demoList should be 5');
+
+    clearList(demoList);
+
+    test.assertEqual(demoList.length, 0,
+      'length of demoList should be 0');
+  });
+
+  // Test Case: manageLumberjacks
   test.testCase(function() {
     var forest = new ForestEcosystem(CONFIG);
-    var i, jackPop = 5;
+    var jackPop = 5;
+    var i, hires;
     for (i=0; i<jackPop; i++) { forest.spawnRandom('lumberjack'); }
 
     test.assertEqual(forest.stats.lumberjack, jackPop,
@@ -108,19 +123,22 @@
       'number of lumber collected should be 0');
 
     // Case 1: lumber exceeds population -> hires
-    var collectedLumber = 10;
-    forest.stats.lumber.year = collectedLumber;
-    var hires = Math.floor(collectedLumber / jackPop);
-    for (i=0; i<hires; i++) { forest.hireLumberjacks(); }
+    forest.stats.lumber.year = 10;
+    hires = Math.floor(forest.stats.lumber.year / jackPop);
+    forest.manageLumberjacks();
     jackPop += hires;
 
     test.assertEqual(forest.stats.lumberjack, jackPop,
-      'number of lumberjack should be increased');
+      'number of lumberjack should be increased due to hires');
 
     // Case 2: lumber less than population -> lay offs
+    forest.stats.lumber.year = 2;
+    forest.manageLumberjacks();
+    jackPop -= 1;
 
+    test.assertEqual(forest.stats.lumberjack, jackPop,
+      'number of lumberjack should be one less due to layoff');
   });
-
 
   // Report test results
   test.results();
