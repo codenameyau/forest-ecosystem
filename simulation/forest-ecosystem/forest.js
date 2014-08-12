@@ -100,6 +100,11 @@ ForestEcosystem.prototype.initializeCanvasGUI = function() {
 
 ForestEcosystem.prototype.initializeSimulation = function() {
   this.simulation = new GridSimulation(this.gridCanvas);
+  this.population = {
+    tree: [],
+    lumberjack: [],
+    bear: [],
+  };
   this.stats = {
     lumber: {year: 0, total: 0},
     maul: {year: 0, total: 0},
@@ -111,6 +116,9 @@ ForestEcosystem.prototype.initializeSimulation = function() {
   };
 };
 
+/******************************
+ * Forest Ecosystem Utilities *
+ ******************************/
 ForestEcosystem.prototype.populateForest = function() {
   // Determine population from grid size and starting ratio
   var gridSize = this.simulation.getSize();
@@ -121,13 +129,14 @@ ForestEcosystem.prototype.populateForest = function() {
   this.updatePopulation('lumberjack', jackPop);
   this.updatePopulation('tree', treePop);
   this.updatePopulation('bear', bearPop);
+
   // Create and shuffle starting population
   var initialForest = [];
-  this.populateArray(initialForest, 'lumberjack', jackPop);
-  this.populateArray(initialForest, 'tree', treePop);
-  this.populateArray(initialForest, 'bear', bearPop);
-  this.populateArray(initialForest, null, emptyPop);
-  this.simulation.shuffle(initialForest);
+  this.fillArray(initialForest, 'lumberjack', jackPop);
+  this.fillArray(initialForest, 'tree', treePop);
+  this.fillArray(initialForest, 'bear', bearPop);
+  this.fillArray(initialForest, null, emptyPop);
+  this.shuffle(initialForest);
   this.simulation.populate(initialForest);
 };
 
@@ -137,6 +146,43 @@ ForestEcosystem.prototype.updatePopulation = function(type, value) {
   }
 };
 
+ForestEcosystem.prototype.fillArray = function(array, type, number) {
+  for (var i=0; i<number; i++) {
+    var life = type ? new ForestLife(type) : null;
+    array.push(life);
+  }
+};
+
+ForestEcosystem.prototype.shuffle = function(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+};
+
+ForestEcosystem.prototype.resetYearlyStats = function() {
+  this.stats.lumber.year = 0;
+  this.stats.maul.year = 0;
+};
+
+
+ForestEcosystem.prototype.clearList = function(list) {
+  while (list.length > 0) {list.pop();}
+};
+
+ForestEcosystem.prototype.setUpdater = function(callback) {
+  this.simulation.setUpdater(callback);
+};
+
+ForestEcosystem.prototype.startSimulation = function() {
+  this.simulation.run();
+};
+
+/***************************
+ * Forest Ecosystem Events *
+ ***************************/
 ForestEcosystem.prototype.growLife = function(life) {
   life.age++;
 
@@ -157,16 +203,17 @@ ForestEcosystem.prototype.growLife = function(life) {
   }
 };
 
-ForestEcosystem.prototype.populateArray = function(array, type, number) {
-  for (var i=0; i<number; i++) {
-    var life = type ? new ForestLife(type) : null;
-    array.push(life);
-  }
-};
-
-ForestEcosystem.prototype.resetYearlyStats = function() {
-  this.stats.lumber.year = 0;
-  this.stats.maul.year = 0;
+ForestEcosystem.prototype.moveForestLife = function(life) {
+  var posX = life.position[0];
+  var posY = life.position[1];
+  var posZ = this.simulation.cellIndex(posX, posY, life);
+  var neighbors = this.simulation.getNeighbor8(posX, posY);
+  var randIndex = this.simulation.randomInteger(0, neighbors.length);
+  var moveTo = neighbors[randIndex];
+  var newX = moveTo[0];
+  var newY = moveTo[1];
+  this.simulation.move(posX, posY, posZ, newX, newY);
+  life.position = [newX, newY];
 };
 
 ForestEcosystem.prototype.spawnForestLife = function(type, x, y) {
@@ -180,8 +227,7 @@ ForestEcosystem.prototype.spawnRandom = function(type) {
   this.spawnForestLife(type, randPos[0], randPos[1]);
 };
 
-ForestEcosystem.prototype.removeRandom = function(type) {
-
+ForestEcosystem.prototype.removeRandom = function(forestList) {
 };
 
 ForestEcosystem.prototype.longLiveHumanity = function() {
@@ -203,19 +249,6 @@ ForestEcosystem.prototype.maulEvent = function(x, y, z) {
   this.stats.maul.total += 1;
   this.updatePopulation('lumberjack', -1);
   this.longLiveHumanity();
-};
-
-ForestEcosystem.prototype.moveForestLife = function(life) {
-  var posX = life.position[0];
-  var posY = life.position[1];
-  var posZ = this.simulation.cellIndex(posX, posY, life);
-  var neighbors = this.simulation.getNeighbor8(posX, posY);
-  var randIndex = this.simulation.randomInteger(0, neighbors.length);
-  var moveTo = neighbors[randIndex];
-  var newX = moveTo[0];
-  var newY = moveTo[1];
-  this.simulation.move(posX, posY, posZ, newX, newY);
-  life.position = [newX, newY];
 };
 
 ForestEcosystem.prototype.lumberjackEvent = function(life) {
@@ -285,17 +318,7 @@ ForestEcosystem.prototype.trapBears = function() {
 
 };
 
-ForestEcosystem.prototype.clearList = function(list) {
-  while (list.length > 0) {list.pop();}
-};
 
-ForestEcosystem.prototype.setUpdater = function(callback) {
-  this.simulation.setUpdater(callback);
-};
-
-ForestEcosystem.prototype.startSimulation = function() {
-  this.simulation.run();
-};
 
 
 /****************
@@ -320,6 +343,7 @@ ForestEcosystem.prototype.startSimulation = function() {
 
   var forest = new ForestEcosystem(CONFIG);
   forest.populateForest();
+  console.log(forest);
 
   /****************************
    * Forest Ecosystem Updater *
@@ -341,8 +365,10 @@ ForestEcosystem.prototype.startSimulation = function() {
     // Get reference to old grid and create new grid
     var i, j, k, life, pos;
     var grid = forest.simulation.getGrid();
-    var jackList = [];
-    var bearList = [];
+    var jackQueue = [];
+    var bearQueue = [];
+    this.clearList(jackList);
+    this.clearList(bearList);
 
     // Phase 0: separate life into lists
     for (i=0; i<grid.length; i++) {
