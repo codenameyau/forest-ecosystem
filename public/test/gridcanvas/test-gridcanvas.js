@@ -149,27 +149,6 @@
       'index of C in cell should be 2');
   });
 
-  // Test Case: populate
-  testSimulation.testCase(function() {
-    var demo = new GridSimulation(canvas);
-    var population = [];
-    for (var i=0; i<demo.simulation.size; i++) {population.push(i);}
-    demo.populate(population);
-
-    // Tests that all cells are filled
-    var filled = true;
-    for (var row=0; row<CONFIG.gridRows; row++) {
-      for (var col=0; col<CONFIG.gridCols; col++) {
-        if (demo.grid[row][col].length === 0) {
-          filled = false;
-        }
-      }
-    }
-
-    testSimulation.assertEqual(filled, true,
-      'cells of simulation grid should be filled');
-  });
-
   // Test Case: validPosition
   testSimulation.testCase(function() {
     testSimulation.assertTrue(simulation.validPosition(0, 0),
