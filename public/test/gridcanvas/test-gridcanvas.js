@@ -149,17 +149,6 @@
       'index of C in cell should be 2');
   });
 
-  // Test Case: shuffle
-  testSimulation.testCase(function() {
-    var shuffle = GridSimulation.prototype.shuffle;
-    var testArray = [1, 2, 3, 4, 5];
-    var testLength = testArray.length;
-    shuffle(testArray);
-
-    testSimulation.assertEqual(testArray.length, testLength,
-      'length of shuffled array should be the same as original');
-  });
-
   // Test Case: populate
   testSimulation.testCase(function() {
     var demo = new GridSimulation(canvas);

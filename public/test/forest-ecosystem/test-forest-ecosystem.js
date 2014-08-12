@@ -109,6 +109,22 @@
       'length of demoList should be 0');
   });
 
+  // Test Case: removeRandom
+  test.testCase(function() {
+    var forest = new ForestEcosystem(CONFIG);
+    var jackPop = 5;
+    for (var i=0; i<jackPop; i++) { forest.spawnRandom('lumberjack'); }
+
+    test.assertEqual(forest.stats.lumberjack, jackPop,
+      'number of lumberjacks should be ' + jackPop);
+
+    forest.removeRandom('lumberjack');
+    jackPop -= 2;
+
+    test.assertEqual(forest.stats.lumberjack, jackPop,
+      'number of lumberjacks should be one less');
+  });
+
   // Test Case: manageLumberjacks
   test.testCase(function() {
     var forest = new ForestEcosystem(CONFIG);
