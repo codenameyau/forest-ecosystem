@@ -95,6 +95,32 @@
       'spawn chance of the sapling should be 0.2');
   });
 
+  // Test Case: hireLumberjacks
+  test.testCase(function() {
+    var forest = new ForestEcosystem(CONFIG);
+    var i, jackPop = 5;
+    for (i=0; i<jackPop; i++) { forest.spawnRandom('lumberjack'); }
+
+    test.assertEqual(forest.stats.lumberjack, jackPop,
+      'number of lumberjacks should be ' + jackPop);
+
+    test.assertEqual(forest.stats.lumber.year, 0,
+      'number of lumber collected should be 0');
+
+    // Case 1: lumber exceeds population -> hires
+    var collectedLumber = 10;
+    forest.stats.lumber.year = collectedLumber;
+    var hires = Math.floor(collectedLumber / jackPop);
+    for (i=0; i<hires; i++) { forest.hireLumberjacks(); }
+    jackPop += hires;
+
+    test.assertEqual(forest.stats.lumberjack, jackPop,
+      'number of lumberjack should be increased');
+
+    // Case 2: lumber less than population -> lay offs
+
+  });
+
 
   // Report test results
   test.results();
