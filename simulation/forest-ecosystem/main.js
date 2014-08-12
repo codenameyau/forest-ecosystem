@@ -10,6 +10,7 @@
  * - [done] Avoid new Array grid during updates
  * - [done] Decouple stats from code
  * - Flexible canvas size
+ * - Elegantly solve loop and splice
  */
 
 /*---------------JSHint---------------*/
@@ -35,7 +36,7 @@ ForestLife.prototype.definition = {
     radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
     score: {},
-    color: 'rgba(168, 245, 28, 0.2)',
+    color: 'rgba(200, 250, 28, 0.2)',
     movement: 0,
     startAge: 0,
   },
@@ -45,7 +46,7 @@ ForestLife.prototype.definition = {
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
     score: {lumber: 1},
-    color: 'rgba(100, 200, 40, 0.3)',
+    color: 'rgba(140, 230, 40, 0.3)',
     movement: 0,
     startAge: 12,
   },
@@ -55,7 +56,7 @@ ForestLife.prototype.definition = {
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
     score: {lumber: 2},
-    color: 'rgba(80, 140, 70, 0.3)',
+    color: 'rgba(40, 150, 20, 0.3)',
     movement: 0,
     startAge: 120,
   },
@@ -65,7 +66,7 @@ ForestLife.prototype.definition = {
     radius: {start: 3, end: 3, growth: 0},
     spawn: {chance: 0.0, child: ''},
     score: {maul: 1},
-    color: 'rgba(214, 45, 48, 0.5)',
+    color: 'rgba(210, 45, 45, 0.5)',
     movement: 3,
     startAge: 20,
   },
@@ -74,7 +75,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    color: 'rgba(120, 30, 0, 0.3)',
+    color: 'rgba(120, 50, 30, 0.25)',
     movement: 5,
     startAge: 5,
   },
@@ -119,7 +120,6 @@ ForestEcosystem.prototype.populateForest = function() {
   this.updatePopulation('lumberjack', jackPop);
   this.updatePopulation('tree', treePop);
   this.updatePopulation('bear', bearPop);
-
   // Create and shuffle starting population
   var initialForest = [];
   this.populateArray(initialForest, 'lumberjack', jackPop);
@@ -136,7 +136,7 @@ ForestEcosystem.prototype.updatePopulation = function(type, value) {
   }
 };
 
-ForestEcosystem.prototype.growForestLife = function(life) {
+ForestEcosystem.prototype.growLife = function(life) {
   life.age++;
 
   // Update the radius of ForestLife
@@ -174,6 +174,13 @@ ForestEcosystem.prototype.spawnForestLife = function(type, x, y) {
   this.updatePopulation(type, 1);
 };
 
+ForestEcosystem.prototype.eternalLumberjack = function() {
+  if (this.simulation.stats.lumberjack <= 0) {
+    var randPos = this.simulation.randomPosition();
+    this.spawnForestLife('lumberjack', randPos[0], randPos[1]);
+  }
+};
+
 ForestEcosystem.prototype.lumberEvent = function(life, x, y, z) {
   this.simulation.splice(x, y, z);
   this.simulation.stats.lumber.year += life.parameters.score.lumber;
@@ -182,12 +189,11 @@ ForestEcosystem.prototype.lumberEvent = function(life, x, y, z) {
 };
 
 ForestEcosystem.prototype.maulEvent = function(x, y, z) {
-  console.log('Maul!');
   this.simulation.splice(x, y, z);
   this.simulation.stats.maul.year += 1;
   this.simulation.stats.maul.total += 1;
   this.updatePopulation('lumberjack', -1);
-  // Spawn lumberjack if last one is mauled
+  this.eternalLumberjack();
 };
 
 ForestEcosystem.prototype.moveForestLife = function(life) {
@@ -206,22 +212,26 @@ ForestEcosystem.prototype.moveForestLife = function(life) {
 ForestEcosystem.prototype.lumberjackEvent = function(life) {
   var x = life.position[0];
   var y = life.position[1];
-  var cell = this.simulation.getCell(x, y);
   var triggeredEvent = false;
-  for (var i=0; i<cell.length; i++) {
+  var cell = this.simulation.getCell(x, y);
+  var z = cell.length-1;
+
+  // [Issue] Becareful with looping and splicing
+  for (var i=0, len=cell.length; i<len; i++) {
     var occupant = cell[i];
+    if (occupant === life) {continue;}
 
     // Event: encountered tree -> collect lumber
     if (occupant.type === 'tree' || occupant.type === 'elder') {
-      this.lumberEvent(occupant, x, y, i);
       triggeredEvent = true;
+      this.lumberEvent(occupant, x, y, i);
+      i--;
+      len--;
     }
 
     // Event: encountered bear -> maul accident
     if (occupant.type === 'bear') {
-      this.maulEvent(x, y, this.simulation.cellLength(x, y)-1);
-      this.triggeredEvent = true;
-      break;
+      triggeredEvent = true;
     }
   }
   return triggeredEvent;
@@ -230,15 +240,18 @@ ForestEcosystem.prototype.lumberjackEvent = function(life) {
 ForestEcosystem.prototype.bearEvent = function(life) {
   var x = life.position[0];
   var y = life.position[1];
-  var cell = this.simulation.getCell(x, y);
   var triggeredEvent = false;
-  for (var i=0; i<cell.length; i++) {
+  var cell = this.simulation.getCell(x, y);
+  for (var i=0, len=cell.length; i<len; i++) {
     var occupant = cell[i];
+    if (occupant === life) {continue;}
 
     // Event: encountered lumberjack -> maul accident
     if (occupant.type === 'lumberjack') {
       this.maulEvent(x, y, i);
       triggeredEvent = true;
+      i--;
+      len--;
     }
   }
   return triggeredEvent;
@@ -264,13 +277,13 @@ ForestEcosystem.prototype.startSimulation = function() {
     gridRows: 10,
     gridCols: 10,
     cellSize: 15,
-    delay: 100,
+    delay: 200,
     radius: 5,
 
     // Strating population
     treeRatio: 0.5,
-    lumberjackRatio: 0.20,
-    bearRatio: 0.20,
+    lumberjackRatio: 0.10,
+    bearRatio: 0.02,
   };
 
   var forest = new ForestEcosystem(CONFIG);
@@ -289,7 +302,7 @@ ForestEcosystem.prototype.startSimulation = function() {
       // [TODO] maul tracking
     }
 
-    // console.log(forest.simulation.stats);
+    // console.log(forest.simulation.stats.lumberjack);
 
     // Get reference to old grid and create new grid
     var i, j, k, life, pos;
@@ -303,7 +316,7 @@ ForestEcosystem.prototype.startSimulation = function() {
         for (k=0; k<grid[i][j].length; k++) {
           life = grid[i][j][k];
           life.position = [i, j];
-          forest.growForestLife(life);
+          forest.growLife(life);
 
           // Phase 1: spawn sapling
           if (life.parameters.spawn.chance > 0) {

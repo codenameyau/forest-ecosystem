@@ -198,6 +198,7 @@ GridSimulation.prototype.update = function() {
 
 
 GridSimulation.prototype.run = function() {
+  this.canvas.drawGrid(this.grid);
   window.setInterval(this.update.bind(this), this.canvas.settings.delay);
 };
 
