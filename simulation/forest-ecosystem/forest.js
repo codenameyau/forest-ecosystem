@@ -36,7 +36,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 12, previous: '', next: 'tree'},
     radius: {start: 2, end: 5, growth: 0.25},
     spawn: {chance: 0.0, child: ''},
-    score: {},
+    species: 'tree',
     color: 'rgba(200, 250, 28, 0.2)',
     movement: 0,
     startAge: 0,
@@ -46,6 +46,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
+    species: 'tree',
     score: {lumber: 1},
     color: 'rgba(140, 230, 40, 0.3)',
     movement: 0,
@@ -56,6 +57,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: 'tree', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
+    species: 'tree',
     score: {lumber: 2},
     color: 'rgba(40, 150, 20, 0.3)',
     movement: 0,
@@ -66,7 +68,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 3, end: 3, growth: 0},
     spawn: {chance: 0.0, child: ''},
-    score: {maul: 1},
+    species: 'human',
     color: 'rgba(210, 45, 45, 0.5)',
     movement: 3,
     startAge: 20,
@@ -76,6 +78,7 @@ ForestLife.prototype.definition = {
     maturity: {age: 0, previous: '', next: ''},
     radius: {start: 5, end: 5, growth: 0},
     spawn: {chance: 0.0, child: ''},
+    species: 'bear',
     color: 'rgba(120, 50, 30, 0.25)',
     movement: 5,
     startAge: 5,
@@ -123,7 +126,7 @@ ForestEcosystem.prototype.initializeSimulation = function() {
   this.simulation = new GridSimulation(this.gridCanvas);
   this.population = {
     tree: [],
-    lumberjack: [],
+    human: [],
     bear: [],
   };
   this.stats = {
@@ -136,7 +139,7 @@ ForestEcosystem.prototype.initializeSimulation = function() {
  * Forest Ecosystem Utilities *
  ******************************/
 ForestEcosystem.prototype.populateList = function(life) {
-  this.population[life.type].push(life);
+  this.population[life.parameters.species].push(life);
 };
 
 ForestEcosystem.prototype.populateForest = function() {
@@ -226,6 +229,7 @@ ForestEcosystem.prototype.moveForestLife = function(life) {
 
 ForestEcosystem.prototype.spawnForestLife = function(type, x, y) {
   var life = new ForestLife(type);
+  life.position = [x, y];
   this.simulation.spawn(life, x, y);
 };
 
@@ -334,8 +338,8 @@ ForestEcosystem.prototype.trapBears = function() {
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 10,
-    gridCols: 10,
+    gridRows: 5,
+    gridCols: 5,
     cellSize: 15,
     delay: 200,
     radius: 5,
@@ -355,7 +359,7 @@ ForestEcosystem.prototype.trapBears = function() {
    ****************************/
   forest.setUpdater(function() {
 
-    console.log(forest.simulation.simulation.time);
+    // console.log(forest.simulation.simulation.time);
 
     // Events for new year
     if (forest.simulation.simulation.time % 12 === 1) {
@@ -365,25 +369,23 @@ ForestEcosystem.prototype.trapBears = function() {
       // [TODO] maul tracking
     }
 
-    // console.log(forest.simulation.stats.lumberjack);
+    // console.log(forest.stats);
 
     // Get reference to grid
     var grid = forest.simulation.getGrid();
     var dimension = forest.simulation.getDimensions();
     var rows = dimension[0];
     var cols = dimension[1];
-    var i, j, k, len, life, pos, x, y, z;
-    // this.clearList(jackList);
-    // this.clearList(bearList);
+    var i, j, k, len, life;
 
-    // Phase 1: tree events
+    // [Phase 1]: tree events
     for (i=0, len=forest.population.tree.length; i<len; i++) {
       life = forest.population.tree[i];
       life.grow();
 
       // Spawn sapling in adjacent open space
       if (life.parameters.spawn.chance > 0) {
-        var space = forest.simulation.getOpenSpace8(life.position.x, life.position.y);
+        var space = forest.simulation.getOpenSpace8(life.position[0], life.position[1]);
         for (j=0; j<space.length; j++) {
           if (forest.simulation.randomChance() <= life.parameters.spawn.chance) {
             forest.spawnForestLife(life.parameters.spawn.child, space[j][0], space[j][1]);
@@ -393,55 +395,42 @@ ForestEcosystem.prototype.trapBears = function() {
       }
     }
 
-    // Phase 0: separate life into lists
-    // for (i=0; i<grid.length; i++) {
-    //   for (j=0; j<grid[i].length; j++) {
-    //     for (k=0; k<grid[i][j].length; k++) {
-    //       life = grid[i][j][k];
-    //       life.position = [i, j];
-    //       forest.growLife(life);
+    // [Phase 2]: lumberjack events
+    for (i=0, len=forest.population.human.length; i<len; i++) {
+      life = forest.population.human[i];
+      life.grow();
 
-    //       // Phase 1: spawn sapling
-    //       if (life.parameters.spawn.chance > 0) {
-    //         var space = forest.simulation.getOpenSpace8(i, j);
-    //         for (var s=0; s<space.length; s++) {
-    //           if (forest.simulation.randomChance() <= life.parameters.spawn.chance) {
-    //             forest.spawnForestLife(life.parameters.spawn.child, space[s][0], space[s][1]);
-    //             break;
-    //           }
-    //         }
-    //       }
+      // Move lumberjack and check events
+      for (j=0; j<life.parameters.movement; j++) {
+        forest.moveForestLife(life);
+        if (forest.lumberjackEvent(life)) {break;}
+      }
+    }
 
-    //       // Perform lumberjack events later
-    //       else if (life.type === 'lumberjack') {
-    //         jackList.push(life);
-    //       }
+    // [Phase 3]: bear events
+    for (i=0, len=forest.population.bear.length; i<len; i++) {
+      life = forest.population.bear[i];
+      life.grow();
 
-    //       // Perform bear events later
-    //       else if (life.type === 'bear') {
-    //         bearList.push(life);
-    //       }
-    //     }
-    //   }
-    // }
+      // Move lumberjack and check events
+      for (j=0; j<life.parameters.movement; j++) {
+        forest.moveForestLife(life);
+        if (forest.bearEvent(life)) {break;}
+      }
+    }
 
-    // // Phase 2: lumberjack events
-    // for (i=0; i<jackList.length; i++) {
-    //   life = jackList[i];
-    //   for (j=0; j<life.parameters.movement; j++) {
-    //     forest.moveForestLife(life);
-    //     if (forest.lumberjackEvent(life)) {break;}
-    //   }
-    // }
-
-    // // Phase 3: bear events
-    // for (i=0; i<bearList.length; i++) {
-    //   life = bearList[i];
-    //   for (j=0; j<life.parameters.movement; j++) {
-    //     forest.moveForestLife(life);
-    //     if (forest.bearEvent(life)) {break;}
-    //   }
-    // }
+    // Last phase: refill population
+    forest.clearList(forest.population.tree);
+    forest.clearList(forest.population.human);
+    forest.clearList(forest.population.bear);
+    for (i=0; i<rows; i++) {
+      for (j=0; j<cols; j++) {
+        var cell = grid[i][j];
+        for (k=0, len=cell.length; k<len; k++) {
+          forest.populateList(cell[k]);
+        }
+      }
+    }
   });
 
   forest.startSimulation();
