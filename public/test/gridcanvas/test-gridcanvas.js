@@ -397,6 +397,9 @@
     var openspaceF = demo.getOpenSpace8(rows, cols);
     testSimulation.assertEqual(openspaceF.length, 3,
       'length of openspace for F should be 3');
+
+    testSimulation.assertArrayContains(grid[0][0], 'A',
+      'assert that grid contains A');
   });
 
   // Report testSimulation results
