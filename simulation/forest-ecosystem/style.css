@@ -10,6 +10,6 @@ body {
 
 canvas {
   border: 1px dotted black;
-  height: 650px;
-  width: 740px;
+  height: 640px;
+  width: 720px;
 }

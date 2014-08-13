@@ -4,7 +4,7 @@
  * codenameyau.github.io
  *
  * Description:
- * Grid simulation tool with canvas renderer
+ * Grid simulation library with canvas renderer
  */
 'use strict';
 
@@ -22,15 +22,15 @@ GridCanvas.prototype.initializeSettings = function(settings) {
   this.settings = settings;
   this.checkProperty(this.settings, 'gridRows', 50);
   this.checkProperty(this.settings, 'gridCols', 50);
-  this.checkProperty(this.settings, 'cellSize', 15);
+  this.checkProperty(this.settings, 'cellSize', 30);
   this.checkProperty(this.settings, 'delay', 200);
 };
 
 
 GridCanvas.prototype.initializeCanvas = function() {
   var canvas = document.getElementById(this.settings.canvasID);
-  canvas.width  = this.settings.gridCols * this.settings.cellSize + 5;
-  canvas.height = this.settings.gridRows * this.settings.cellSize + 5;
+  canvas.width  = this.settings.gridCols * this.settings.cellSize + 10;
+  canvas.height = this.settings.gridRows * this.settings.cellSize + 10;
   this.ctx = canvas.getContext('2d');
 };
 
@@ -73,9 +73,8 @@ GridCanvas.prototype.drawGrid = function(grid) {
       for (var k=0, cells=grid[i][j].length; k<cells; k++) {
         var occupant = grid[i][j][k];
         var radius = occupant.radius;
-        var offset = radius + 5;
-        var posX = i*cellSize + offset;
-        var posY = j*cellSize + offset;
+        var posX = i*cellSize + 20;
+        var posY = j*cellSize + radius + 8;
         this.ctx.fillStyle = occupant.parameters.color;
         this.ctx.moveTo(posX, posY);
         this.ctx.beginPath();

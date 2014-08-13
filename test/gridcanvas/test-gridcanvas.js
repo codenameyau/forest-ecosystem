@@ -8,14 +8,15 @@
 (function() {
 
   var CONFIG = {
+    // GridSimulation
     canvasID: 'imagination',
-    gridRows: 10,
-    gridCols: 10,
-    cellSize: 10,
-    delay: 1000,
-    radius: 5,
+    gridRows: 20,
+    gridCols: 20,
+    delay: 125,
+
+    // Strating population
     treeRatio: 0.5,
-    lumberjackRatio: 0.1,
+    lumberjackRatio: 0.10,
     bearRatio: 0.02,
   };
 
