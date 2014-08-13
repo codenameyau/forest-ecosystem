@@ -36,51 +36,151 @@
       'length of demoList should be 0');
   });
 
+  // Test Case: spawnForestLife
+  test.testCase(function() {
+    var forest = new ForestEcosystem(CONFIG);
+
+    test.assertEqual(forest.population.tree.length, 0,
+      'length of starting tree population should be 0');
+
+    test.assertEqual(forest.population.lumberjack.length, 0,
+      'length of starting lumberjack population should be 0');
+
+    test.assertEqual(forest.population.bear.length, 0,
+      'length of starting bear population should be 0');
+
+    forest.spawnForestLife('sapling', 0, 0);
+    forest.spawnForestLife('tree', 0, 1);
+    forest.spawnForestLife('elder', 0, 2);
+    forest.spawnForestLife('lumberjack', 1, 0);
+    forest.spawnForestLife('bear', 1, 1);
+
+    test.assertEqual(forest.population.tree.length, 3,
+      'length of tree population should be 3');
+
+    test.assertEqual(forest.population.lumberjack.length, 1,
+      'length of lumberjack population should be 1');
+
+    test.assertEqual(forest.population.bear.length, 1,
+      'length of bear population should be 1');
+  });
+
+  // Test Case: removeForestLife
+  test.testCase(function() {
+    var forest = new ForestEcosystem(CONFIG);
+    forest.spawnForestLife('sapling', 0, 0);
+    forest.spawnForestLife('tree', 0, 1);
+    forest.spawnForestLife('tree', 0, 2);
+    forest.spawnForestLife('elder', 0, 3);
+    forest.spawnForestLife('lumberjack', 1, 0);
+    forest.spawnForestLife('lumberjack', 1, 1);
+    forest.spawnForestLife('bear', 2, 0);
+    forest.spawnForestLife('bear', 2, 1);
+
+    test.assertEqual(forest.population.tree.length, 4,
+      'length of tree population should be 4');
+
+    test.assertEqual(forest.population.lumberjack.length, 2,
+      'length of lumberjack population should be 2');
+
+    test.assertEqual(forest.population.bear.length, 2,
+      'length of bear population should be 2');
+
+    test.assertEqual(forest.population.tree[0].type, 'sapling',
+      'type of first element in tree population should be sapling');
+
+    forest.removeForestLife(forest.population.tree[0], 0);
+    forest.removeForestLife(forest.population.lumberjack[0], 0);
+    forest.removeForestLife(forest.population.bear[0], 0);
+
+    test.assertEqual(forest.population.tree.length, 3,
+      'length of tree population should be 3');
+
+    test.assertEqual(forest.population.lumberjack.length, 1,
+      'length of lumberjack population should be 1');
+
+    test.assertEqual(forest.population.bear.length, 1,
+      'length of bear population should be 1');
+
+    test.assertEqual(forest.population.tree[0].type, 'tree',
+      'type of first element in tree population should be tree');
+
+  });
+
   // Test Case: removeRandom
   test.testCase(function() {
     var forest = new ForestEcosystem(CONFIG);
     var jackPop = 5;
     for (var i=0; i<jackPop; i++) { forest.spawnRandom('lumberjack'); }
 
-    test.assertEqual(forest.stats.lumberjack, jackPop,
+    test.assertEqual(forest.population.lumberjack.length, jackPop,
       'number of lumberjacks should be ' + jackPop);
 
     forest.removeRandom('lumberjack');
-    jackPop -= 2;
+    jackPop--;
 
-    test.assertEqual(forest.stats.lumberjack, jackPop,
+    test.assertEqual(forest.population.lumberjack.length, jackPop,
       'number of lumberjacks should be one less');
+  });
+
+  // Test Case: moveForestLife
+  test.testCase(function() {
+    var forest = new ForestEcosystem(CONFIG);
+    forest.spawnForestLife('lumberjack', 2, 2);
+    var lumberjack = forest.population.lumberjack[0];
+
+    test.assertEqual(lumberjack.position[0], 2,
+      'position x of lumberjack should be 2');
+
+    test.assertEqual(lumberjack.position[1], 2,
+      'position y of lumberjack should be 2');
+
+    forest.moveForestLife(lumberjack);
+
+    test.assert(lumberjack.position[0] != 2 || lumberjack.position[1] != 2,
+      'position of lumberjack should have changed');
+
+    test.assertRange(lumberjack.position[0], 1, 3,
+      'position x of lumberjack should have only changed by at most 1');
+
+    test.assertRange(lumberjack.position[1], 1, 3,
+      'position y of lumberjack should have only changed by at most 1');
   });
 
   // Test Case: lumberTracking
   test.testCase(function() {
     var forest = new ForestEcosystem(CONFIG);
-    var jackPop = 5;
-    var i, hires;
-    for (i=0; i<jackPop; i++) { forest.spawnRandom('lumberjack'); }
 
-    test.assertEqual(forest.stats.lumberjack, jackPop,
-      'number of lumberjacks should be ' + jackPop);
+    // Case: lumberjack population at least 1 after lumberTracking
+    test.assertEqual(forest.population.lumberjack.length, 0,
+      'population of lumberjack should be 0');
+
+    forest.lumberTracking();
+
+    test.assertEqual(forest.population.lumberjack.length, 1,
+      'population of lumberjack should have increased by 1');
+
+    // Case: lay off 1 lumberjack if quota not met
+    for (var i=0; i<5; i++) { forest.spawnRandom('lumberjack'); }
+    forest.stats.lumber.year = 0;
+
+    test.assertEqual(forest.population.lumberjack.length, 6,
+      'population of lumberjack should be 6');
+
+    forest.lumberTracking();
 
     test.assertEqual(forest.stats.lumber.year, 0,
-      'number of lumber collected should be 0');
+      'number of lumber collected this year should be 0');
 
-    // Case 1: lumber exceeds population -> hires
-    forest.stats.lumber.year = 10;
-    hires = Math.floor(forest.stats.lumber.year / jackPop);
-    forest.lumberTracking();
-    jackPop += hires;
-
-    test.assertEqual(forest.stats.lumberjack, jackPop,
-      'number of lumberjack should be increased due to hires');
-
-    // Case 2: lumber less than population -> lay offs
-    forest.stats.lumber.year = 2;
-    forest.lumberTracking();
-    jackPop -= 1;
-
-    test.assertEqual(forest.stats.lumberjack, jackPop,
+    test.assertEqual(forest.population.lumberjack.length, 5,
       'number of lumberjack should be one less due to layoff');
+
+    // Case: more lumberjack hired if passes quota
+    forest.stats.lumber.year = 200;
+    forest.lumberTracking();
+
+    test.assert(forest.population.lumberjack.length > 6,
+      'population of lumberjack should be greater than 6');
   });
 
   // Report test results

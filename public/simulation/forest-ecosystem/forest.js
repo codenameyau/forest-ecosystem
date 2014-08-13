@@ -331,16 +331,14 @@ ForestEcosystem.prototype.bearEvent = function(life) {
 };
 
 ForestEcosystem.prototype.lumberTracking = function() {
-  var lumberCollected = this.stats.lumber.year;
-  var expectedLumber = this.population.lumberjack.length * 3;
-
-  // console.log('Lumber: ' + lumberCollected);
-  // console.log('Quota: ' + expectedLumber);
+  var lumberCut = this.stats.lumber.year;
+  var lumberjacks = this.population.lumberjack.length;
+  var quota = lumberjacks * 3;
 
   // Hire lumberjacks
-  if (lumberCollected >= expectedLumber) {
-    var hires = Math.floor(lumberCollected / expectedLumber);
-    // console.log('Hiring: ' + hires);
+  if (lumberCut >= quota) {
+    // Prevent infinite loop if lumberjack population is 0
+    var hires = (lumberjacks > 0) ? Math.floor(lumberCut / quota) : 1;
     for (var i=0; i<hires; i++) {
       this.spawnRandom('lumberjack');
     }
@@ -354,7 +352,6 @@ ForestEcosystem.prototype.lumberTracking = function() {
 
 ForestEcosystem.prototype.maulTracking = function() {
   var mauls = this.stats.maul.year;
-  // console.log('Mauls: ' + mauls);
   if (mauls) {
     this.removeRandom('bear');
   }
