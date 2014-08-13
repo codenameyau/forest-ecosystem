@@ -264,7 +264,7 @@ ForestEcosystem.prototype.longLiveHumanity = function() {
   }
 };
 
-ForestEcosystem.prototype.lovesAnimals = function() {
+ForestEcosystem.prototype.longLiveBears = function() {
   if (this.population.bear <= 0) {
     this.spawnRandom('bear');
   }
@@ -363,6 +363,23 @@ ForestEcosystem.prototype.maulTracking = function() {
   }
 };
 
+ForestEcosystem.prototype.calibrationPhase = function() {
+  var dimension = this.simulation.getDimensions();
+  var grid = this.simulation.getGrid();
+  var rows = dimension[0];
+  var cols = dimension[1];
+  this.clearList(this.population.tree);
+  this.clearList(this.population.lumberjack);
+  this.clearList(this.population.bear);
+  for (var i=0; i<rows; i++) {
+    for (var j=0; j<cols; j++) {
+      var cell = grid[i][j];
+      for (var k=0, len=cell.length; k<len; k++) {
+        this.populateList(cell[k]);
+      }
+    }
+  }
+};
 
 /****************
  * Main Program *
@@ -372,11 +389,9 @@ ForestEcosystem.prototype.maulTracking = function() {
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 30,
-    gridCols: 30,
-    cellSize: 15,
+    gridRows: 20,
+    gridCols: 20,
     delay: 200,
-    radius: 5,
 
     // Strating population
     treeRatio: 0.5,
@@ -395,9 +410,6 @@ ForestEcosystem.prototype.maulTracking = function() {
 
     // Get reference to grid
     var grid = forest.simulation.getGrid();
-    var dimension = forest.simulation.getDimensions();
-    var rows = dimension[0];
-    var cols = dimension[1];
     var i, j, k, len, life;
 
     // [Phase 1]: tree events
@@ -441,22 +453,10 @@ ForestEcosystem.prototype.maulTracking = function() {
       }
     }
 
-    // Standby Phase: calibrate population to grid
-    forest.clearList(forest.population.tree);
-    forest.clearList(forest.population.lumberjack);
-    forest.clearList(forest.population.bear);
-    for (i=0; i<rows; i++) {
-      for (j=0; j<cols; j++) {
-        var cell = grid[i][j];
-        for (k=0, len=cell.length; k<len; k++) {
-          forest.populateList(cell[k]);
-        }
-      }
-    }
-
-    // Respawn if population is 0
+    // Calibrate population to grid
+    forest.calibrationPhase();
     forest.longLiveHumanity();
-    forest.lovesAnimals();
+    forest.longLiveBears();
 
     // [Phase 4]: tracking events for new year
     if (forest.simulation.simulation.time % 12 === 0) {
