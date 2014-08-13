@@ -11,8 +11,8 @@
  * - [done] Decouple stats from code
  * - [done] Modularize into components
  * - [done] Define species to simplify loops
+ * - [done] Flexible canvas size
  * - Elegantly solve loop and splice
- * - Flexible canvas size
  */
 
 /*---------------JSHint---------------*/
@@ -35,7 +35,7 @@ function ForestLife(lifetype) {
 ForestLife.prototype.definition = {
   'sapling': {
     maturity: {age: 12, previous: '', next: 'tree'},
-    radius: {start: 2, end: 5, growth: 0.25},
+    radius: {start: 2, end: 11, growth: 0.75},
     spawn: {chance: 0.0, child: ''},
     species: 'tree',
     color: 'rgba(200, 250, 28, 0.2)',
@@ -45,7 +45,7 @@ ForestLife.prototype.definition = {
 
   'tree': {
     maturity: {age: 120, previous: 'sapling', next: 'elder'},
-    radius: {start: 5, end: 5, growth: 0},
+    radius: {start: 11, end: 11, growth: 0},
     spawn: {chance: 0.1, child: 'sapling'},
     species: 'tree',
     score: {lumber: 1},
@@ -56,7 +56,7 @@ ForestLife.prototype.definition = {
 
   'elder': {
     maturity: {age: 0, previous: 'tree', next: ''},
-    radius: {start: 5, end: 5, growth: 0},
+    radius: {start: 11, end: 11, growth: 0},
     spawn: {chance: 0.2, child: 'sapling'},
     species: 'tree',
     score: {lumber: 2},
@@ -67,7 +67,7 @@ ForestLife.prototype.definition = {
 
   'lumberjack': {
     maturity: {age: 0, previous: '', next: ''},
-    radius: {start: 3, end: 3, growth: 0},
+    radius: {start: 6, end: 6, growth: 0},
     spawn: {chance: 0.0, child: ''},
     species: 'lumberjack',
     color: 'rgba(210, 45, 45, 0.5)',
@@ -77,10 +77,10 @@ ForestLife.prototype.definition = {
 
   'bear': {
     maturity: {age: 0, previous: '', next: ''},
-    radius: {start: 5, end: 5, growth: 0},
+    radius: {start: 8.5, end: 8.5, growth: 0},
     spawn: {chance: 0.0, child: ''},
     species: 'bear',
-    color: 'rgba(120, 50, 30, 0.25)',
+    color: 'rgba(120, 50, 30, 0.3)',
     movement: 5,
     startAge: 5,
   },
@@ -334,13 +334,13 @@ ForestEcosystem.prototype.lumberTracking = function() {
   var lumberCollected = this.stats.lumber.year;
   var expectedLumber = this.population.lumberjack.length * 3;
 
-  console.log('Lumber: ' + lumberCollected);
-  console.log('Quota: ' + expectedLumber);
+  // console.log('Lumber: ' + lumberCollected);
+  // console.log('Quota: ' + expectedLumber);
 
   // Hire lumberjacks
   if (lumberCollected >= expectedLumber) {
     var hires = Math.floor(lumberCollected / expectedLumber);
-    console.log('Hiring: ' + hires);
+    // console.log('Hiring: ' + hires);
     for (var i=0; i<hires; i++) {
       this.spawnRandom('lumberjack');
     }
@@ -354,7 +354,7 @@ ForestEcosystem.prototype.lumberTracking = function() {
 
 ForestEcosystem.prototype.maulTracking = function() {
   var mauls = this.stats.maul.year;
-  console.log('Mauls: ' + mauls);
+  // console.log('Mauls: ' + mauls);
   if (mauls) {
     this.removeRandom('bear');
   }
@@ -391,7 +391,7 @@ ForestEcosystem.prototype.calibrationPhase = function() {
     canvasID: 'imagination',
     gridRows: 20,
     gridCols: 20,
-    delay: 200,
+    delay: 125,
 
     // Strating population
     treeRatio: 0.5,
@@ -401,7 +401,7 @@ ForestEcosystem.prototype.calibrationPhase = function() {
 
   var forest = new ForestEcosystem(CONFIG);
   forest.populateForest();
-  console.log(forest);
+  // console.log(forest);
 
   /****************************
    * Forest Ecosystem Updater *
@@ -460,7 +460,7 @@ ForestEcosystem.prototype.calibrationPhase = function() {
 
     // [Phase 4]: tracking events for new year
     if (forest.simulation.simulation.time % 12 === 0) {
-      console.log('\nMonth: ' + forest.simulation.simulation.time);
+      // console.log('\nMonth: ' + forest.simulation.simulation.time);
       forest.lumberTracking();
       forest.maulTracking();
       forest.resetYearlyStats();

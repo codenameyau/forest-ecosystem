@@ -12,11 +12,9 @@
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 10,
-    gridCols: 10,
-    cellSize: 15,
-    delay: 100,
-    radius: 5,
+    gridRows: 20,
+    gridCols: 20,
+    delay: 125,
 
     // Strating population
     treeRatio: 0.5,
@@ -54,7 +52,7 @@
       'number of lumberjacks should be one less');
   });
 
-  // Test Case: manageLumberjacks
+  // Test Case: lumberTracking
   test.testCase(function() {
     var forest = new ForestEcosystem(CONFIG);
     var jackPop = 5;
@@ -70,7 +68,7 @@
     // Case 1: lumber exceeds population -> hires
     forest.stats.lumber.year = 10;
     hires = Math.floor(forest.stats.lumber.year / jackPop);
-    forest.manageLumberjacks();
+    forest.lumberTracking();
     jackPop += hires;
 
     test.assertEqual(forest.stats.lumberjack, jackPop,
@@ -78,7 +76,7 @@
 
     // Case 2: lumber less than population -> lay offs
     forest.stats.lumber.year = 2;
-    forest.manageLumberjacks();
+    forest.lumberTracking();
     jackPop -= 1;
 
     test.assertEqual(forest.stats.lumberjack, jackPop,
