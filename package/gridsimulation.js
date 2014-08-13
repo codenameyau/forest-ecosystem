@@ -22,17 +22,15 @@ GridCanvas.prototype.initializeSettings = function(settings) {
   this.settings = settings;
   this.checkProperty(this.settings, 'gridRows', 50);
   this.checkProperty(this.settings, 'gridCols', 50);
-  this.checkProperty(this.settings, 'cellSize', 5);
-  this.checkProperty(this.settings, 'delay', 500);
-  this.checkProperty(this.settings, 'running', true);
+  this.checkProperty(this.settings, 'cellSize', 15);
+  this.checkProperty(this.settings, 'delay', 200);
 };
 
 
 GridCanvas.prototype.initializeCanvas = function() {
   var canvas = document.getElementById(this.settings.canvasID);
-  // [TODO] Changing size clears canvas
-  // canvas.width  = this.settings.gridCols * this.settings.cellSize;
-  // canvas.height = this.settings.gridRows * this.settings.cellSize;
+  canvas.width  = this.settings.gridCols * this.settings.cellSize + 5;
+  canvas.height = this.settings.gridRows * this.settings.cellSize + 5;
   this.ctx = canvas.getContext('2d');
 };
 
@@ -67,19 +65,21 @@ GridCanvas.prototype.checkProperty = function(object, property, value) {
 
 GridCanvas.prototype.drawGrid = function(grid) {
   var cellSize = this.settings.cellSize;
+  var twoPI = 2*Math.PI;
   this.clearCanvas();
-  this.ctx.strokeStyle = 'rgba(90, 90, 90, 0.5)';
-  for (var i=0; i<grid.length; i++) {
-    for (var j=0; j<grid[i].length; j++) {
-      for (var k=0; k<grid[i][j].length; k++) {
+  this.ctx.strokeStyle = 'rgba(60, 60, 60, 0.5)';
+  for (var i=0, rows=grid.length; i<rows; i++) {
+    for (var j=0, cols=grid[i].length, lenJ; j<cols; j++) {
+      for (var k=0, cells=grid[i][j].length; k<cells; k++) {
         var occupant = grid[i][j][k];
         var radius = occupant.radius;
-        var posX = i*cellSize+this.settings.radius+5;
-        var posY = j*cellSize+radius+5;
+        var offset = radius + 5;
+        var posX = i*cellSize + offset;
+        var posY = j*cellSize + offset;
         this.ctx.fillStyle = occupant.parameters.color;
         this.ctx.moveTo(posX, posY);
         this.ctx.beginPath();
-        this.ctx.arc(posX, posY, radius, 0, 2*Math.PI, true);
+        this.ctx.arc(posX, posY, radius, 0, twoPI, true);
         this.ctx.fill();
         this.ctx.stroke();
       }
@@ -94,15 +94,7 @@ GridCanvas.prototype.setBackground = function(color) {
 
 
 GridCanvas.prototype.clearCanvas = function() {
-  // Store the current transformation matrix
-  this.ctx.save();
-
-  // Use the identity matrix while clearing the canvas
-  this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-  // Restore the transform
-  this.ctx.restore();
 };
 
 
