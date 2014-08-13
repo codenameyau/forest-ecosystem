@@ -183,6 +183,31 @@
       'population of lumberjack should be greater than 6');
   });
 
+  // Test Case: maulTracking
+  test.testCase(function() {
+    var forest = new ForestEcosystem(CONFIG);
+    for (var i=0; i<5; i++) {
+      forest.spawnRandom('bear');
+    }
+
+    test.assertEqual(forest.population.bear.length, 5,
+      'population of bear should be 5');
+
+    // Case: bear should spawn if 0 mauls this year
+    forest.stats.maul.year = 0;
+    forest.maulTracking();
+
+    test.assertEqual(forest.population.bear.length, 6,
+      'population of bear should be 6');
+
+    // Case: bear is removed if maul is greater than 0
+    forest.stats.maul.year = 1;
+    forest.maulTracking();
+
+    test.assertEqual(forest.population.bear.length, 5,
+      'population of bear should be 5 after the bear trap');
+  });
+
   // Report test results
   test.results();
 
