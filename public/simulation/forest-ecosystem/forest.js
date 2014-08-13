@@ -386,14 +386,14 @@ ForestEcosystem.prototype.calibrationPhase = function() {
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 20,
-    gridCols: 20,
+    gridRows: 30,
+    gridCols: 30,
     delay: 125,
 
     // Strating population
     treeRatio: 0.5,
     lumberjackRatio: 0.10,
-    bearRatio: 0.02,
+    bearRatio: 0.05,
   };
 
   var forest = new ForestEcosystem(CONFIG);
