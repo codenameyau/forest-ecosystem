@@ -1,5 +1,5 @@
 body {
-  background: rgb(240, 240, 240);
+  background: rgb(245, 245, 245);
   margin: 0;
   padding: 0;
 }
@@ -15,6 +15,7 @@ canvas {
   margin: 20px 0 0 0;
 }
 
+/* Card UI design */
 .gui-helper {
   float: right;
   margin: 40px 20px 20px 0;
@@ -25,14 +26,33 @@ canvas {
 .gui-card {
   background: rgb(255, 255, 255);
   width: 200px;
+  margin: 10px;
+  font: Arial;
+  letter-spacing: 1px;
+  color: #4c4c4c;
+  font-size: 15px;
 }
 
 .gui-card-container {
-  border-top: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   padding: 10px;
 }
 
-.gui-label {
-  margin: 30px 0 10px 0;
+.gui-card-label {
+  margin: 0px 0 10px 0;
+  border-bottom: 1px solid #dadada;
+  width: 100%;
+}
+
+/* Simulation */
+.simulation-lumberjack-label {
+  color: #A31919;
+}
+
+.simulation-tree-label {
+  color: #339933;
+}
+
+.simulation-bear-label {
+  color: #806953;
 }
