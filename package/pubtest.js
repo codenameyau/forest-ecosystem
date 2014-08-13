@@ -119,8 +119,8 @@ PubTest.prototype.assertProperty = function(object, property, message) {
  * PubTest - Internal Methods *
  ******************************/
 PubTest.prototype._addCase = function(assertion, message) {
-  message = message || 'test case';
   this.cases.total++;
+  message = message || 'test case ' + this.cases.total;
   console.assert(assertion, message);
   if (assertion) { this._passed(); }
   else { this._failed(); }

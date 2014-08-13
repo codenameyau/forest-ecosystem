@@ -7,11 +7,12 @@
  * http://codegolf.stackexchange.com/q/35322/30051
  *
  * Suggested Improvements:
+ * - [done] Forest life definition prototype
  * - [done] Avoid new Array grid during updates
  * - [done] Decouple stats from code
  * - [done] Modularize into components
  * - [done] Define species to simplify loops
- * - [done] Flexible canvas size
+ * - [done] Automatic canvas size and zoom
  * - Elegantly solve loop and splice
  */
 
@@ -38,7 +39,7 @@ ForestLife.prototype.definition = {
     radius: {start: 2, end: 11, growth: 0.75},
     spawn: {chance: 0.0, child: ''},
     species: 'tree',
-    color: 'rgba(200, 250, 28, 0.2)',
+    color: 'rgba(200, 250, 28, 0.3)',
     movement: 0,
     startAge: 0,
   },
@@ -49,7 +50,7 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.1, child: 'sapling'},
     species: 'tree',
     score: {lumber: 1},
-    color: 'rgba(140, 230, 40, 0.3)',
+    color: 'rgba(140, 230, 40, 0.4)',
     movement: 0,
     startAge: 12,
   },
@@ -60,7 +61,7 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.2, child: 'sapling'},
     species: 'tree',
     score: {lumber: 2},
-    color: 'rgba(40, 150, 20, 0.3)',
+    color: 'rgba(60, 180, 30, 0.4)',
     movement: 0,
     startAge: 120,
   },
@@ -80,7 +81,7 @@ ForestLife.prototype.definition = {
     radius: {start: 8.5, end: 8.5, growth: 0},
     spawn: {chance: 0.0, child: ''},
     species: 'bear',
-    color: 'rgba(120, 50, 30, 0.3)',
+    color: 'rgba(200, 180, 150, 0.8)',
     movement: 5,
     startAge: 5,
   },
@@ -118,13 +119,12 @@ function ForestEcosystem(config) {
 }
 
 ForestEcosystem.prototype.initializeCanvasGUI = function() {
-  this.gridCanvas = new GridCanvas(this.config);
-  this.gridCanvas.setBackground('rgba(180, 240, 90, 0.10)');
-  this.gridCanvas.initializePause();
+  this.canvas = new GridCanvas(this.config);
+  this.canvas.setBackground('rgba(180, 240, 90, 0.10)');
 };
 
 ForestEcosystem.prototype.initializeSimulation = function() {
-  this.simulation = new GridSimulation(this.gridCanvas);
+  this.simulation = new GridSimulation(this.canvas);
   this.population = {
     tree: [],
     lumberjack: [],
@@ -333,7 +333,7 @@ ForestEcosystem.prototype.bearEvent = function(life) {
 ForestEcosystem.prototype.lumberTracking = function() {
   var lumberCut = this.stats.lumber.year;
   var lumberjacks = this.population.lumberjack.length;
-  var quota = lumberjacks * 3;
+  var quota = lumberjacks * 2;
 
   // Hire lumberjacks
   if (lumberCut >= quota) {
@@ -351,8 +351,7 @@ ForestEcosystem.prototype.lumberTracking = function() {
 };
 
 ForestEcosystem.prototype.maulTracking = function() {
-  var mauls = this.stats.maul.year;
-  if (mauls) {
+  if (this.stats.maul.year > 0) {
     this.removeRandom('bear');
   }
   else {
@@ -360,7 +359,7 @@ ForestEcosystem.prototype.maulTracking = function() {
   }
 };
 
-ForestEcosystem.prototype.calibrationPhase = function() {
+ForestEcosystem.prototype.calibrateGrid = function() {
   var dimension = this.simulation.getDimensions();
   var grid = this.simulation.getGrid();
   var rows = dimension[0];
@@ -386,8 +385,8 @@ ForestEcosystem.prototype.calibrationPhase = function() {
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 30,
-    gridCols: 30,
+    gridRows: 25,
+    gridCols: 25,
     delay: 125,
 
     // Strating population
@@ -397,8 +396,8 @@ ForestEcosystem.prototype.calibrationPhase = function() {
   };
 
   var forest = new ForestEcosystem(CONFIG);
+  forest.canvas.initializePause();
   forest.populateForest();
-  // console.log(forest);
 
   /****************************
    * Forest Ecosystem Updater *
@@ -451,13 +450,13 @@ ForestEcosystem.prototype.calibrationPhase = function() {
     }
 
     // Calibrate population to grid
-    forest.calibrationPhase();
+    forest.calibrateGrid();
     forest.longLiveHumanity();
     forest.longLiveBears();
 
     // [Phase 4]: tracking events for new year
     if (forest.simulation.simulation.time % 12 === 0) {
-      // console.log('\nMonth: ' + forest.simulation.simulation.time);
+      console.log('Month: ' + forest.simulation.simulation.time);
       forest.lumberTracking();
       forest.maulTracking();
       forest.resetYearlyStats();
