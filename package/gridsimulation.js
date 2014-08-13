@@ -41,12 +41,17 @@ GridCanvas.prototype.initializePause = function() {
   container.style.position = 'fixed';
   container.style.top = '0px';
   container.style.right = '10px';
+  container.style.width = '100px';
+  container.style.height = '100px';
 
   var header = document.createElement('h3');
   header.id = 'paused-header';
-  header.innerText = 'Paused';
+  header.textContent = 'Paused';
   header.style.color = '#BC2C2C';
   header.style.letterSpacing = '1px';
+  header.style.display = 'block';
+  header.style.width = 'auto';
+  header.style.height = 'auto';
 
   container.appendChild(header);
   document.body.appendChild(container);
@@ -99,15 +104,15 @@ GridCanvas.prototype.clearCanvas = function() {
 
 GridCanvas.prototype.showPaused = function() {
   var element = document.getElementById('paused-header');
-  element.innerText = 'Paused';
-  element.style.color = '#BC2C2C';
+  element.textContent = 'Paused';
+  element.style.color = '#BC3C2C';
 };
 
 
 GridCanvas.prototype.showRunning = function() {
   var element = document.getElementById('paused-header');
-  element.innerText = 'Running';
-  element.style.color = '#2CBC2C';
+  element.textContent = 'Running';
+  element.style.color = '#2CAC2C';
 };
 
 

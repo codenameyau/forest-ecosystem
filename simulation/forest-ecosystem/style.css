@@ -1,15 +1,38 @@
 body {
+  background: rgb(240, 240, 240);
   margin: 0;
   padding: 0;
-}
-
-.container {
-  margin: 20px 0 20px 0;
-  text-align: center;
 }
 
 canvas {
   border: 1px dashed #454545;
   height: 640px;
   width: 720px;
+}
+
+.container {
+  text-align: center;
+  margin: 20px 0 0 0;
+}
+
+.gui-helper {
+  float: right;
+  margin: 40px 20px 20px 0;
+  text-align: left;
+  line-height: 25px;
+}
+
+.gui-card {
+  background: rgb(255, 255, 255);
+  width: 200px;
+}
+
+.gui-card-container {
+  border-top: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  padding: 10px;
+}
+
+.gui-label {
+  margin: 30px 0 10px 0;
 }

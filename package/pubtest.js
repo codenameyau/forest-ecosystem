@@ -13,8 +13,7 @@
  * PubTest Constructor *
  ***********************/
 function PubTest(name) {
-  name = name || 'Test';
-  this.testing = name;
+  this.testing = name || 'Test';
   this.cases = {
     total: 0,
     pass: 0,
@@ -106,6 +105,11 @@ PubTest.prototype.assertInteger = function(value, message) {
 
 PubTest.prototype.assertArray = function(value, message) {
   var assertion = (value instanceof Array);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertArrayContains = function(array, value, message) {
+  var assertion = (array.indexOf(value) < 0) ? false : true;
   this._addCase(assertion, message);
 };
 

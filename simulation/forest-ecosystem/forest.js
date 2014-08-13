@@ -39,7 +39,7 @@ ForestLife.prototype.definition = {
     radius: {start: 2, end: 11, growth: 0.75},
     spawn: {chance: 0.0, child: ''},
     species: 'tree',
-    color: 'rgba(200, 250, 28, 0.3)',
+    color: 'rgba(200, 250, 28, 0.6)',
     movement: 0,
     startAge: 0,
   },
@@ -50,7 +50,7 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.1, child: 'sapling'},
     species: 'tree',
     score: {lumber: 1},
-    color: 'rgba(140, 230, 40, 0.4)',
+    color: 'rgba(140, 230, 40, 0.6)',
     movement: 0,
     startAge: 12,
   },
@@ -61,7 +61,7 @@ ForestLife.prototype.definition = {
     spawn: {chance: 0.2, child: 'sapling'},
     species: 'tree',
     score: {lumber: 2},
-    color: 'rgba(60, 180, 30, 0.4)',
+    color: 'rgba(60, 180, 30, 0.6)',
     movement: 0,
     startAge: 120,
   },
@@ -81,7 +81,7 @@ ForestLife.prototype.definition = {
     radius: {start: 8.5, end: 8.5, growth: 0},
     spawn: {chance: 0.0, child: ''},
     species: 'bear',
-    color: 'rgba(200, 180, 150, 0.8)',
+    color: 'rgba(220, 180, 150, 0.8)',
     movement: 5,
     startAge: 5,
   },
@@ -395,6 +395,7 @@ ForestEcosystem.prototype.calibrateGrid = function() {
     bearRatio: 0.05,
   };
 
+  // Create forest ecosystem
   var forest = new ForestEcosystem(CONFIG);
   forest.canvas.initializePause();
   forest.populateForest();
@@ -456,7 +457,6 @@ ForestEcosystem.prototype.calibrateGrid = function() {
 
     // [Phase 4]: tracking events for new year
     if (forest.simulation.simulation.time % 12 === 0) {
-      console.log('Month: ' + forest.simulation.simulation.time);
       forest.lumberTracking();
       forest.maulTracking();
       forest.resetYearlyStats();
