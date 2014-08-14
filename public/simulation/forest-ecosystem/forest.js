@@ -126,8 +126,8 @@ ForestEcosystem.prototype.initializeSimulation = function() {
     bear: [],
   };
   this.stats = {
-    lumber: {year: 0, total: 0},
-    maul: {year: 0, total: 0},
+    lumber: 0,
+    maul: 0,
   };
 };
 
@@ -190,8 +190,8 @@ ForestEcosystem.prototype.shuffle = function(array) {
 };
 
 ForestEcosystem.prototype.resetYearlyStats = function() {
-  this.stats.lumber.year = 0;
-  this.stats.maul.year = 0;
+  this.stats.lumber = 0;
+  this.stats.maul = 0;
 };
 
 
@@ -267,14 +267,12 @@ ForestEcosystem.prototype.longLiveBears = function() {
 
 ForestEcosystem.prototype.lumberEvent = function(life, x, y, z) {
   this.simulation.splice(x, y, z);
-  this.stats.lumber.year += life.parameters.score.lumber;
-  this.stats.lumber.total += life.parameters.score.lumber;
+  this.stats.lumber += life.parameters.score.lumber;
 };
 
 ForestEcosystem.prototype.maulEvent = function(x, y, z) {
   this.simulation.splice(x, y, z);
-  this.stats.maul.year += 1;
-  this.stats.maul.total += 1;
+  this.stats.maul += 1;
 };
 
 ForestEcosystem.prototype.lumberjackEvent = function(life) {
@@ -326,7 +324,7 @@ ForestEcosystem.prototype.bearEvent = function(life) {
 };
 
 ForestEcosystem.prototype.lumberTracking = function() {
-  var lumberCut = this.stats.lumber.year;
+  var lumberCut = this.stats.lumber;
   var lumberjacks = this.population.lumberjack.length;
   var quota = lumberjacks * 2;
 
@@ -346,7 +344,7 @@ ForestEcosystem.prototype.lumberTracking = function() {
 };
 
 ForestEcosystem.prototype.maulTracking = function() {
-  if (this.stats.maul.year > 0) {
+  if (this.stats.maul > 0) {
     this.removeRandom('bear');
   }
   else {
@@ -376,19 +374,17 @@ ForestEcosystem.prototype.calibrateGrid = function() {
  * Forest Ecosystem Listeners *
  ******************************/
 ForestEcosystem.prototype.enableEventHandlers = function() {
-  // window.addEventListener('focus', this.resume.bind(this), false);
-  // window.addEventListener('blur', this.pause.bind(this), false);
+  // window.addEventListener('focus', this.simulation.resume.bind(this), false);
+  // window.addEventListener('blur', this.simulation.pause.bind(this), false);
   window.addEventListener('keydown', this.enableKeyboardInput.bind(this), false);
 };
 
 ForestEcosystem.prototype.enableKeyboardInput = function(event) {
   switch (event.which) {
-
   case 32: // spacebar
     event.preventDefault();
     this.togglePause();
     break;
-
   }
 };
 
@@ -416,6 +412,25 @@ ForestEcosystem.prototype.showRunning = function() {
   element.style.color = '#2CAC2C';
 };
 
+ForestEcosystem.prototype.updateStats = function() {
+  var yearStat   = document.getElementById('simulation-year');
+  var monthStat  = document.getElementById('simulation-month');
+  var jackStat   = document.getElementById('simulation-lumberjack');
+  var treeStat   = document.getElementById('simulation-tree');
+  var bearStat   = document.getElementById('simulation-bear');
+  var lumberStat = document.getElementById('simulation-lumber');
+  var maulStat   = document.getElementById('simulation-maul');
+
+  // Calculate stats for DOM elements
+  yearStat.textContent = Math.floor(this.simulation.simulation.time / 12);
+  monthStat.textContent = this.simulation.simulation.time % 12 + 1;
+  jackStat.textContent = this.population.lumberjack.length;
+  treeStat.textContent = this.population.tree.length;
+  bearStat.textContent = this.population.bear.length;
+  lumberStat.textContent = this.stats.lumber;
+  maulStat.textContent = this.stats.maul;
+};
+
 /****************
  * Main Program *
  ***************/
@@ -428,7 +443,7 @@ ForestEcosystem.prototype.showRunning = function() {
     gridCols: 25,
     delay: 125,
 
-    // Strating population
+    // Starting population
     treeRatio: 0.5,
     lumberjackRatio: 0.10,
     bearRatio: 0.05,
@@ -493,6 +508,7 @@ ForestEcosystem.prototype.showRunning = function() {
     forest.calibrateGrid();
     forest.longLiveHumanity();
     forest.longLiveBears();
+    forest.updateStats();
 
     // [Phase 4]: tracking events for new year
     if (forest.simulation.simulation.time % 12 === 0) {
@@ -504,5 +520,4 @@ ForestEcosystem.prototype.showRunning = function() {
   });
 
   forest.startSimulation();
-
 })();
