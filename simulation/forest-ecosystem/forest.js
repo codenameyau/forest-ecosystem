@@ -128,6 +128,10 @@ ForestEcosystem.prototype.initializeSimulation = function() {
   this.stats = {
     lumber: 0,
     maul: 0,
+    revenue: 0,
+    expense: 0,
+    income: 0,
+    score: 0,
   };
 };
 
@@ -326,12 +330,11 @@ ForestEcosystem.prototype.bearEvent = function(life) {
 ForestEcosystem.prototype.lumberTracking = function() {
   var lumberCut = this.stats.lumber;
   var lumberjacks = this.population.lumberjack.length;
-  var quota = lumberjacks * 2;
 
   // Hire lumberjacks
-  if (lumberCut >= quota) {
+  if (lumberCut >= lumberjacks * this.config.minLumber) {
     // Prevent infinite loop if lumberjack population is 0
-    var hires = (lumberjacks > 0) ? Math.floor(lumberCut / quota) : 1;
+    var hires = (lumberjacks > 0) ? Math.floor(lumberCut / lumberjacks) : 1;
     for (var i=0; i<hires; i++) {
       this.spawnRandom('lumberjack');
     }
@@ -344,7 +347,7 @@ ForestEcosystem.prototype.lumberTracking = function() {
 };
 
 ForestEcosystem.prototype.maulTracking = function() {
-  if (this.stats.maul > 0) {
+  if (this.stats.maul > this.config.minMaul) {
     this.removeRandom('bear');
   }
   else {
@@ -370,9 +373,9 @@ ForestEcosystem.prototype.calibrateGrid = function() {
   }
 };
 
-/******************************
- * Forest Ecosystem Listeners *
- ******************************/
+/*****************************
+ * Forest Ecosystem Controls *
+ *****************************/
 ForestEcosystem.prototype.enableEventHandlers = function() {
   // window.addEventListener('focus', this.simulation.resume.bind(this), false);
   // window.addEventListener('blur', this.simulation.pause.bind(this), false);
@@ -405,21 +408,34 @@ ForestEcosystem.prototype.showPaused = function() {
   element.style.color = '#BC3C2C';
 };
 
-
 ForestEcosystem.prototype.showRunning = function() {
   var element = document.getElementById('simulation-pause');
   element.textContent = 'Running';
   element.style.color = '#2CAC2C';
 };
 
+ForestEcosystem.prototype.calculateBudget = function() {
+  var jacks = this.population.lumberjack.length;
+  var lumber = this.stats.lumber;
+  var maul = this.stats.maul;
+  this.stats.revenue = (2 * lumber);
+  this.stats.expense = (5 * jacks) + (10 * maul);
+  this.stats.income = this.stats.revenue - this.stats.expense;
+  this.stats.score += this.stats.income;
+};
+
 ForestEcosystem.prototype.updateStats = function() {
-  var yearStat   = document.getElementById('simulation-year');
-  var monthStat  = document.getElementById('simulation-month');
-  var jackStat   = document.getElementById('simulation-lumberjack');
-  var treeStat   = document.getElementById('simulation-tree');
-  var bearStat   = document.getElementById('simulation-bear');
+  var yearStat = document.getElementById('simulation-year');
+  var monthStat = document.getElementById('simulation-month');
+  var jackStat = document.getElementById('simulation-lumberjack');
+  var treeStat = document.getElementById('simulation-tree');
+  var bearStat = document.getElementById('simulation-bear');
   var lumberStat = document.getElementById('simulation-lumber');
-  var maulStat   = document.getElementById('simulation-maul');
+  var maulStat = document.getElementById('simulation-maul');
+  var revenueStat = document.getElementById('simulation-revenue');
+  var expenseStat = document.getElementById('simulation-expense');
+  var incomeStat = document.getElementById('simulation-income');
+  var scoreStat = document.getElementById('simulation-score');
 
   // Calculate stats for DOM elements
   yearStat.textContent = Math.floor(this.simulation.simulation.time / 12);
@@ -429,6 +445,14 @@ ForestEcosystem.prototype.updateStats = function() {
   bearStat.textContent = this.population.bear.length;
   lumberStat.textContent = this.stats.lumber;
   maulStat.textContent = this.stats.maul;
+  revenueStat.textContent = this.stats.revenue;
+  expenseStat.textContent = this.stats.expense;
+  incomeStat.textContent = this.stats.income;
+  scoreStat.textContent = this.stats.score;
+
+  // Determine color
+  incomeStat.style.color = (this.stats.income > 0) ? '#33A933' : '#BC3C2C';
+  scoreStat.style.color = (this.stats.score > 0) ? '#33A933' : '#BC3C2C';
 };
 
 /****************
@@ -446,7 +470,11 @@ ForestEcosystem.prototype.updateStats = function() {
     // Starting population
     treeRatio: 0.5,
     lumberjackRatio: 0.10,
-    bearRatio: 0.05,
+    bearRatio: 0.02,
+
+    // Population control
+    minMaul: 5,
+    minLumber: 6,
   };
 
   // Create forest ecosystem
@@ -508,6 +536,7 @@ ForestEcosystem.prototype.updateStats = function() {
     forest.calibrateGrid();
     forest.longLiveHumanity();
     forest.longLiveBears();
+    forest.calculateBudget();
     forest.updateStats();
 
     // [Phase 4]: tracking events for new year

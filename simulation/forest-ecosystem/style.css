@@ -58,6 +58,10 @@ canvas {
   color: #806953;
 }
 
-.simulation-status {
+.text-green {
+  color: #33A933;
+}
+
+.text-red {
   color: #BC3C2C;
 }

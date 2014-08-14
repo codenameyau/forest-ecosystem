@@ -21,7 +21,7 @@
           <div class="gui-card-container">
             <div class="gui-card-body">
               <div id="simulation-year-label">Simulation:
-                <span class="simulation-status" id="simulation-pause">Paused</span>
+                <span class="text-red" id="simulation-pause">Paused</span>
               </div>
             </div>
           </div>
@@ -78,16 +78,16 @@
         <!-- Simulation budget -->
         <div class="gui-card">
           <div class="gui-card-container">
-            <div class="gui-card-label">Annual Budget</div>
+            <div class="gui-card-label">Monthly Budget</div>
             <div class="gui-card-body">
               <div class="simulation-revenue-label">
-                Revenue: $<span id="simulation-revenue">0</span>
+                Revenue: <span class="text-green" id="simulation-revenue">0</span>
               </div>
               <div class="simulation-expense-label">
-                Expenses: $<span id="simulation-expense">0</span>
+                Expenses: <span class="text-red" id="simulation-expense">0</span>
               </div>
-              <div class="simulation-profit-label">
-                Profit: $<span id="simulation-profit">0</span>
+              <div class="simulation-income-label">
+                Income: <span id="simulation-income">0</span>
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@
           <div class="gui-card-container">
             <div class="gui-card-body">
               <div class="simulation-score-label">
-                Total Score: $<span id="simulation-score">0</span>
+                Total Score: <span id="simulation-score">0</span>
               </div>
             </div>
           </div>

@@ -12,14 +12,18 @@
   var CONFIG = {
     // GridSimulation
     canvasID: 'imagination',
-    gridRows: 20,
-    gridCols: 20,
+    gridRows: 25,
+    gridCols: 25,
     delay: 125,
 
-    // Strating population
+    // Starting population
     treeRatio: 0.5,
     lumberjackRatio: 0.10,
-    bearRatio: 0.02,
+    bearRatio: 0.05,
+
+    // Population control
+    minMaul: 5,
+    minLumber: 7,
   };
 
   // Test Case: clearList
