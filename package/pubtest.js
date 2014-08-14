@@ -71,13 +71,33 @@ PubTest.prototype.assertFalse = function(expr, message) {
   this._addCase(assertion, message);
 };
 
+PubTest.prototype.assertLess = function(exprA, exprB, message) {
+  var assertion = (exprA < exprB);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertLessEqual = function(exprA, exprB, message) {
+  var assertion = (exprA <= exprB);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertGreater = function(exprA, exprB, message) {
+  var assertion = (exprA > exprB);
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertGreaterEqual = function(exprA, exprB, message) {
+  var assertion = (exprA >= exprB);
+  this._addCase(assertion, message);
+};
+
 PubTest.prototype.assertRange = function(value, min, max, message) {
   var assertion = (value >= min && value <= max);
   this._addCase(assertion, message);
 };
 
 PubTest.prototype.assertNotRange = function(value, min, max, message) {
-  var assertion = (value <= min && value >= max);
+  var assertion = (value < min && value > max);
   this._addCase(assertion, message);
 };
 
@@ -98,6 +118,10 @@ PubTest.prototype.assertNumber = function(value, message) {
   this.assertType(value, 'number', message);
 };
 
+PubTest.prototype.assertBoolean = function(value, message) {
+  this.assertType(value, 'boolean', message);
+};
+
 PubTest.prototype.assertInteger = function(value, message) {
   var assertion = isNaN(value) ? false : (parseInt(value, 10) === value);
   this._addCase(assertion, message);
@@ -108,8 +132,17 @@ PubTest.prototype.assertArray = function(value, message) {
   this._addCase(assertion, message);
 };
 
+
+/****************************
+ * PubTest - Data Assertion *
+ ****************************/
 PubTest.prototype.assertArrayContains = function(array, value, message) {
   var assertion = (array.indexOf(value) < 0) ? false : true;
+  this._addCase(assertion, message);
+};
+
+PubTest.prototype.assertNotArrayContains = function(array, value, message) {
+  var assertion = (array.indexOf(value) < 0) ? true : false;
   this._addCase(assertion, message);
 };
 
