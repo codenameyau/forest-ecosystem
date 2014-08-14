@@ -114,14 +114,9 @@ ForestLife.prototype.grow = function() {
  ********************************/
 function ForestEcosystem(config) {
   this.config = config;
-  this.initializeCanvasGUI();
+  this.canvas = new GridCanvas(this.config);
   this.initializeSimulation();
 }
-
-ForestEcosystem.prototype.initializeCanvasGUI = function() {
-  this.canvas = new GridCanvas(this.config);
-  this.canvas.setBackground('rgba(180, 240, 90, 0.10)');
-};
 
 ForestEcosystem.prototype.initializeSimulation = function() {
   this.simulation = new GridSimulation(this.canvas);
@@ -377,6 +372,50 @@ ForestEcosystem.prototype.calibrateGrid = function() {
   }
 };
 
+/******************************
+ * Forest Ecosystem Listeners *
+ ******************************/
+ForestEcosystem.prototype.enableEventHandlers = function() {
+  // window.addEventListener('focus', this.resume.bind(this), false);
+  // window.addEventListener('blur', this.pause.bind(this), false);
+  window.addEventListener('keydown', this.enableKeyboardInput.bind(this), false);
+};
+
+ForestEcosystem.prototype.enableKeyboardInput = function(event) {
+  switch (event.which) {
+
+  case 32: // spacebar
+    event.preventDefault();
+    this.togglePause();
+    break;
+
+  }
+};
+
+ForestEcosystem.prototype.togglePause = function() {
+  if (this.simulation.isRunning()) {
+    this.simulation.pause();
+    this.showPaused();
+  }
+  else {
+    this.simulation.resume();
+    this.showRunning();
+  }
+};
+
+ForestEcosystem.prototype.showPaused = function() {
+  var element = document.getElementById('simulation-pause');
+  element.textContent = 'Paused';
+  element.style.color = '#BC3C2C';
+};
+
+
+ForestEcosystem.prototype.showRunning = function() {
+  var element = document.getElementById('simulation-pause');
+  element.textContent = 'Running';
+  element.style.color = '#2CAC2C';
+};
+
 /****************
  * Main Program *
  ***************/
@@ -397,7 +436,7 @@ ForestEcosystem.prototype.calibrateGrid = function() {
 
   // Create forest ecosystem
   var forest = new ForestEcosystem(CONFIG);
-  forest.canvas.initializePause();
+  forest.enableEventHandlers();
   forest.populateForest();
 
   /****************************
