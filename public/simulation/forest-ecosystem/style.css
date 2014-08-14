@@ -5,9 +5,10 @@ body {
 }
 
 canvas {
+  background-color: rgb(250, 255, 215);
   border: 1px dashed #454545;
   height: 640px;
-  width: 720px;
+  width: 700px;
 }
 
 .container {
@@ -18,16 +19,16 @@ canvas {
 /* Card UI design */
 .gui-helper {
   float: right;
-  margin: 40px 20px 20px 0;
+  margin: 0px 20px 20px 0;
   text-align: left;
   line-height: 25px;
 }
 
 .gui-card {
   background: rgb(255, 255, 255);
-  width: 200px;
+  width: 250px;
   margin: 10px;
-  font: Arial;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
   letter-spacing: 1px;
   color: #4c4c4c;
   font-size: 15px;
@@ -46,7 +47,7 @@ canvas {
 
 /* Simulation */
 .simulation-lumberjack-label {
-  color: #A31919;
+  color: #A11919;
 }
 
 .simulation-tree-label {
@@ -55,4 +56,8 @@ canvas {
 
 .simulation-bear-label {
   color: #806953;
+}
+
+.simulation-status {
+  color: #BC3C2C;
 }
