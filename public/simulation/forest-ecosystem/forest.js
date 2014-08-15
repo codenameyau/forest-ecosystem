@@ -473,8 +473,8 @@ ForestEcosystem.prototype.updateStats = function() {
     bearRatio: 0.02,
 
     // Population control
-    minMaul: 5,
-    minLumber: 6,
+    minMaul: 6,
+    minLumber: 9,
   };
 
   // Create forest ecosystem
