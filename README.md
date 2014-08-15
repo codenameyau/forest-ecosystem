@@ -4,11 +4,11 @@ coding-cafe
 Welcome to Coding Cafe, a collection of weekly programming challenges.
 
 ###Table of Content
-  * [Featured Projects](https://github.com/codenameyau/coding-cafe#featured-projects)
-    * [Forest Ecosystem](https://github.com/codenameyau/coding-cafe#forest-ecosystem)
-  * [Packages](https://github.com/codenameyau/coding-cafe#packages)
-    * [GridSimulation](https://github.com/codenameyau/coding-cafe#grid-simulation)
-    * [PubTest](https://github.com/codenameyau/coding-cafe#pubtest)
+ * [Featured Projects](https://github.com/codenameyau/coding-cafe#featured-projects)
+  * [Forest Ecosystem](https://github.com/codenameyau/coding-cafe/blob/master/README.md#forest-ecosystem-8-14-2014)
+ * [Packages](https://github.com/codenameyau/coding-cafe#packages)
+  * [GridSimulation](https://github.com/codenameyau/coding-cafe#grid-simulation-8-5-2014)
+  * [PubTest](https://github.com/codenameyau/coding-cafe#pubtest-8-6-2014)
 
 
 ###Featured Projects
@@ -32,6 +32,16 @@ paper brainstorms and redesigns, but ultimately turned out to be what I wanted!
 
 ###Packages
 
-####PubTest
+####Grid Simulation (8-5-2014)
+Contains contains two modules, `GridCanvas` and `GridSimulation`, which
+function as the front-end and back-end of the Forest Ecosystem simulation.
 
-####GridSimulation
+[View Source](https://github.com/codenameyau/coding-cafe/blob/master/public/package/gridsimulation.js)
+
+####PubTest (8-6-2014)
+Setting up a client-side test runner without using a Yeoman generator, framework, or boilerplate is
+a pain. `Mocha`, `Karma`, `Jasmine`, etc. are great for large projects, but for small client-side projects,
+it's a different story...and the *syntax*... So, I created `PubTest`, which is easy to setup, unobtrusive,
+super lightweight, and has zero dependencies. Maybe you might like it.
+
+[GitHub Repository](https://github.com/codenameyau/pubtest)
