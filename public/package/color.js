@@ -13,6 +13,8 @@
  * Color Constructor *
  *********************/
 function Color(type, value) {
+  this.setDefaultColor();
+
   switch (type) {
 
   case 'hex':
@@ -23,17 +25,18 @@ function Color(type, value) {
     this.parseCSSHex(value);
     break;
 
+  case 'rgb':
+    this.parseRGB(value);
+    break;
+
   case 'cssrgb':
     this.parseCSSRGB(value);
     break;
 
-  default:
-    this.setDefaultColor();
   }
 }
 
 Color.prototype.setDefaultColor = function() {
-  this.hex = 0xFFFFFF;
   this.rgb = {
     red: 255,
     green: 255,
@@ -45,6 +48,7 @@ Color.prototype.setDefaultColor = function() {
  * Color Constructor Parser *
  ****************************/
 Color.prototype.parseHex = function(value) {
+  var hexString = value.toString(16);
 
 };
 
@@ -57,5 +61,12 @@ Color.prototype.parseRGB = function(value) {
 };
 
 Color.prototype.parseCSSRGB = function(value) {
+
+};
+
+/************************
+ * Color Public Methods *
+ ************************/
+Color.prototype.hexToRGB = function(stringHex) {
 
 };
