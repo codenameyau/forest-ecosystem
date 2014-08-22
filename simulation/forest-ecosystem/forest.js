@@ -198,7 +198,6 @@ ForestEcosystem.prototype.resetYearlyStats = function() {
   this.stats.maul = 0;
 };
 
-
 ForestEcosystem.prototype.clearList = function(list) {
   while (list.length > 0) {list.pop();}
 };
@@ -486,7 +485,6 @@ ForestEcosystem.prototype.updateStats = function() {
    * Forest Ecosystem Updater *
    ****************************/
   forest.setUpdater(function() {
-
     // Get reference to grid
     var grid = forest.simulation.getGrid();
     var i, j, k, len, life;
@@ -545,7 +543,6 @@ ForestEcosystem.prototype.updateStats = function() {
       forest.maulTracking();
       forest.resetYearlyStats();
     }
-
   });
 
   forest.startSimulation();
