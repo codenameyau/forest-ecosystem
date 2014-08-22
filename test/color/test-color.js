@@ -13,18 +13,38 @@
     var color = new Color();
 
     // Color default should be white
-    test.assertEqual(color.hex, 'FFFFFF',
-      'hex value of color should be FFFFFF');
+    test.assertEqual(color.hex, 0xFFFFFF,
+      'hex value of color should be 0xFFFFFF');
 
-    test.assertEqual(color.red, 255,
+    test.assertEqual(color.rgb.red, 255,
       'red value of color should be 255');
 
-    test.assertEqual(color.green, 255,
+    test.assertEqual(color.rgb.green, 255,
       'green value of color should be 255');
 
-    test.assertEqual(color.blue, 255,
+    test.assertEqual(color.rgb.blue, 255,
       'blue value of color should be 255');
-
   });
+
+  // Test Case: hex constructor
+  test.testCase(function() {
+    var color = new Color('hex', 0xFF0000);
+
+    test.assertEqual(color.hex, 0xFF0000,
+      'hex value of color should be 0xFF0000');
+
+    test.assertEqual(color.rgb.red, 255,
+      'red value of color should be 255');
+
+    test.assertEqual(color.rgb.green, 0,
+      'green value of color should be 0');
+
+    test.assertEqual(color.rgb.blue, 0,
+      'blue value of color should be 0');
+  });
+
+
+  // Show test results
+  test.results();
 
 })();
