@@ -5,7 +5,7 @@ Welcome to Coding Cafe, a collection of weekly programming challenges.
 
 ###Table of Content
  * [Featured Projects](https://github.com/codenameyau/coding-cafe#featured-projects)
-  * [Forest Ecosystem](https://github.com/codenameyau/coding-cafe/blob/master/README.md#forest-ecosystem-8-14-2014)
+  * [Forest Ecosystem](https://github.com/codenameyau/coding-cafe#forest-ecosystem-8-14-2014)
  * [Packages](https://github.com/codenameyau/coding-cafe#packages)
   * [GridSimulation](https://github.com/codenameyau/coding-cafe#grid-simulation-8-5-2014)
   * [PubTest](https://github.com/codenameyau/coding-cafe#pubtest-8-6-2014)
@@ -16,7 +16,7 @@ Welcome to Coding Cafe, a collection of weekly programming challenges.
 ####Forest Ecosystem (8-14-2014)
 ![Screenshot of forest ecosystem](https://raw.githubusercontent.com/codenameyau/coding-cafe/master/screenshot/projects/forest-ecosystem.jpg)
 
-**Forest Ecosystem** is a simulation based on this 
+**Forest Ecosystem** is a simulation based on this
 [programming challenge](http://codegolf.stackexchange.com/q/35322/30051).
 
 I really enjoyed working on this project, and learned how to efficiently run a simulation
