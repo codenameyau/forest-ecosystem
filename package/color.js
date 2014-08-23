@@ -92,7 +92,7 @@ Color.prototype.getHex = function(cssflag) {
 };
 
 Color.prototype.getCSSRGB = function() {
-
+  return 'rgb(' + this.rgb.join(',') + ')';
 };
 
 Color.prototype.randomNumber = function(min, max) {
