@@ -110,6 +110,19 @@
       'blue value of color should be 0');
   });
 
+  // Test Case: getHex
+  test.testCase(function() {
+    var color = new Color('rgb', [255, 255, 255]);
+    var hex = color.getHex();
+    var csshex = color.getHex(true);
+
+    test.assertEqual(hex, 'ffffff',
+      'value of getHex should be ffffff');
+
+    test.assertEqual(csshex, '#ffffff',
+      'value of getHex with argument true should contain hash');
+  });
+
 
   // Show test results
   test.results();

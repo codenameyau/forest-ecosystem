@@ -83,6 +83,13 @@ Color.prototype.hexToRGB = function(stringHex) {
   ];
 };
 
+Color.prototype.getHex = function(cssflag) {
+  var hex = (cssflag === true) ? '#' : '';
+  hex += this.rgb.red.toString(16);
+  hex += this.rgb.green.toString(16);
+  hex += this.rgb.blue.toString(16);
+  return hex;
+};
 
 /**************************
  * Color Internal Methods *
