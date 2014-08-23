@@ -7,6 +7,7 @@
 
   // Create test suite for Color
   var test = new PubTest('Color');
+  var globalColor = new Color();
 
   // Test Case: blank constructor
   test.testCase(function() {
@@ -25,9 +26,8 @@
 
   // Test Case: hexToRGB
   test.testCase(function() {
-    var hexToRGB = Color.prototype.hexToRGB;
-    var upper = hexToRGB('FF250A');
-    var lower = hexToRGB('ff250a');
+    var upper = globalColor.hexToRGB('FF250A');
+    var lower = globalColor.hexToRGB('ff250a');
 
     test.assertArray(upper,
       'data type of rgb result should be an array');
