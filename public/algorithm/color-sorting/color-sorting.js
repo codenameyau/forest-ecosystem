@@ -15,14 +15,16 @@
   // Configuration
   var config = {
     canvas: 'imagination',
-    width: 500,
-    height: 500,
-    size: 10,
+    width: 555,
+    height: 555,
   };
 
   // Generate random colors
   var colors = [];
-  var squares = 10;
+  var cols = 12;
+  var rows = 12;
+  var squares = cols * rows;
+  var size = 30;
   var i, j;
   for (i=0; i<squares; i++) {
     colors.push(new Color('random'));
@@ -35,17 +37,20 @@
   canvas.height = config.height;
 
   // Draw color squares
-  // for (i=0; i<squares; i++) {
-  //   var color = colors[i];
-  //   ctx.fillStyle = color.getCSSRGB();
-  // }
+  var padding = 15;
+  var posX = padding;
+  var posY = -size;
+  for (i=0; i<squares; i++) {
+    // Move to next col
+    if (i % cols === 0) {
+      posX = padding;
+      posY += size + padding;
+    }
 
-  // Draw something
-  ctx.fillStyle = 'rgb(200, 0, 0)';
-  ctx.fillRect(0, 0, 50, 50);
-
-  ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-  ctx.fillRect(30, 30, 50, 50);
-
+    var color = colors[i];
+    ctx.fillStyle = color.getCSSRGB();
+    ctx.fillRect(posX, posY, size, size);
+    posX += size + padding;
+  }
 
 })();

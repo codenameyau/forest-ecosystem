@@ -139,7 +139,7 @@
 
   // Test Case: getCSSRGB
   test.testCase(function() {
-    var color = new Color('#ffff00');
+    var color = new Color('csshex', '#ffff00');
 
     test.assertEqual(color.getCSSRGB(), 'rgb(255,255,0)',
       'value of getCSSRGB should match css rgb string');
