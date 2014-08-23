@@ -41,12 +41,14 @@
   var posX = padding;
   var posY = -size;
   for (i=0; i<squares; i++) {
+
     // Move to next col
     if (i % cols === 0) {
       posX = padding;
       posY += size + padding;
     }
 
+    // Fill in color square
     var color = colors[i];
     ctx.fillStyle = color.getCSSRGB();
     ctx.fillRect(posX, posY, size, size);
