@@ -40,21 +40,14 @@ function Color(type, value) {
 }
 
 Color.prototype.setDefaultColor = function() {
-  this.rgb = {
-    red: 255,
-    green: 255,
-    blue: 255
-  };
+  this.rgb = [255, 255, 255];
 };
 
 /****************************
  * Color Constructor Parser *
  ****************************/
 Color.prototype.parseHex = function(value) {
-  var rgb = this.hexToRGB( value.toString(16) );
-  this.rgb.red   = rgb[0];
-  this.rgb.green = rgb[1];
-  this.rgb.blue  = rgb[2];
+  this.rgb = this.hexToRGB( value.toString(16) );
 };
 
 Color.prototype.parseCSSHex = function(value) {
@@ -62,22 +55,20 @@ Color.prototype.parseCSSHex = function(value) {
 };
 
 Color.prototype.parseRGB = function(value) {
-  this.rgb.red   = value[0];
-  this.rgb.green = value[1];
-  this.rgb.blue  = value[2];
+  this.rgb = value;
 };
 
 Color.prototype.parseCSSRGB = function(value) {
-  var colors = value.match(/\d{1,3}/g);
-  this.rgb.red   = parseInt(colors[0], 10);
-  this.rgb.green = parseInt(colors[1], 10);
-  this.rgb.blue  = parseInt(colors[2], 10);
+  var colors  = value.match(/\d{1,3}/g);
+  this.rgb[0] = parseInt(colors[0], 10);
+  this.rgb[1] = parseInt(colors[1], 10);
+  this.rgb[2] = parseInt(colors[2], 10);
 };
 
 Color.prototype.setRandomColor = function() {
-  this.rgb.red   = this.randomNumber(0, 256);
-  this.rgb.green = this.randomNumber(0, 256);
-  this.rgb.blue  = this.randomNumber(0, 256);
+  this.rgb[0] = this.randomNumber(0, 256);
+  this.rgb[1] = this.randomNumber(0, 256);
+  this.rgb[2] = this.randomNumber(0, 256);
 };
 
 /************************
@@ -94,10 +85,14 @@ Color.prototype.hexToRGB = function(stringHex) {
 
 Color.prototype.getHex = function(cssflag) {
   var hex = (cssflag === true) ? '#' : '';
-  hex += this.rgb.red.toString(16);
-  hex += this.rgb.green.toString(16);
-  hex += this.rgb.blue.toString(16);
+  hex += this.rgb[0].toString(16);
+  hex += this.rgb[1].toString(16);
+  hex += this.rgb[2].toString(16);
   return hex;
+};
+
+Color.prototype.getCSSRGB = function() {
+
 };
 
 Color.prototype.randomNumber = function(min, max) {

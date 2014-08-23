@@ -14,13 +14,13 @@
     var color = new Color();
 
     // Color default should be white
-    test.assertEqual(color.rgb.red, 255,
+    test.assertEqual(color.rgb[0], 255,
       'red value of color should be 255');
 
-    test.assertEqual(color.rgb.green, 255,
+    test.assertEqual(color.rgb[1], 255,
       'green value of color should be 255');
 
-    test.assertEqual(color.rgb.blue, 255,
+    test.assertEqual(color.rgb[2], 255,
       'blue value of color should be 255');
   });
 
@@ -58,13 +58,13 @@
   test.testCase(function() {
     var color = new Color('hex', 0xFF0000);
 
-    test.assertEqual(color.rgb.red, 255,
+    test.assertEqual(color.rgb[0], 255,
       'red value of color should be 255');
 
-    test.assertEqual(color.rgb.green, 0,
+    test.assertEqual(color.rgb[1], 0,
       'green value of color should be 0');
 
-    test.assertEqual(color.rgb.blue, 0,
+    test.assertEqual(color.rgb[2], 0,
       'blue value of color should be 0');
   });
 
@@ -72,13 +72,13 @@
   test.testCase(function() {
     var color = new Color('csshex', '#FF0000');
 
-    test.assertEqual(color.rgb.red, 255,
+    test.assertEqual(color.rgb[0], 255,
       'red value of color should be 255');
 
-    test.assertEqual(color.rgb.green, 0,
+    test.assertEqual(color.rgb[1], 0,
       'green value of color should be 0');
 
-    test.assertEqual(color.rgb.blue, 0,
+    test.assertEqual(color.rgb[2], 0,
       'blue value of color should be 0');
   });
 
@@ -86,13 +86,13 @@
   test.testCase(function() {
     var color = new Color('rgb', [255, 0, 0]);
 
-    test.assertEqual(color.rgb.red, 255,
+    test.assertEqual(color.rgb[0], 255,
       'red value of color should be 255');
 
-    test.assertEqual(color.rgb.green, 0,
+    test.assertEqual(color.rgb[1], 0,
       'green value of color should be 0');
 
-    test.assertEqual(color.rgb.blue, 0,
+    test.assertEqual(color.rgb[2], 0,
       'blue value of color should be 0');
   });
 
@@ -100,13 +100,13 @@
   test.testCase(function() {
     var color = new Color('cssrgb', 'rgb(255, 0, 0)');
 
-    test.assertEqual(color.rgb.red, 255,
+    test.assertEqual(color.rgb[0], 255,
       'red value of color should be 255');
 
-    test.assertEqual(color.rgb.green, 0,
+    test.assertEqual(color.rgb[1], 0,
       'green value of color should be 0');
 
-    test.assertEqual(color.rgb.blue, 0,
+    test.assertEqual(color.rgb[2], 0,
       'blue value of color should be 0');
   });
 
@@ -127,14 +127,22 @@
   test.testCase(function() {
     var color = new Color('random');
 
-    test.assertRange(color.rgb.red, 0, 255,
+    test.assertRange(color.rgb[0], 0, 255,
       'value of red should be between 0 and 255 for random color');
 
-    test.assertRange(color.rgb.green, 0, 255,
+    test.assertRange(color.rgb[1], 0, 255,
       'value of green should be between 0 and 255 for random color');
 
-    test.assertRange(color.rgb.blue, 0, 255,
+    test.assertRange(color.rgb[2], 0, 255,
       'value of blue should be between 0 and 255 for random color');
+  });
+
+  // Test Case: getCSSRGB
+  test.testCase(function() {
+    var color = new Color('#ffff00');
+
+    test.assertEqual(color.getCSSRGB(), 'rgb(255,255,0)',
+      'value of getCSSRGB should match css rgb string');
   });
 
   // Show test results
