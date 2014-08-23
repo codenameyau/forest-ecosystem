@@ -33,6 +33,9 @@ function Color(type, value) {
     this.parseCSSRGB(value);
     break;
 
+  case 'random':
+    this.setRandomColor();
+    break;
   }
 }
 
@@ -71,6 +74,12 @@ Color.prototype.parseCSSRGB = function(value) {
   this.rgb.blue  = parseInt(colors[2], 10);
 };
 
+Color.prototype.setRandomColor = function() {
+  this.rgb.red   = this.randomNumber(0, 256);
+  this.rgb.green = this.randomNumber(0, 256);
+  this.rgb.blue  = this.randomNumber(0, 256);
+};
+
 /************************
  * Color Public Methods *
  ************************/
@@ -89,6 +98,10 @@ Color.prototype.getHex = function(cssflag) {
   hex += this.rgb.green.toString(16);
   hex += this.rgb.blue.toString(16);
   return hex;
+};
+
+Color.prototype.randomNumber = function(min, max) {
+  return parseInt(Math.random() * (max - min) + min, 10);
 };
 
 /**************************

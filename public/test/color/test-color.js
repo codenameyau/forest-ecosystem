@@ -123,6 +123,19 @@
       'value of getHex with argument true should contain hash');
   });
 
+  // Test Case: setRandomColor
+  test.testCase(function() {
+    var color = new Color('random');
+
+    test.assertRange(color.rgb.red, 0, 255,
+      'value of red should be between 0 and 255 for random color');
+
+    test.assertRange(color.rgb.green, 0, 255,
+      'value of green should be between 0 and 255 for random color');
+
+    test.assertRange(color.rgb.blue, 0, 255,
+      'value of blue should be between 0 and 255 for random color');
+  });
 
   // Show test results
   test.results();
