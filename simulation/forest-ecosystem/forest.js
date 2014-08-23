@@ -13,7 +13,7 @@
  * - [done] Modularize into components
  * - [done] Define species to simplify loops
  * - [done] Automatic canvas size and zoom
- * - Elegantly solve loop and splice
+ * - [done] Solve loop and splice
  */
 
 /*---------------JSHint---------------*/
@@ -116,6 +116,7 @@ function ForestEcosystem(config) {
   this.config = config;
   this.canvas = new GridCanvas(this.config);
   this.initializeSimulation();
+  this.initializeLabels();
 }
 
 ForestEcosystem.prototype.initializeSimulation = function() {
@@ -133,6 +134,20 @@ ForestEcosystem.prototype.initializeSimulation = function() {
     income: 0,
     score: 0,
   };
+};
+
+ForestEcosystem.prototype.initializeLabels = function() {
+  this.yearStat    = document.getElementById('simulation-year');
+  this.monthStat   = document.getElementById('simulation-month');
+  this.jackStat    = document.getElementById('simulation-lumberjack');
+  this.treeStat    = document.getElementById('simulation-tree');
+  this.bearStat    = document.getElementById('simulation-bear');
+  this.lumberStat  = document.getElementById('simulation-lumber');
+  this.maulStat    = document.getElementById('simulation-maul');
+  this.revenueStat = document.getElementById('simulation-revenue');
+  this.expenseStat = document.getElementById('simulation-expense');
+  this.incomeStat  = document.getElementById('simulation-income');
+  this.scoreStat   = document.getElementById('simulation-score');
 };
 
 /******************************
@@ -424,34 +439,22 @@ ForestEcosystem.prototype.calculateBudget = function() {
 };
 
 ForestEcosystem.prototype.updateStats = function() {
-  var yearStat = document.getElementById('simulation-year');
-  var monthStat = document.getElementById('simulation-month');
-  var jackStat = document.getElementById('simulation-lumberjack');
-  var treeStat = document.getElementById('simulation-tree');
-  var bearStat = document.getElementById('simulation-bear');
-  var lumberStat = document.getElementById('simulation-lumber');
-  var maulStat = document.getElementById('simulation-maul');
-  var revenueStat = document.getElementById('simulation-revenue');
-  var expenseStat = document.getElementById('simulation-expense');
-  var incomeStat = document.getElementById('simulation-income');
-  var scoreStat = document.getElementById('simulation-score');
-
   // Calculate stats for DOM elements
-  yearStat.textContent = Math.floor(this.simulation.simulation.time / 12);
-  monthStat.textContent = this.simulation.simulation.time % 12 + 1;
-  jackStat.textContent = this.population.lumberjack.length;
-  treeStat.textContent = this.population.tree.length;
-  bearStat.textContent = this.population.bear.length;
-  lumberStat.textContent = this.stats.lumber;
-  maulStat.textContent = this.stats.maul;
-  revenueStat.textContent = this.stats.revenue;
-  expenseStat.textContent = this.stats.expense;
-  incomeStat.textContent = this.stats.income;
-  scoreStat.textContent = this.stats.score;
+  this.yearStat.textContent = Math.floor(this.simulation.simulation.time / 12);
+  this.monthStat.textContent = this.simulation.simulation.time % 12 + 1;
+  this.jackStat.textContent = this.population.lumberjack.length;
+  this.treeStat.textContent = this.population.tree.length;
+  this.bearStat.textContent = this.population.bear.length;
+  this.lumberStat.textContent = this.stats.lumber;
+  this.maulStat.textContent = this.stats.maul;
+  this.revenueStat.textContent = this.stats.revenue;
+  this.expenseStat.textContent = this.stats.expense;
+  this.incomeStat.textContent = this.stats.income;
+  this.scoreStat.textContent = this.stats.score;
 
   // Determine color
-  incomeStat.style.color = (this.stats.income > 0) ? '#33A933' : '#BC3C2C';
-  scoreStat.style.color = (this.stats.score > 0) ? '#33A933' : '#BC3C2C';
+  this.incomeStat.style.color = (this.stats.income > 0) ? '#33A933' : '#BC3C2C';
+  this.scoreStat.style.color = (this.stats.score > 0) ? '#33A933' : '#BC3C2C';
 };
 
 /****************
