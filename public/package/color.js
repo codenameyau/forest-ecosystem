@@ -96,8 +96,13 @@ Color.prototype.getCSSRGB = function() {
   return 'rgb(' + this.rgb.join(',') + ')';
 };
 
+Color.prototype.getCSSGrayscale = function() {
+  var gray = this.lightness;
+  return 'rgb(' + gray + ',' + gray + ',' + gray + ')';
+};
+
 Color.prototype.computeGrayscale = function() {
-  // [TODO] Gamma correction
+  // [TODO] gamma correction option
   var R = this.rgb[0];
   var G = this.rgb[1];
   var B = this.rgb[2];
