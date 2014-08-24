@@ -13,12 +13,10 @@
 /**********************
  * Sorting Algorithms *
  **********************/
-var quickSort = function(array, callback) {
-  if (callback) { callback(); }
-};
-
-var radixSort = function(array, callback) {
-  if (callback) { callback(); }
+var arraySort = function(array, property) {
+  array.sort(function(a, b) {
+    return a[property] - b[property];
+  });
 };
 
 
@@ -42,7 +40,9 @@ var radixSort = function(array, callback) {
   var size = 30;
   var i, j;
   for (i=0; i<squares; i++) {
-    colors.push(new Color('random'));
+    var randColor = new Color('random');
+    randColor.computeGrayscale();
+    colors.push(randColor);
   }
 
   // Setup canvas grid
@@ -50,6 +50,9 @@ var radixSort = function(array, callback) {
   var ctx = canvas.getContext('2d');
   canvas.width = config.width;
   canvas.height = config.height;
+
+  // Perform sort
+  arraySort(colors, 'lightness');
 
   // Draw color squares
   var padding = 15;
