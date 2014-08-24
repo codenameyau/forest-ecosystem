@@ -145,6 +145,19 @@
       'value of getCSSRGB should match css rgb string');
   });
 
+  // Test Case: computeGrayscale
+  test.testCase(function() {
+    var color = new Color('rgb', [255, 255, 255]);
+
+    test.assertEqual(color.lightness, null,
+      'value of color lightness should be null by default');
+
+    color.computeGrayscale();
+
+    test.assertEqual(color.lightness, 255,
+      'value of color lightness should be 255');
+  });
+
   // Show test results
   test.results();
 
