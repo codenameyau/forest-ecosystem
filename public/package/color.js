@@ -41,6 +41,7 @@ function Color(type, value) {
 
 Color.prototype.setDefaultColor = function() {
   this.rgb = [255, 255, 255];
+  this.lightness = null;
 };
 
 /****************************
@@ -93,6 +94,14 @@ Color.prototype.getHex = function(cssflag) {
 
 Color.prototype.getCSSRGB = function() {
   return 'rgb(' + this.rgb.join(',') + ')';
+};
+
+Color.prototype.computeGrayscale = function() {
+  // [TODO] Gamma correction
+  var R = this.rgb[0];
+  var G = this.rgb[1];
+  var B = this.rgb[2];
+  this.lightness = Math.round(0.2126*R + 0.7152*G + 0.0722*B);
 };
 
 Color.prototype.randomNumber = function(min, max) {
