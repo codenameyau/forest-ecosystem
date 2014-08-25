@@ -70,8 +70,8 @@ var sortByMinDistance = function(array) {
 
   // Perform sort
   // sortByProperty(colors, 'lightness');
-  // sortByColorRatio(colors, [0]);
-  sortByMinDistance(colors);
+  sortByColorRatio(colors, [1]);
+  // sortByMinDistance(colors);
 
   // Draw color squares
   var padding = 15;
