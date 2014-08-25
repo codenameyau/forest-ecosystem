@@ -6,6 +6,8 @@ Welcome to Coding Cafe, a collection of weekly programming challenges.
 ###Table of Content
  * [Featured Projects](https://github.com/codenameyau/coding-cafe#featured-projects)
   * [Forest Ecosystem](https://github.com/codenameyau/coding-cafe#forest-ecosystem-8-14-2014)
+ * [Projects](https://github.com/codenameyau/coding-cafe#featured-projects)
+  * [Color Sorting](https://github.com/codenameyau/coding-cafe#color-sorting-8-25-2014)
  * [Packages](https://github.com/codenameyau/coding-cafe#packages)
   * [GridSimulation](https://github.com/codenameyau/coding-cafe#grid-simulation-8-5-2014)
   * [PubTest](https://github.com/codenameyau/coding-cafe#pubtest-8-6-2014)
@@ -29,6 +31,13 @@ paper brainstorms and redesigns, but ultimately turned out to be what I wanted!
 [Live Demo](https://codenameyau.github.io/coding-cafe/simulation/forest-ecosystem/) |
 [View Source](https://github.com/codenameyau/coding-cafe/tree/master/public/simulation/forest-ecosystem)
 
+###Projects
+
+####Color Sorting (8-25-2014)
+The color sorting algorithms are base on luminosity, minimum distance, and color ratios.
+
+[Live Demo](https://codenameyau.github.io/coding-cafe/algorithm/color-sorting/) |
+[View Source](https://github.com/codenameyau/coding-cafe/tree/master/public/algorithm/color-sorting)
 
 ###Packages
 
