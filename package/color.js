@@ -102,7 +102,6 @@ Color.prototype.getCSSGrayscale = function() {
 };
 
 Color.prototype.computeGrayscale = function() {
-  // [TODO] gamma correction option
   var R = this.rgb[0];
   var G = this.rgb[1];
   var B = this.rgb[2];
