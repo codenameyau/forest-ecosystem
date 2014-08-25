@@ -13,12 +13,29 @@
 /**********************
  * Sorting Algorithms *
  **********************/
-var arraySort = function(array, property) {
+var sortByProperty = function(array, property) {
   array.sort(function(a, b) {
     return a[property] - b[property];
   });
 };
 
+var sortByColorRatio = function(array, index) {
+  array.sort(function(a, b) {
+    var sumA = a.rgb[0] + a.rgb[1] + a.rgb[2];
+    var sumB = b.rgb[0] + b.rgb[1] + b.rgb[2];
+    var colorA = (sumA > 0) ? a.rgb[index] / sumA : 0;
+    var colorB = (sumB > 0) ? b.rgb[index] / sumB : 0;
+    return colorA - colorB;
+  });
+};
+
+var sortByMinDistance = function(array) {
+  array.sort(function(a, b) {
+    var distA = a.rgb[0] + Math.abs(a.rgb[1] - 255) + Math.abs(a.rgb[2] - 255);
+    var distB = b.rgb[0] + Math.abs(b.rgb[1] - 255) + Math.abs(b.rgb[2] - 255);
+    return distA - distB;
+  });
+};
 
 /****************
  * Main Program *
@@ -52,7 +69,9 @@ var arraySort = function(array, property) {
   canvas.height = config.height;
 
   // Perform sort
-  arraySort(colors, 'lightness');
+  // sortByProperty(colors, 'lightness');
+  // sortByColorRatio(colors, [0]);
+  sortByMinDistance(colors);
 
   // Draw color squares
   var padding = 15;
