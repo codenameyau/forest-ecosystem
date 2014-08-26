@@ -29,13 +29,14 @@ var sortByColorRatio = function(array, index) {
   });
 };
 
-var sortByMinDistance = function(array) {
+var sortByDistance = function(array, i, j, k) {
   array.sort(function(a, b) {
-    var distA = a.rgb[0] + Math.abs(a.rgb[1] - 255) + Math.abs(a.rgb[2] - 255);
-    var distB = b.rgb[0] + Math.abs(b.rgb[1] - 255) + Math.abs(b.rgb[2] - 255);
+    var distA = (a.rgb[i] - a.rgb[j] - a.rgb[k]) / 255;
+    var distB = (b.rgb[i] - b.rgb[j] - b.rgb[k]) / 255;
     return distA - distB;
   });
 };
+
 
 /****************
  * Main Program *
@@ -45,16 +46,19 @@ var sortByMinDistance = function(array) {
   // Configuration
   var config = {
     canvas: 'imagination',
-    width: 690,
-    height: 555,
+    width: 760,
+    height: 610,
   };
 
+  // Configuration
+  var cols = 30;
+  var rows = 24;
+  var size = 15;
+  var padding = 4;
+
   // Generate random colors
-  var colors = [];
-  var cols = 15;
-  var rows = 12;
   var squares = cols * rows;
-  var size = 30;
+  var colors = [];
   var i, j;
   for (i=0; i<squares; i++) {
     var randColor = new Color('random');
@@ -70,14 +74,13 @@ var sortByMinDistance = function(array) {
 
   // Perform sort
   // sortByProperty(colors, 'lightness');
-  sortByColorRatio(colors, [1]);
-  // sortByMinDistance(colors);
+  // sortByColorRatio(colors, [1]);
+  sortByDistance(colors);
 
   // Draw color squares
-  var padding = 15;
   var posX = padding;
   var posY = -size;
-  ctx.strokeStyle = '#666666';
+  ctx.strokeStyle = '#AAAAAA';
   for (i=0; i<squares; i++) {
 
     // Move to next col
