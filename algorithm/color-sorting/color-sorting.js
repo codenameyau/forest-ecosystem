@@ -13,9 +13,15 @@
 /**********************
  * Sorting Algorithms *
  **********************/
-var sortByProperty = function(array, property) {
+var sortByLightness = function(array) {
   array.sort(function(a, b) {
-    return a[property] - b[property];
+    return a.lightness - b.lightness;
+  });
+};
+
+var sortByDarkness = function(array) {
+  array.sort(function(a, b) {
+    return b.lightness - a.lightness;
   });
 };
 
@@ -37,7 +43,6 @@ var sortByDistance = function(array, i, j, k) {
   });
 };
 
-
 /****************
  * Main Program *
  ****************/
@@ -46,15 +51,15 @@ var sortByDistance = function(array, i, j, k) {
   // Configuration
   var config = {
     canvas: 'imagination',
-    width: 760,
-    height: 610,
+    width: 725,
+    height: 605,
   };
 
   // Configuration
-  var cols = 30;
-  var rows = 24;
+  var cols = 36;
+  var rows = 30;
   var size = 15;
-  var padding = 4;
+  var padding = 5;
 
   // Generate random colors
   var squares = cols * rows;
@@ -73,9 +78,10 @@ var sortByDistance = function(array, i, j, k) {
   canvas.height = config.height;
 
   // Perform sort
-  // sortByProperty(colors, 'lightness');
+  sortByLightness(colors);
+  // sortByDarkness(colors);
   // sortByColorRatio(colors, [1]);
-  sortByDistance(colors);
+  // sortByDistance(colors, 0, 1, 2);
 
   // Draw color squares
   var posX = padding;
