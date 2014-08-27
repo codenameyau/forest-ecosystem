@@ -43,13 +43,6 @@ var sortByDistance = function(array, i, j, k) {
   });
 };
 
-var sortByTint = function(array, index) {
-  array.sort(function(a, b) {
-    var distA = (a.rgb[0] - a.rgb[index] - a.rgb[0]) / 255;
-    var distB = (b.rgb[0] - b.rgb[index] - b.rgb[0]) / 255;
-    return distA - distB;
-  });
-};
 
 /****************
  * Main Program *
@@ -83,7 +76,7 @@ var sortByTint = function(array, index) {
 
   // Pops all elements in array
   var clearArray = function(array) {
-    while (array.length) {array.pop();}
+    while (array.length) { array.pop(); }
   };
 
   // Generates array of random colors
@@ -99,7 +92,7 @@ var sortByTint = function(array, index) {
   };
 
   // Draw color squares
-  var drawColors = function(colors) {
+  var drawColors = function(colors, grayscale) {
     var posX = padding;
     var posY = -size;
     ctx.strokeStyle = '#AAAAAA';
@@ -113,28 +106,64 @@ var sortByTint = function(array, index) {
 
       // Fill in color square
       var color = colors[i];
-      ctx.fillStyle = color.getCSSRGB();
+      ctx.fillStyle = (grayscale) ? color.getCSSGrayscale() : color.getCSSRGB();
       ctx.fillRect(posX, posY, size, size);
       ctx.strokeRect(posX, posY, size, size);
       posX += size + padding;
     }
   };
 
-  // Event listeners
-
-  // Perform sort
-  // sortByLightness(colors);
-  // sortByDarkness(colors);
-  // sortByColorRatio(colors, 0);
-  // sortByColorRatio(colors, 1);
-  // sortByColorRatio(colors, 2);
-  // sortByDistance(colors, 2, 0, 1);
-  // sortByTint(colors, 0);
-  // sortByTint(colors, 1);
-  // sortByTint(colors, 2);
-
-  // Start program
+  // Generate colors
   randomizeColors();
   drawColors(colors);
+
+  // Event listeners
+  document.getElementById('sort-original').addEventListener('click', function() {
+    drawColors(unsorted);
+  });
+
+  document.getElementById('sort-grayscale').addEventListener('click', function() {
+    drawColors(colors, true);
+  });
+
+  document.getElementById('sort-lightness').addEventListener('click', function() {
+    sortByLightness(colors);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-darkness').addEventListener('click', function() {
+    sortByDarkness(colors);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-red-ratio').addEventListener('click', function() {
+    sortByColorRatio(colors, 0);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-green-ratio').addEventListener('click', function() {
+    sortByColorRatio(colors, 1);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-blue-ratio').addEventListener('click', function() {
+    sortByColorRatio(colors, 2);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-red-distance').addEventListener('click', function() {
+    sortByDistance(colors, 0, 0, 0);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-green-distance').addEventListener('click', function() {
+    sortByDistance(colors, 1, 1, 1);
+    drawColors(colors);
+  });
+
+  document.getElementById('sort-blue-distance').addEventListener('click', function() {
+    sortByDistance(colors, 2, 2, 2);
+    drawColors(colors);
+  });
 
 })();
