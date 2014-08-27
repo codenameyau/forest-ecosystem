@@ -17,23 +17,40 @@ canvas {
   padding: 10px;
   color: #ffffff;
   border: none;
-  border-radius: 2px;
-  font-size: 15px;
+  border-radius: 4px;
+  font-size: 16px;
   letter-spacing: 2px;
 }
 
-.blue {
-  background: rgb(100, 200, 240);
+.nice-btn:hover {
+  cursor: pointer;
+}
+
+.black {
+  background: #282828;
+}
+
+.black:hover {
+  background: #5CAEFE;
 }
 
 .sidebar {
   font-family: Futura, "Trebuchet MS", Arial, sans-serif;
   letter-spacing: 1px;
   font-size: 18px;
-  color: #666666;
+  color: #606060;
   float: right;
   margin: 20px 40px 0 0;
   width: 300px;
+}
+
+.sidebar a {
+  color: #606060;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #5CAEFE;
 }
 
 .card {
@@ -43,12 +60,14 @@ canvas {
 .card-title {
   font-size: 30px;
   margin: 0 0 40px 0;
+  cursor: default;
 }
 
 .card-body {
-  margin: 0 0 80px 0;
+  margin: 0 0 60px 0;
 }
 
 .card-item {
   margin: 0 0 10px 0;
+  cursor: pointer;
 }

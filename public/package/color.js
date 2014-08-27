@@ -34,7 +34,7 @@ function Color(type, value) {
     break;
 
   case 'random':
-    this.setRandomColor();
+    this.setRandomColor(value);
     break;
   }
 }
@@ -66,10 +66,12 @@ Color.prototype.parseCSSRGB = function(value) {
   this.rgb[2] = parseInt(colors[2], 10);
 };
 
-Color.prototype.setRandomColor = function() {
-  this.rgb[0] = this.randomNumber(0, 256);
-  this.rgb[1] = this.randomNumber(0, 256);
-  this.rgb[2] = this.randomNumber(0, 256);
+Color.prototype.setRandomColor = function(value) {
+  var min = value[0];
+  var max = value[1];
+  this.rgb[0] = this.randomNumber(min, max);
+  this.rgb[1] = this.randomNumber(min, max);
+  this.rgb[2] = this.randomNumber(min, max);
 };
 
 /************************
