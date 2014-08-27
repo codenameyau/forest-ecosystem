@@ -43,6 +43,14 @@ var sortByDistance = function(array, i, j, k) {
   });
 };
 
+var sortByTint = function(array, index) {
+  array.sort(function(a, b) {
+    var distA = (a.rgb[0] - a.rgb[index] - a.rgb[0]) / 255;
+    var distB = (b.rgb[0] - b.rgb[index] - b.rgb[0]) / 255;
+    return distA - distB;
+  });
+};
+
 /****************
  * Main Program *
  ****************/
@@ -78,10 +86,15 @@ var sortByDistance = function(array, i, j, k) {
   canvas.height = config.height;
 
   // Perform sort
-  sortByLightness(colors);
+  // sortByLightness(colors);
   // sortByDarkness(colors);
-  // sortByColorRatio(colors, [1]);
-  // sortByDistance(colors, 0, 1, 2);
+  // sortByColorRatio(colors, 0);
+  // sortByColorRatio(colors, 1);
+  // sortByColorRatio(colors, 2);
+  // sortByDistance(colors, 2, 0, 1);
+  // sortByTint(colors, 0);
+  // sortByTint(colors, 1);
+  sortByTint(colors, 2);
 
   // Draw color squares
   var posX = padding;

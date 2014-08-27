@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  background: #dadada;
 }
 
 .container {
@@ -10,4 +11,12 @@ body {
 
 canvas {
   border: 1px solid #cccccc;
+}
+
+.sidebar {
+  float: right;
+}
+
+.card {
+  background: #fafafa;
 }
