@@ -40,7 +40,7 @@ canvas {
   font-size: 18px;
   color: #606060;
   float: right;
-  margin: 20px 40px 0 0;
+  margin: 35px 50px 0 0;
   width: 250px;
 }
 
@@ -59,7 +59,7 @@ canvas {
 
 .card-title {
   font-size: 30px;
-  margin: 0 0 40px 0;
+  margin: 0 0 60px 0;
   cursor: default;
 }
 
@@ -71,4 +71,8 @@ canvas {
   margin: 0 0 10px 0;
   cursor: pointer;
   width: auto;
+}
+
+.card-item:hover {
+  color: #FA2E3E;
 }
