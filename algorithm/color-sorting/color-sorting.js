@@ -70,20 +70,57 @@ var sortByTint = function(array, index) {
   var padding = 5;
 
   // Generate random colors
+  var colorRange = [40, 256];
   var squares = cols * rows;
   var colors = [];
-  var i, j;
-  for (i=0; i<squares; i++) {
-    var randColor = new Color('random');
-    randColor.computeGrayscale();
-    colors.push(randColor);
-  }
+  var unsorted = [];
 
   // Setup canvas grid
   var canvas = document.getElementById(config.canvas);
   var ctx = canvas.getContext('2d');
   canvas.width = config.width;
   canvas.height = config.height;
+
+  // Pops all elements in array
+  var clearArray = function(array) {
+    while (array.length) {array.pop();}
+  };
+
+  // Generates array of random colors
+  var randomizeColors = function() {
+    clearArray(colors);
+    clearArray(unsorted);
+    for (var i=0; i<squares; i++) {
+      var randColor = new Color('random', colorRange);
+      randColor.computeGrayscale();
+      colors.push(randColor);
+      unsorted.push(randColor);
+    }
+  };
+
+  // Draw color squares
+  var drawColors = function(colors) {
+    var posX = padding;
+    var posY = -size;
+    ctx.strokeStyle = '#AAAAAA';
+    for (var i=0; i<squares; i++) {
+
+      // Move to next col
+      if (i % cols === 0) {
+        posX = padding;
+        posY += size + padding;
+      }
+
+      // Fill in color square
+      var color = colors[i];
+      ctx.fillStyle = color.getCSSRGB();
+      ctx.fillRect(posX, posY, size, size);
+      ctx.strokeRect(posX, posY, size, size);
+      posX += size + padding;
+    }
+  };
+
+  // Event listeners
 
   // Perform sort
   // sortByLightness(colors);
@@ -94,26 +131,10 @@ var sortByTint = function(array, index) {
   // sortByDistance(colors, 2, 0, 1);
   // sortByTint(colors, 0);
   // sortByTint(colors, 1);
-  sortByTint(colors, 0);
+  // sortByTint(colors, 2);
 
-  // Draw color squares
-  var posX = padding;
-  var posY = -size;
-  ctx.strokeStyle = '#AAAAAA';
-  for (i=0; i<squares; i++) {
-
-    // Move to next col
-    if (i % cols === 0) {
-      posX = padding;
-      posY += size + padding;
-    }
-
-    // Fill in color square
-    var color = colors[i];
-    ctx.fillStyle = color.getCSSRGB();
-    ctx.fillRect(posX, posY, size, size);
-    ctx.strokeRect(posX, posY, size, size);
-    posX += size + padding;
-  }
+  // Start program
+  randomizeColors();
+  drawColors(colors);
 
 })();
