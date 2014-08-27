@@ -1,7 +1,6 @@
 body {
   margin: 0;
   padding: 0;
-  background: #dadada;
 }
 
 .container {
@@ -13,10 +12,43 @@ canvas {
   border: 1px solid #cccccc;
 }
 
+.nice-btn {
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+  padding: 10px;
+  color: #ffffff;
+  border: none;
+  border-radius: 2px;
+  font-size: 15px;
+  letter-spacing: 2px;
+}
+
+.blue {
+  background: rgb(100, 200, 240);
+}
+
 .sidebar {
+  font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+  letter-spacing: 1px;
+  font-size: 18px;
+  color: #666666;
   float: right;
+  margin: 20px 40px 0 0;
+  width: 300px;
 }
 
 .card {
-  background: #fafafa;
+  padding: 10px;
+}
+
+.card-title {
+  font-size: 30px;
+  margin: 0 0 40px 0;
+}
+
+.card-body {
+  margin: 0 0 80px 0;
+}
+
+.card-item {
+  margin: 0 0 10px 0;
 }

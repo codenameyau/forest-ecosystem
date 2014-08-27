@@ -94,7 +94,7 @@ var sortByTint = function(array, index) {
   // sortByDistance(colors, 2, 0, 1);
   // sortByTint(colors, 0);
   // sortByTint(colors, 1);
-  sortByTint(colors, 2);
+  sortByTint(colors, 0);
 
   // Draw color squares
   var posX = padding;
