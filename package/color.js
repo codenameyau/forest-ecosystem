@@ -67,11 +67,12 @@ Color.prototype.parseCSSRGB = function(value) {
 };
 
 Color.prototype.setRandomColor = function(value) {
-  var min = value[0];
-  var max = value[1];
-  this.rgb[0] = this.randomNumber(min, max);
-  this.rgb[1] = this.randomNumber(min, max);
-  this.rgb[2] = this.randomNumber(min, max);
+  var redRange = value.red;
+  var greenRange = value.green;
+  var blueRange = value.blue;
+  this.rgb[0] = this.randomNumber(redRange[0], redRange[1]);
+  this.rgb[1] = this.randomNumber(greenRange[0], greenRange[1]);
+  this.rgb[2] = this.randomNumber(blueRange[0], blueRange[1]);
 };
 
 /************************

@@ -41,7 +41,7 @@ canvas {
   color: #606060;
   float: right;
   margin: 20px 40px 0 0;
-  width: 300px;
+  width: 250px;
 }
 
 .sidebar a {
@@ -70,4 +70,5 @@ canvas {
 .card-item {
   margin: 0 0 10px 0;
   cursor: pointer;
+  width: auto;
 }

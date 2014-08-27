@@ -63,10 +63,15 @@ var sortByDistance = function(array, i, j, k) {
   var padding = 5;
 
   // Generate random colors
-  var colorRange = [40, 256];
   var squares = cols * rows;
+  var grayscale = false;
   var colors = [];
   var unsorted = [];
+  var colorRange = {
+    red: [0, 256],
+    green: [100, 200],
+    blue: [100, 200]
+  };
 
   // Setup canvas grid
   var canvas = document.getElementById(config.canvas);
@@ -115,7 +120,7 @@ var sortByDistance = function(array, i, j, k) {
 
   // Generate colors
   randomizeColors();
-  drawColors(colors);
+  drawColors(colors, grayscale);
 
   // Event listeners
   document.getElementById('sort-original').addEventListener('click', function() {
@@ -123,47 +128,48 @@ var sortByDistance = function(array, i, j, k) {
   });
 
   document.getElementById('sort-grayscale').addEventListener('click', function() {
-    drawColors(colors, true);
+    grayscale = (grayscale === true) ? false : true;
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-lightness').addEventListener('click', function() {
     sortByLightness(colors);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-darkness').addEventListener('click', function() {
     sortByDarkness(colors);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-red-ratio').addEventListener('click', function() {
     sortByColorRatio(colors, 0);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-green-ratio').addEventListener('click', function() {
     sortByColorRatio(colors, 1);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-blue-ratio').addEventListener('click', function() {
     sortByColorRatio(colors, 2);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-red-distance').addEventListener('click', function() {
     sortByDistance(colors, 0, 0, 0);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-green-distance').addEventListener('click', function() {
     sortByDistance(colors, 1, 1, 1);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
   document.getElementById('sort-blue-distance').addEventListener('click', function() {
     sortByDistance(colors, 2, 2, 2);
-    drawColors(colors);
+    drawColors(colors, grayscale);
   });
 
 })();
