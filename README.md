@@ -34,7 +34,7 @@ paper brainstorms and redesigns, but ultimately turned out to be what I wanted!
 ###Projects
 
 ####Color Sorting (8-25-2014)
-The color sorting algorithms are base on luminosity, minimum distance, and color ratios.
+Exploring color sorting algorithms based on luminosity, color ratios, and color distances.
 
 [Live Demo](https://codenameyau.github.io/coding-cafe/algorithm/color-sorting/) |
 [View Source](https://github.com/codenameyau/coding-cafe/tree/master/public/algorithm/color-sorting)

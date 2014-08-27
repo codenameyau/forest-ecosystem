@@ -66,11 +66,10 @@ var sortByDistance = function(array, i, j, k) {
   var squares = cols * rows;
   var grayscale = false;
   var colors = [];
-  var unsorted = [];
   var colorRange = {
-    red: [0, 256],
-    green: [100, 200],
-    blue: [100, 200]
+    red:   [10, 250],
+    green: [10, 250],
+    blue:  [10, 250]
   };
 
   // Setup canvas grid
@@ -87,12 +86,10 @@ var sortByDistance = function(array, i, j, k) {
   // Generates array of random colors
   var randomizeColors = function() {
     clearArray(colors);
-    clearArray(unsorted);
     for (var i=0; i<squares; i++) {
       var randColor = new Color('random', colorRange);
       randColor.computeGrayscale();
       colors.push(randColor);
-      unsorted.push(randColor);
     }
   };
 
@@ -123,10 +120,6 @@ var sortByDistance = function(array, i, j, k) {
   drawColors(colors, grayscale);
 
   // Event listeners
-  document.getElementById('sort-original').addEventListener('click', function() {
-    drawColors(unsorted);
-  });
-
   document.getElementById('sort-grayscale').addEventListener('click', function() {
     grayscale = (grayscale === true) ? false : true;
     drawColors(colors, grayscale);
@@ -169,6 +162,11 @@ var sortByDistance = function(array, i, j, k) {
 
   document.getElementById('sort-blue-distance').addEventListener('click', function() {
     sortByDistance(colors, 2, 2, 2);
+    drawColors(colors, grayscale);
+  });
+
+  document.getElementById('sort-randomize').addEventListener('click', function() {
+    randomizeColors();
     drawColors(colors, grayscale);
   });
 
