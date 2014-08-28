@@ -1,0 +1,17 @@
+body {
+  background: rgb(245, 245, 245);
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  background-color: rgb(250, 255, 215);
+  border: 1px solid #d6d6d6;
+  height: 640px;
+  width: 700px;
+}
+
+.container {
+  text-align: center;
+  margin: 20px 0 0 0;
+}
