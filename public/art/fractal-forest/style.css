@@ -1,17 +1,14 @@
 body {
-  background: rgb(245, 245, 245);
+  background: #FCFCFC;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 canvas {
-  background-color: rgb(250, 255, 215);
-  border: 1px solid #d6d6d6;
-  height: 640px;
-  width: 700px;
+  background: #FCFCFC;
 }
 
 .container {
   text-align: center;
-  margin: 20px 0 0 0;
 }
