@@ -1,5 +1,15 @@
 'use strict';
 
+/********************
+ * Canvas Utilities *
+ ********************/
+var clearCanvas = function(ctx) {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+}
+
+/****************
+ * Main Program *
+ ****************/
 (function() {
 
   // Setup canvas grid
