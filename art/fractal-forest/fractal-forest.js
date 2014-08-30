@@ -7,18 +7,24 @@
  */
 'use strict';
 
+/********************
+ * Canvas Utilities *
+ ********************/
 var fillPixel = function(data, x, y, color) {
-  var index = (x + y*data.width) * 4;
+  var index = (x + y * data.width) * 4;
   data.data[index + 0] = color[0];
   data.data[index + 1] = color[1];
   data.data[index + 2] = color[2];
-  data.data[index + 3] = color[3];
+  data.data[index + 3] = color[3] || 1;
 };
 
 var updateCanvas = function(ctx, data) {
   ctx.putImageData(data, 0, 0);
 };
 
+/**************************
+ * Black and White Forest *
+ **************************/
 var drawFractalTree = function(ctx) {
   var x = 200;
   var y = 200;
@@ -32,13 +38,23 @@ var drawFractalTree = function(ctx) {
   ctx.stroke();
 };
 
+var drawRandomForest = function(ctx) {
+  var width = ctx.canvas.width;
+  var height = ctx.canvas.height;
+  var data = ctx.getImageData(0, 0, width, height);
+  fillPixel(data, 200, 200, [100, 0, 0]);
+  updateCanvas(ctx, data);
+};
+
+/****************
+ * Main Program *
+ ****************/
 (function() {
   // Setup canvas element
   var canvas = document.getElementById('imagination');
   var ctx = canvas.getContext('2d');
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  var data = ctx.getImageData(0, 0, width, height);
+  var width = 800;
+  var height = 600;
   canvas.width = width;
   canvas.height = height;
   canvas.style.width = width;
@@ -46,15 +62,12 @@ var drawFractalTree = function(ctx) {
 
   // Define context settings
   ctx.imageSmoothingEnabled = false;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
   ctx.fillStyle = 'rgb(0, 0, 0)';
   ctx.strokeStyle = 'rgb(0, 0, 0)';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
   ctx.lineWidth = 2;
 
-  drawFractalTree(ctx);
-  for (var i=20; i<100; i++) {
-    fillPixel(data, i, 200, [0, 0, 0, 1]);
-  }
-  updateCanvas(ctx, data);
+  // drawFractalTree(ctx);
+  drawRandomForest(ctx);
 })();
