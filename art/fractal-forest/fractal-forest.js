@@ -15,10 +15,10 @@ var fillPixel = function(data, x, y, color) {
   data.data[index + 0] = color[0];
   data.data[index + 1] = color[1];
   data.data[index + 2] = color[2];
-  data.data[index + 3] = color[3] || 1;
+  data.data[index + 3] = color[3] || 255;
 };
 
-var updateCanvas = function(ctx, data) {
+var saveCanvasData = function(ctx, data) {
   ctx.putImageData(data, 0, 0);
 };
 
@@ -41,9 +41,11 @@ var drawFractalTree = function(ctx) {
 var drawRandomForest = function(ctx) {
   var width = ctx.canvas.width;
   var height = ctx.canvas.height;
-  var data = ctx.getImageData(0, 0, width, height);
-  fillPixel(data, 200, 200, [100, 0, 0]);
-  updateCanvas(ctx, data);
+  var data = ctx.createImageData(width, height);
+  for (var i=0; i<200; i++) {
+    fillPixel(data, 200, i, [100, 0, 0]);
+  }
+  saveCanvasData(ctx, data);
 };
 
 /****************
@@ -60,14 +62,6 @@ var drawRandomForest = function(ctx) {
   canvas.style.width = width;
   canvas.style.height = height;
 
-  // Define context settings
-  ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = 'rgb(0, 0, 0)';
-  ctx.strokeStyle = 'rgb(0, 0, 0)';
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.lineWidth = 2;
-
-  // drawFractalTree(ctx);
+  // Draw random forest
   drawRandomForest(ctx);
 })();
