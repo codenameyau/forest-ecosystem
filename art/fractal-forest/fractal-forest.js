@@ -42,40 +42,17 @@ var drawFractalTree = function(ctx) {
   ctx.stroke();
 };
 
-var drawBasicForest = function(ctx) {
-  var width = ctx.canvas.width;
-  var height = ctx.canvas.height;
-  var data = ctx.createImageData(width, height);
-
-  // Tree parameters
-  var numTrees = 20;
-  var leftBound = 20;
-  var rightBound = width - leftBound;
-  var x, y, h;
-
-  // Draw trees as vertical line
-  for (var i=0; i<numTrees; i++) {
-    y = 400 - (i*10);
-    x = randomNumber(leftBound, rightBound);
-    h = 200 - i*20;
-
-    // Draw vertical lines
-    var colorR = randomNumber(0, 200);
-    var colorG = randomNumber(0, 200);
-    var colorB = randomNumber(0, 200);
-    for (var j=y, treeHeight=y+h; j<treeHeight; j++) {
-      fillPixel(data, x, j, [colorR, colorG, colorB]);
-    }
-  }
-  saveCanvasData(ctx, data);
-};
-
 var drawRandomForest = function(ctx) {
   var width = ctx.canvas.width;
   var height = ctx.canvas.height;
   var data = ctx.createImageData(width, height);
-  for (var i=0; i<200; i++) {
-    fillPixel(data, 200, i, [100, 0, 0]);
+  var x, y, h;
+
+  // Draw random tree
+  x = 50;
+  y = 300;
+  for (var i=0; i<90; i++) {
+
   }
   saveCanvasData(ctx, data);
 };
@@ -93,6 +70,7 @@ var drawRandomForest = function(ctx) {
   canvas.height = height;
   canvas.style.width = width;
   canvas.style.height = height;
-  drawBasicForest(ctx);
+  // drawBasicForest(ctx);
+  drawRandomForest(ctx);
 
 })();
