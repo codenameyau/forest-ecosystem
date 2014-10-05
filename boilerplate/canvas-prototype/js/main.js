@@ -7,8 +7,7 @@
 
   // Setup canvas project
   var canvasID = 'imagination';
-  var settings = {width: 800, height: 500};
-  var project = new CanvasProject(canvasID, settings);
+  var project = new CanvasProject(canvasID);
   project.drawDemo();
 
 })();

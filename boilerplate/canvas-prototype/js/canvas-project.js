@@ -12,6 +12,14 @@ CanvasProject.prototype.setupCanvas = function() {
   this.ctx.imageSmoothingEnabled = false;
 };
 
+CanvasProject.prototype.getWidth = function() {
+  return this.canvas.width;
+};
+
+CanvasProject.prototype.getHeight = function() {
+  return this.canvas.height;
+};
+
 CanvasProject.prototype.drawDemo = function() {
   this.ctx.fillStyle = 'rgb(200, 0, 0)';
   this.ctx.fillRect(0, 0, 50, 50);
