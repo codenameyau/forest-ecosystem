@@ -1,5 +1,5 @@
-coding-cafe
-===========
+forest-ecosystem
+================
 
 Welcome to Coding Cafe, a collection of weekly programming challenges.
 
@@ -16,7 +16,7 @@ Welcome to Coding Cafe, a collection of weekly programming challenges.
 ###Featured Projects
 
 ####Forest Ecosystem (8-14-2014)
-![Screenshot of forest ecosystem](https://raw.githubusercontent.com/codenameyau/coding-cafe/master/screenshot/projects/forest-ecosystem.jpg)
+![Screenshot of forest ecosystem](https://raw.githubusercontent.com/codenameyau/coding-cafe/master/screenshot/forest-ecosystem.jpg)
 
 **Forest Ecosystem** is a simulation based on this
 [programming challenge](http://codegolf.stackexchange.com/q/35322/30051).
