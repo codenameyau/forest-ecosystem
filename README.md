@@ -13,4 +13,4 @@ I encountered several issues such as looping efficiency, splicing during loop it
 and designing an elegant ForestLife and ForestEcosystem interface. In the end it took several
 paper brainstorms and redesigns, but ultimately turned out to be what I wanted!
 
-[Live Demo](https://codenameyau.github.io/coding-cafe/simulation/forest-ecosystem/)
+[**Live Demo**](https://codenameyau.github.io/forest-ecosystem/)
