@@ -1,5 +1,5 @@
 /*---------------JSHint---------------*/
-/* global ForestLife, ForestEcosystem */
+/* global ForestEcosystem             */
 /* global PubTest                     */
 /*------------------------------------*/
 'use strict';
@@ -141,7 +141,7 @@
 
     forest.moveForestLife(lumberjack);
 
-    test.assert(lumberjack.position[0] != 2 || lumberjack.position[1] != 2,
+    test.assert(lumberjack.position[0] !== 2 || lumberjack.position[1] !== 2,
       'position of lumberjack should have changed');
 
     test.assertRange(lumberjack.position[0], 1, 3,
@@ -172,15 +172,14 @@
       'population of lumberjack should be 6');
 
     forest.lumberTracking();
-
-    test.assertEqual(forest.stats.lumber.year, 0,
+    test.assertEqual(forest.stats.lumber, 0,
       'number of lumber collected this year should be 0');
 
     test.assertEqual(forest.population.lumberjack.length, 5,
       'number of lumberjack should be one less due to layoff');
 
     // Case: more lumberjack hired if passes quota
-    forest.stats.lumber.year = 200;
+    forest.stats.lumber = 200;
     forest.lumberTracking();
 
     test.assert(forest.population.lumberjack.length > 6,
@@ -203,13 +202,6 @@
 
     test.assertEqual(forest.population.bear.length, 6,
       'population of bear should be 6');
-
-    // Case: bear is removed if maul is greater than 0
-    forest.stats.maul.year = 1;
-    forest.maulTracking();
-
-    test.assertEqual(forest.population.bear.length, 5,
-      'population of bear should be 5 after the bear trap');
   });
 
   // Report test results
