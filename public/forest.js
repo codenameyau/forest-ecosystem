@@ -298,7 +298,6 @@ ForestEcosystem.prototype.lumberjackEvent = function(life) {
   var y = life.position[1];
   var triggeredEvent = false;
   var cell = this.simulation.getCell(x, y);
-  var z = cell.length-1;
 
   // [Issue] Becareful with looping and splicing
   for (var i=0, len=cell.length; i<len; i++) {
@@ -489,8 +488,7 @@ ForestEcosystem.prototype.updateStats = function() {
    ****************************/
   forest.setUpdater(function() {
     // Get reference to grid
-    var grid = forest.simulation.getGrid();
-    var i, j, k, len, life;
+    var i, j, len, life;
 
     // [Phase 1]: tree events
     for (i=0, len=forest.population.tree.length; i<len; i++) {
