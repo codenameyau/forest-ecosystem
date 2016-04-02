@@ -12,16 +12,22 @@ canvas {
 }
 
 .container {
-  text-align: center;
   margin: 20px 0 0 0;
+  text-align: center;
+}
+
+.canvas-container {
+  display: inline-block;
+  vertical-align: top;
 }
 
 /* Card UI design */
 .gui-helper {
-  float: right;
-  margin: 0 20px 20px 0;
-  text-align: left;
+  margin: 0 20px 20px 20px;
   line-height: 25px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: left;
 }
 
 .gui-card {

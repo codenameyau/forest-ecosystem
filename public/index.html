@@ -10,8 +10,11 @@
   <body>
 
     <div class="container">
-      <!-- GridCanvas -->
-      <canvas id="imagination" height="755" width="755"></canvas>
+      <div class="canvas-container">
+        <!-- GridCanvas -->
+        <canvas id="imagination" height="755" width="755"></canvas>
+        <br>
+      </div>
 
       <!-- Simulation GUI -->
       <div class="gui-helper">
@@ -30,7 +33,9 @@
         <!-- Simulation time -->
         <div class="gui-card">
           <div class="gui-card-container">
-            <div class="gui-card-label">Time (press spacebar)</div>
+            <div class="gui-card-label">
+              Time (press spacebar)
+            </div>
             <div class="gui-card-body">
               <div id="simulation-year-label">
                 Year: <span id="simulation-year">0</span>
